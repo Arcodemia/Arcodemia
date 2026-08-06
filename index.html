@@ -78,6 +78,11 @@
 <link rel="preload" href="fonts/heebo-hebrew-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/heebo-hebrew-400.woff2" as="font" type="font/woff2" crossorigin>
 
+<!-- תמונת ה-hero. רק החיתוך המתאים למסך נטען — media מונע
+     מהדפדפן להוריד את שניהם. -->
+<link rel="preload" as="image" href="img/hero-wide.webp" media="(min-width:834px)" fetchpriority="high">
+<link rel="preload" as="image" href="img/hero-tall.webp" media="(max-width:833px)" fetchpriority="high">
+
 <!-- מדליק את אנימציות הכניסה. רץ ב-head כדי שהמחלקות יהיו
      במקום עוד לפני הציור הראשון ולא ייווצר הבזק.
      שתי מחלקות נפרדות בכוונה:
@@ -214,155 +219,32 @@ h3{line-height:1.28; letter-spacing:-.02em; font-weight:800}
 @media (max-width:833px){ .frame{display:none} }
 
 /* ============================================================
-   קריסטלים
+   הקריסטלים — תמונה סטטית
    ------------------------------------------------------------
-   הגוף הוא פריזמה משושה אמיתית: קודקוד עליון → שלוש פאות
-   הכתרה → שלוש פאות גוף ארוכות → שלוש פאות תחתונות → קודקוד
-   תחתון. עשר פאות, כל אחת בהצללה משלה — משם מגיע התלת-ממד.
-
-   העיקרון שמפריד זכוכית מפלסטיק: **הגוף כמעט שחור.**
-   הקשת מופיעה רק בפסי פיזור (dispersion) ובקצוות שתופסים
-   אור, במיזוג screen. קריסטל שכולו רווי בצבע נראה כמו סוכרייה.
-
-   ביצועים: אין פילטרי SVG על האלמנט המסתובב — רק גרדיאנטים
-   ומיזוגים. הזוהר הרך יושב על המעטפת שרק זזה ולא מסתובבת.
+   רונדרה מראש ב-raymarcher עם פיזור ספקטרלי בשמונה אורכי גל
+   ואנטי-אליאסינג. איכות שאין שום סיכוי להריץ בזמן אמת, ועלות
+   ריצה אפס: אין שיידר, אין קנבס, אין לולאת אנימציה.
    ============================================================ */
-/* קנבס WebGL — הקריסטלים האמיתיים. ה-SVG שמתחת הוא רק גיבוי
-   למקרה שאין WebGL, ונעלם ברגע שהקנבס עולה. */
-.gl{
-  position:absolute; inset:0; z-index:0; pointer-events:none;
+.hero__art{position:absolute; inset:0; z-index:0; pointer-events:none}
+.hero__art img{
   inline-size:100%; block-size:100%;
-  opacity:0; transition:opacity 1.4s ease;
+  object-fit:cover; object-position:center;
+  opacity:0; transition:opacity 1.1s ease;
 }
-.gl.is-on{opacity:1}
-body.has-gl .crystals{display:none}
+.hero__art img.is-on{opacity:1}
+/* אם JS לא רץ — התמונה פשוט מוצגת, בלי המתנה */
+html:not(.intro) .hero__art img{opacity:1}
 
-.crystals{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
-/* הפרספקטיבה חייבת לשבת על ההורה הישיר של האלמנט שמסתובב.
-   על .crystals היא לא הייתה מגיעה ל-.cr__body — נכד ולא ילד. */
-.cr{
-  position:absolute; will-change:transform;
-  perspective:900px; perspective-origin:50% 50%;
-  animation:floatY ease-in-out infinite alternate;
-}
-
-/* הילה — CSS ולא SVG, כי היא לא מסתובבת ולכן זולה בהרבה */
-.cr__aura{
-  position:absolute; inset:-22% -46%;
-  background:radial-gradient(50% 42% at 50% 50%, var(--au, rgba(201,123,255,.55)), transparent 68%);
-  animation:auraPulse ease-in-out infinite;
-  transition:opacity 1.6s ease, filter 1.6s ease;
-}
-.cr__body{
-  position:relative;
-  inline-size:100%; block-size:auto; overflow:visible;
-  animation:tumble linear infinite;
-  transform-style:preserve-3d;
-}
-
-/* פסי הפיזור — האור שנשבר בתוך הזכוכית */
-.disp{mix-blend-mode:screen}
-/* קצה שתופס אור */
-.edge{fill:none; stroke:#fff; stroke-linejoin:round; vector-effect:non-scaling-stroke}
-/* סדקים פנימיים */
-.frac{fill:none; stroke:#fff; stroke-linecap:round; opacity:.3; vector-effect:non-scaling-stroke}
-/* קשתות החשמל */
-.arc{
-  fill:none; stroke-linecap:round; stroke-linejoin:round;
-  stroke-dasharray:26 210; mix-blend-mode:screen;
-  animation:arcRun linear infinite, arcFlick ease-in-out infinite;
-  transition:stroke-width 1.6s ease, opacity 1.6s ease, filter 1.6s ease;
-}
-
-@keyframes tumble{ from{transform:rotate3d(.22,1,.1,0deg)} to{transform:rotate3d(.22,1,.1,360deg)} }
-@keyframes floatY{ from{transform:translate3d(0,0,0)} to{transform:translate3d(-14px,-40px,0)} }
-@keyframes auraPulse{ 0%,100%{opacity:.34; transform:scale(1)} 50%{opacity:.72; transform:scale(1.1)} }
-@keyframes arcRun{ from{stroke-dashoffset:236} to{stroke-dashoffset:0} }
-@keyframes arcFlick{ 0%,100%{opacity:.2} 12%{opacity:.9} 20%{opacity:.35} 46%{opacity:.8} 60%{opacity:.25} }
-
-/* ============================================================
-   טעינה — ארבע שניות שבהן הקריסטלים נטענים בחשמל
-   ------------------------------------------------------------
-   בכניסה לדף: הקשתות בורקות בעוצמה מלאה ורצות מהר, ההילה
-   מתנפחת, והכותרת מתחדדת מתוך טשטוש. אחרי 4 שניות המחלקה
-   יורדת — וה-transition מנחית הכל בעדינות למצב הרגוע.
-   ============================================================ */
-body.charging .arc{
-  stroke:#FFFFFF;
-  stroke-width:3.2px;
-  stroke-dasharray:70 120;
-  filter:drop-shadow(0 0 7px rgba(190,235,255,.95)) drop-shadow(0 0 20px rgba(177,75,255,.7));
-  animation-duration:.55s, .32s !important;
-}
-body.charging .cr__aura{ opacity:.95 !important; filter:brightness(1.6) }
-
-/* הבזק שמתפוגג — נותן את רגע ה"התנעה" */
-.surge{
-  position:fixed; inset:0; z-index:5; pointer-events:none; opacity:0;
+/* החשכה מדורגת מעל התמונה.
+   התמונה נחתכת ב-cover, ולכן ביחסי מסך שונים הגבישים
+   מתקרבים למרכז ודוחקים את הכותרת. השכבה הזו מבטיחה שהטקסט
+   יישאר קריא בכל חיתוך, ומשאירה את הגבישים בהירים בצדדים.
+   זה גם מה שהרפרנס עושה — המרכז שם כמעט שחור. */
+.hero__art::after{
+  content:''; position:absolute; inset:0;
   background:
-    radial-gradient(60% 50% at 12% 8%,  rgba(201,123,255,.5), transparent 62%),
-    radial-gradient(55% 46% at 88% 92%, rgba(59,232,255,.42), transparent 62%);
-}
-body.charging .surge{ animation:surge 4s cubic-bezier(.2,.7,.3,1) both }
-@keyframes surge{
-  0%{opacity:0} 6%{opacity:1} 22%{opacity:.5} 38%{opacity:.9}
-  64%{opacity:.35} 82%{opacity:.5} 100%{opacity:0}
-}
-
-/* ============================================================
-   כניסת הכותרת — מתחדדת מתוך טשטוש
-   ------------------------------------------------------------
-   ⚠️ הכלל שנשבר כאן פעם אחת ואסור לשבור שוב:
-   **אנימציית כניסה לא יכולה להיות מה שהופך תוכן לנראה.**
-   הגרסה הקודמת נתנה ל-.hero__in > * ערך opacity:0 קבוע עם
-   animation-fill-mode:both. אם האנימציה לא רצה — הכותרת
-   הראשית של הדף פשוט לא קיימת.
-
-   לכן: מצב ברירת המחדל הוא נראה. האנימציה נתלית רק כשמחלקת
-   .intro קיימת, והיא נוספת ב-JS ומוסרת אחרי 3.2 שניות.
-   בלי JS, עם JS שנכשל, או עם אנימציה תקועה — הטקסט נראה.
-   ============================================================ */
-.intro .hero__in > *{animation:resolve 1.5s cubic-bezier(.2,.8,.25,1) both}
-.intro .hero__in > :nth-child(1){animation-delay:.15s}
-.intro .hero__in > :nth-child(2){animation-delay:.35s}
-.intro .hero__in > :nth-child(3){animation-delay:.75s}
-.intro .hero__in > :nth-child(4){animation-delay:1s}
-.intro .hero__in > :nth-child(5){animation-delay:1.2s}
-@keyframes resolve{
-  from{opacity:0; filter:blur(16px); transform:translateY(16px) scale(.985)}
-  to  {opacity:1; filter:blur(0);    transform:none}
-}
-
-/* מיקומים — אלכסון מלמעלה-שמאל למטה-ימין.
-   כל קריסטל מקבל גם גוון הילה משלו וסיבוב בקצב אחר. */
-.cr--a{
-  inline-size:clamp(190px,26vw,400px); inset-block-start:-16%; inset-inline-start:-9%;
-  animation-duration:13s; --au:rgba(201,123,255,.5);
-  rotate:14deg;
-}
-.cr--a .cr__body{animation-duration:46s}
-
-.cr--b{
-  inline-size:clamp(168px,23vw,350px); inset-block-end:-20%; inset-inline-end:-7%;
-  animation-duration:17s; animation-delay:-6s; --au:rgba(80,200,255,.45);
-  rotate:-166deg;                       /* הפוך — קריסטל אחר, לא אותו נכס פעמיים */
-  filter:hue-rotate(58deg);
-}
-.cr--b .cr__body{animation-duration:55s; animation-direction:reverse}
-
-.cr--c{
-  inline-size:clamp(78px,9vw,140px); inset-block-start:14%; inset-inline-end:9%;
-  animation-duration:9s; animation-delay:-3s; --au:rgba(255,140,220,.4);
-  rotate:-32deg;
-  filter:hue-rotate(-42deg) brightness(1.1);
-  opacity:.9;
-}
-.cr--c .cr__body{animation-duration:27s}
-
-@media (max-width:833px){
-  .cr--a{inline-size:210px; inset-block-start:-9%; inset-inline-start:-22%}
-  .cr--b{inline-size:190px; inset-block-end:-11%;  inset-inline-end:-20%}
-  .cr--c{display:none}
+    radial-gradient(62% 58% at 50% 44%, rgba(0,0,0,.88), rgba(0,0,0,.52) 52%, rgba(0,0,0,0) 76%),
+    linear-gradient(to bottom, rgba(0,0,0,.62), rgba(0,0,0,0) 26%, rgba(0,0,0,0) 68%, rgba(0,0,0,.9));
 }
 
 /* ============================================================
@@ -725,9 +607,8 @@ html[data-fs="3"]{font-size:138%}
 html.a11y-gray{filter:grayscale(1)}
 
 html.a11y-contrast body{background:#000; color:#fff}
-html.a11y-contrast .crystals,
+html.a11y-contrast .hero__art,
 html.a11y-contrast .grain,
-html.a11y-contrast .surge,
 html.a11y-contrast .frame{display:none !important}
 html.a11y-contrast :is(.card,.stepc,.faq details,.dline,.risk,.a11y-panel,.doc,.field input,.field textarea){background:#000 !important; border-color:#fff !important}
 html.a11y-contrast :is(p,span,li,strong,b,summary,label,h1,h2,h3,.lead,.sub,.val,.eyebrow){color:#fff !important; -webkit-text-fill-color:#fff}
@@ -838,7 +719,6 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
-<div class="surge" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
@@ -872,164 +752,12 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 <!-- ===== HERO ===== -->
 <section class="hero">
 
-  <!-- הקריסטלים האמיתיים. הקוד יושב בתחתית הדף. -->
-  <canvas class="gl" id="gl" aria-hidden="true"></canvas>
-
-  <!-- ============================================================
-       גיבוי ב-SVG — מוצג רק אם אין WebGL בדפדפן.
-       הצורה מוגדרת פעם אחת ב-<defs> ומשוכפלת ב-<use>.
-       ============================================================ -->
-
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-    <defs>
-      <!-- ==== פאות הגוף. כמעט שחור: זה מה שעושה אותו זכוכית ==== -->
-      <linearGradient id="fLeft" x1=".1" y1="0" x2=".9" y2="1">
-        <stop offset="0"   stop-color="#1A1330"/>
-        <stop offset=".38" stop-color="#090711"/>
-        <stop offset=".72" stop-color="#150E28"/>
-        <stop offset="1"   stop-color="#05040A"/>
-      </linearGradient>
-      <linearGradient id="fMid" x1=".5" y1="0" x2=".5" y2="1">
-        <stop offset="0"   stop-color="#3B2A5E"/>
-        <stop offset=".22" stop-color="#120D22"/>
-        <stop offset=".55" stop-color="#1D1636"/>
-        <stop offset=".82" stop-color="#0B0814"/>
-        <stop offset="1"   stop-color="#241A3F"/>
-      </linearGradient>
-      <linearGradient id="fRight" x1="1" y1="0" x2="0" y2="1">
-        <stop offset="0"   stop-color="#6E5B9E"/>
-        <stop offset=".3"  stop-color="#241B3E"/>
-        <stop offset=".68" stop-color="#0D0A16"/>
-        <stop offset="1"   stop-color="#1A1230"/>
-      </linearGradient>
-      <linearGradient id="fCapL" x1="0" y1="1" x2="1" y2="0">
-        <stop offset="0" stop-color="#0B0813"/><stop offset="1" stop-color="#4B3C7A"/>
-      </linearGradient>
-      <linearGradient id="fCapM" x1=".5" y1="1" x2=".5" y2="0">
-        <stop offset="0" stop-color="#170F2B"/><stop offset="1" stop-color="#9C86D8"/>
-      </linearGradient>
-      <linearGradient id="fCapR" x1="1" y1="1" x2="0" y2="0">
-        <stop offset="0" stop-color="#0A0711"/><stop offset="1" stop-color="#6C57A6"/>
-      </linearGradient>
-
-      <!-- ==== פיזור אור. אלה, ורק אלה, נושאים את הקשת ==== -->
-      <linearGradient id="d1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0"   stop-color="#FF2D8F" stop-opacity="0"/>
-        <stop offset=".14" stop-color="#FF2D8F" stop-opacity=".95"/>
-        <stop offset=".32" stop-color="#8B5CFF" stop-opacity=".8"/>
-        <stop offset=".5"  stop-color="#22E6FF" stop-opacity=".95"/>
-        <stop offset=".68" stop-color="#FFFFFF" stop-opacity=".85"/>
-        <stop offset=".86" stop-color="#4F8CFF" stop-opacity=".7"/>
-        <stop offset="1"   stop-color="#4F8CFF" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="d2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0"   stop-color="#22E6FF" stop-opacity="0"/>
-        <stop offset=".2"  stop-color="#22E6FF" stop-opacity=".9"/>
-        <stop offset=".42" stop-color="#FFFFFF" stop-opacity=".95"/>
-        <stop offset=".6"  stop-color="#FF2D8F" stop-opacity=".85"/>
-        <stop offset=".8"  stop-color="#8B5CFF" stop-opacity=".7"/>
-        <stop offset="1"   stop-color="#8B5CFF" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="d3" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0"   stop-color="#FFD86B" stop-opacity="0"/>
-        <stop offset=".26" stop-color="#FFD86B" stop-opacity=".75"/>
-        <stop offset=".48" stop-color="#FF6FA8" stop-opacity=".9"/>
-        <stop offset=".72" stop-color="#7C4DFF" stop-opacity=".8"/>
-        <stop offset="1"   stop-color="#22E6FF" stop-opacity="0"/>
-      </linearGradient>
-
-      <!-- ==== קצה שתופס אור ==== -->
-      <linearGradient id="eG" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0"   stop-color="#FFFFFF" stop-opacity=".95"/>
-        <stop offset=".28" stop-color="#C9E9FF" stop-opacity=".5"/>
-        <stop offset=".62" stop-color="#FFFFFF" stop-opacity=".18"/>
-        <stop offset="1"   stop-color="#E6D4FF" stop-opacity=".6"/>
-      </linearGradient>
-
-      <radialGradient id="tip">
-        <stop offset="0" stop-color="#FFFFFF" stop-opacity=".95"/>
-        <stop offset=".45" stop-color="#C9A6FF" stop-opacity=".35"/>
-        <stop offset="1" stop-color="#C9A6FF" stop-opacity="0"/>
-      </radialGradient>
-
-      <!-- ============================================================
-           הפריזמה. קודקוד עליון 120,18 · טבעת עליונה · טבעת תחתונה
-           · קודקוד תחתון 126,700. עשר פאות.
-           ============================================================ -->
-      <g id="shard">
-        <!-- פאות ההכתרה -->
-        <polygon points="120,18 54,152 98,182"  fill="url(#fCapL)"/>
-        <polygon points="120,18 98,182 156,174" fill="url(#fCapM)"/>
-        <polygon points="120,18 156,174 192,140" fill="url(#fCapR)"/>
-
-        <!-- פאות הגוף -->
-        <polygon points="54,152 98,182 104,590 62,552"   fill="url(#fLeft)"/>
-        <polygon points="98,182 156,174 152,582 104,590" fill="url(#fMid)"/>
-        <polygon points="156,174 192,140 184,544 152,582" fill="url(#fRight)"/>
-
-        <!-- פאות התחתית -->
-        <polygon points="62,552 104,590 126,700"  fill="url(#fCapL)" opacity=".8"/>
-        <polygon points="104,590 152,582 126,700" fill="url(#fCapM)" opacity=".7"/>
-        <polygon points="152,582 184,544 126,700" fill="url(#fCapR)" opacity=".8"/>
-
-        <!-- ==== פיזור: פסים מעוקלים שרצים בתוך הזכוכית ==== -->
-        <g class="disp">
-          <path d="M112,186 C124,300 104,420 116,586" stroke="url(#d1)" stroke-width="13" fill="none" opacity=".55"/>
-          <path d="M132,180 C142,310 126,430 138,584" stroke="url(#d2)" stroke-width="7"  fill="none" opacity=".6"/>
-          <path d="M88,190  C 98,300  80,418  92,578" stroke="url(#d3)" stroke-width="5"  fill="none" opacity=".45"/>
-          <path d="M166,172 C176,300 160,420 170,560" stroke="url(#d2)" stroke-width="9"  fill="none" opacity=".4"/>
-          <path d="M70,166  C 80,290  64,410  74,548" stroke="url(#d1)" stroke-width="4"  fill="none" opacity=".38"/>
-          <!-- ההכתרה שוברת את האור הכי חזק -->
-          <path d="M120,26 C104,90 112,140 100,180"  stroke="url(#d2)" stroke-width="9"  fill="none" opacity=".7"/>
-          <path d="M120,26 C136,88 128,138 152,174"  stroke="url(#d1)" stroke-width="7"  fill="none" opacity=".6"/>
-        </g>
-
-        <!-- ==== סדקים פנימיים ==== -->
-        <g class="frac" stroke-width="1">
-          <path d="M104,240 L138,286 L110,330 L146,372"/>
-          <path d="M126,420 L100,452 L134,494"/>
-          <path d="M78,268 L96,318"/>
-          <path d="M168,300 L150,352 L172,394"/>
-        </g>
-
-        <!-- ==== קצוות ==== -->
-        <g class="edge" stroke="url(#eG)">
-          <path d="M120,18 L192,140 L184,544 L126,700 L62,552 L54,152 Z" stroke-width="1.4"/>
-          <path d="M120,18 L98,182 L104,590 L126,700"  stroke-width="1" opacity=".75"/>
-          <path d="M120,18 L156,174 L152,582 L126,700" stroke-width="1" opacity=".75"/>
-          <path d="M54,152 L98,182 L156,174 L192,140"  stroke-width=".9" opacity=".55"/>
-          <path d="M62,552 L104,590 L152,582 L184,544" stroke-width=".9" opacity=".5"/>
-        </g>
-
-        <!-- ==== נצנוץ בקודקודים ==== -->
-        <ellipse cx="120" cy="26"  rx="52" ry="40" fill="url(#tip)"/>
-        <ellipse cx="126" cy="690" rx="42" ry="32" fill="url(#tip)" opacity=".65"/>
-
-        <!-- ==== קשתות חשמל ==== -->
-        <path class="arc" d="M120,18 C150,110 84,196 140,290 C92,380 148,470 112,560 L126,700"
-              stroke="#EAF9FF" stroke-width="2.2" style="animation-duration:3.4s, 2.1s"/>
-        <path class="arc" d="M54,152 C104,230 46,318 100,404 C48,486 108,556 126,700"
-              stroke="#C97BFF" stroke-width="1.6" style="animation-duration:4.6s, 1.8s; animation-delay:-1.4s"/>
-      </g>
-    </defs>
-  </svg>
-
-  <div class="crystals" aria-hidden="true">
-    <div class="cr cr--a">
-      <span class="cr__aura"></span>
-      <svg class="cr__body" viewBox="0 0 246 720"><use href="#shard"/></svg>
-    </div>
-    <div class="cr cr--b">
-      <span class="cr__aura"></span>
-      <!-- מוצר מעט צר יותר: אותה צורה, פרופורציה אחרת -->
-      <svg class="cr__body" viewBox="0 0 246 720"><g transform="translate(123 0) scale(.88 1.04) translate(-123 0)"><use href="#shard"/></g></svg>
-    </div>
-    <div class="cr cr--c">
-      <span class="cr__aura"></span>
-      <svg class="cr__body" viewBox="0 0 246 720"><g transform="translate(123 360) scale(1.12 .82) rotate(6) translate(-123 -360)"><use href="#shard"/></g></svg>
-    </div>
-  </div>
-
+  <!-- הקריסטלים. שני חיתוכים: רחב לדסקטופ, לאורך לנייד —
+       כדי שהגבישים לא ייחתכו החוצה במסך צר. -->
+  <picture class="hero__art" aria-hidden="true">
+    <source media="(max-width:833px)" srcset="img/hero-tall.webp" width="900" height="1100">
+    <img src="img/hero-wide.webp" alt="" width="1920" height="840" fetchpriority="high" decoding="async">
+  </picture>
 
   <div class="wrap hero__in">
     <span class="eyebrow">דפי נחיתה לעסקים מקומיים</span>
@@ -1707,6 +1435,15 @@ document.querySelectorAll('.rv').forEach((el,i) => {
    ============================================================ */
 setTimeout(() => document.documentElement.classList.remove('intro'), 3200);
 
+/* הקריסטלים נכנסים בדעיכה רכה ברגע שהתמונה מפוענחת */
+(function heroArt(){
+  const img = document.querySelector('.hero__art img');
+  if(!img) return;
+  const on = () => img.classList.add('is-on');
+  if(img.complete) on();
+  else { img.addEventListener('load', on); img.addEventListener('error', on); }
+})();
+
 const sweep = () => {
   document.querySelectorAll('.rv:not(.is-in)').forEach(el => {
     if(el.getBoundingClientRect().top < innerHeight) el.classList.add('is-in');
@@ -1776,482 +1513,65 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 })();
 
 /* ============================================================
-   קריסטלים תלת-ממדיים — WebGL raymarching
+   נגישות
    ------------------------------------------------------------
-   למה לא SVG: הקשת בקריסטל אמיתי היא לא ציור. היא התוצאה של
-   אור שנשבר, ולכל אורך גל יש מקדם שבירה מעט שונה. לכן כאן
-   כל קרן נשברת שלוש פעמים — פעם לאדום, פעם לירוק, פעם לכחול —
-   ומה שיוצא זה פיזור כרומטי אמיתי.
-
-   הצורה: SDF של פריזמה משושה שנחתכת בשישה מישורים משופעים
-   בכל קצה = גביש קוורץ עם שני קודקודים.
-
-   ביצועים: הרנדר רץ בחצי רזולוציה ומוגבל ל-36fps. לפני כל
-   raymarch יש בדיקת ספירה חוסמת אנליטית, כך שפיקסלים ריקים —
-   רוב המסך — כמעט לא עולים כלום. עוצר לגמרי כשה-hero לא נראה.
+   כל התאמה היא מחלקה על <html> (או data-fs להגדלת טקסט),
+   ונשמרת ב-localStorage כדי שהבחירה תשרוד רענון.
+   זה אחסון פונקציונלי בלבד — לא מעקב, ומוזכר במדיניות הפרטיות.
    ============================================================ */
-(function crystalGL(){
-  const cv = document.getElementById('gl');
-  if(!cv) return;
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+(function a11y(){
+  const KEY   = 'arcodemia:a11y';
+  const root  = document.documentElement;
+  const btn   = document.getElementById('a11yBtn');
+  const panel = document.getElementById('a11yPanel');
+  const TOGGLES = ['contrast','gray','links','nomotion','spacing','readable'];
 
-  const gl = cv.getContext('webgl', {
-    alpha:true, premultipliedAlpha:false, antialias:false,
-    depth:false, stencil:false, powerPreference:'high-performance'
+  let state = { fs:0 };
+  try{ state = Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}')); }catch{}
+
+  const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch{} };
+
+  function apply(){
+    TOGGLES.forEach(k => root.classList.toggle('a11y-' + k, !!state[k]));
+    if(state.fs) root.dataset.fs = state.fs; else delete root.dataset.fs;
+
+    panel.querySelectorAll('[data-a11y]').forEach(b => {
+      const k = b.dataset.a11y;
+      if(k === 'reset') return;
+      b.setAttribute('aria-pressed', String(k === 'font' ? state.fs > 0 : !!state[k]));
+    });
+  }
+
+  panel.querySelectorAll('[data-a11y]').forEach(b => {
+    b.addEventListener('click', () => {
+      const k = b.dataset.a11y;
+      if(k === 'reset')      state = { fs:0 };
+      else if(k === 'font')  state.fs = (state.fs + 1) % 4;   // 0→1→2→3→כבוי
+      else                   state[k] = !state[k];
+      apply(); save();
+    });
   });
-  if(!gl) return;                       // אין WebGL → נשאר גיבוי ה-SVG
 
-  const VERT = `
-    attribute vec2 aP;
-    void main(){ gl_Position = vec4(aP, 0.0, 1.0); }
-  `;
-
-  const FRAG = `
-  precision highp float;
-  uniform vec2  uRes;
-  uniform float uTime;
-  uniform float uCharge;
-
-  mat3 rotY(float a){ float s=sin(a),c=cos(a); return mat3(c,0.,s, 0.,1.,0., -s,0.,c); }
-  mat3 rotZ(float a){ float s=sin(a),c=cos(a); return mat3(c,-s,0., s,c,0., 0.,0.,1.); }
-
-  float hash(vec3 p){ return fract(sin(dot(p, vec3(127.1,311.7,74.7))) * 43758.5453); }
-  float noise(vec3 p){
-    vec3 i = floor(p), f = fract(p);
-    f = f*f*(3.0-2.0*f);
-    return mix(mix(mix(hash(i+vec3(0,0,0)), hash(i+vec3(1,0,0)), f.x),
-                   mix(hash(i+vec3(0,1,0)), hash(i+vec3(1,1,0)), f.x), f.y),
-               mix(mix(hash(i+vec3(0,0,1)), hash(i+vec3(1,0,1)), f.x),
-                   mix(hash(i+vec3(0,1,1)), hash(i+vec3(1,1,1)), f.x), f.y), f.z);
-  }
-
-  /* פריזמה משושה, ציר האורך הוא z */
-  float sdHex(vec3 p, vec2 h){
-    const vec3 k = vec3(-0.8660254, 0.5, 0.57735);
-    p = abs(p);
-    p.xy -= 2.0 * min(dot(k.xy, p.xy), 0.0) * k.xy;
-    vec2 d = vec2(
-      length(p.xy - vec2(clamp(p.x, -k.z*h.x, k.z*h.x), h.x)) * sign(p.y - h.x),
-      p.z - h.y);
-    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
-  }
-
-  /* גביש: פריזמה ∩ שישה מישורים משופעים בכל קצה */
-  float sdCrystal(vec3 p, float h, float r){
-    float d = sdHex(p, vec2(r, h));
-    float t = -1000.0;
-    for(int i=0;i<3;i++){
-      float a = 1.0471976 * float(i);
-      vec2 n = vec2(cos(a), sin(a));
-      t = max(t, abs(dot(p.xy, n)) * 0.78 + abs(p.z) - h - r * 0.95);
-    }
-    return max(d, t);
-  }
-
-  /* --- שני גבישים. כל אחד: סיבוב סביב הציר שלו, נטייה, וזווית מסך.
-     המיקום האופקי נגזר מיחס המסך — אחרת בנייד הם יוצאים מהמסגרת. --- */
-  vec3 pA(){
-    float a = uRes.x / uRes.y;
-    return vec3(-max(2.15, a * 2.05), 0.55, 0.4) + vec3(0.0, sin(uTime*0.31)*0.20, 0.0);
-  }
-  vec3 pB(){
-    float a = uRes.x / uRes.y;
-    return vec3(max(2.35, a * 2.15), -0.75, -0.5) + vec3(0.0, sin(uTime*0.24+1.7)*0.24, 0.0);
-  }
-
-  mat3 mA(){ return rotZ(-0.62) * rotY(1.31) * rotZ(uTime * 0.19); }
-  mat3 mB(){ return rotZ( 0.48) * rotY(-1.24) * rotZ(-uTime * 0.15 + 2.0); }
-
-  /* יחס עבה יותר בין הרוחב לאורך — כך רואים את הפאות ולא רק צינור */
-  float map(vec3 p){
-    float da = sdCrystal((p - pA()) * mA(), 2.95, 0.66);
-    float db = sdCrystal((p - pB()) * mB(), 2.60, 0.58);
-    return min(da, db);
-  }
-
-  vec3 nrm(vec3 p){
-    vec2 e = vec2(0.0016, 0.0);
-    return normalize(vec3(
-      map(p+e.xyy) - map(p-e.xyy),
-      map(p+e.yxy) - map(p-e.yxy),
-      map(p+e.yyx) - map(p-e.yyx)));
-  }
-
-  /* סביבה פרוצדורלית — סטודיו חשוך עם כמה מקורות אור צבעוניים.
-     זה מה שהקרניים השבורות "רואות", ומכאן מגיעים כל הצבעים. */
-  /* פלטה ספקטרלית: שלושה קוסינוסים בהיסט של 120° = קשת מלאה
-     כפונקציה של פרמטר אחד. */
-  vec3 spectrum(float t){
-    return 0.5 + 0.5 * cos(6.28318 * (vec3(0.0, 0.333, 0.667) + t));
-  }
-
-  vec3 env(vec3 d){
-    vec3 c = vec3(0.005, 0.005, 0.011);
-    c += mix(vec3(0.0), vec3(0.030, 0.020, 0.058), smoothstep(-1.0, 1.0, d.y));
-
-    /* אור מפתח לבן — ממנו מגיעים הברקים החדים */
-    c += vec3(1.00, 0.99, 0.97) * pow(max(0.0, dot(d, normalize(vec3(-0.34, 0.78, 0.52)))), 78.0) * 24.0;
-    c += vec3(1.00, 0.98, 1.00) * pow(max(0.0, dot(d, normalize(vec3( 0.30, 0.62,-0.72)))), 92.0) * 15.0;
-
-    /* ==== הלב של האפקט ====
-       פסי ספקטרום צרים כפונקציה של כיוון הקרן.
-       ה-pow על הסינוס הוא הדבר החשוב כאן: הוא כווץ את הפס לרכס דק,
-       כך שרוב הכיוונים נשארים שחורים ורק מעטים בורקים בצבע.
-       בלעדיו הספקטרום מאיר את כל הכיוונים והגביש יוצא פסטלי ושטוח. */
-    float ph = atan(d.z, d.x) * 1.05 + d.y * 2.10;
-    float s1 = pow(max(0.0, sin(ph * 1.25       )),  7.0);
-    float s2 = pow(max(0.0, sin(ph * 2.30 + 1.10)),  9.0);
-    float s3 = pow(max(0.0, sin(ph * 3.90 + 2.40)), 12.0);
-    c += spectrum(ph * 0.30       ) * s1 * 15.0;
-    c += spectrum(ph * 0.52 + 0.33) * s2 * 10.0;
-    c += spectrum(ph * 0.88 + 0.66) * s3 *  6.0;
-
-    /* מקורות רוויים לעיגון הצבע */
-    c += vec3(1.00, 0.06, 0.42) * pow(max(0.0, dot(d, normalize(vec3( 0.82, 0.12, 0.42)))), 14.0) * 7.0;
-    c += vec3(0.04, 0.72, 1.00) * pow(max(0.0, dot(d, normalize(vec3(-0.62,-0.34, 0.52)))), 12.0) * 6.5;
-    c += vec3(1.00, 0.62, 0.06) * pow(max(0.0, dot(d, normalize(vec3( 0.46, 0.48,-0.72)))), 16.0) * 5.0;
-    return c;
-  }
-
-  /* היטל נקודה מהעולם לקואורדינטות המסך — צריך אותו כדי לדעת
-     מאיפה בדיוק לירות את הברקים. */
-  vec2 proj(vec3 wp){ return wp.xy * 1.55 / (wp.z + 9.0); }
-
-  /* ============================================================
-     ברק בודד היוצא מנקודה
-     ------------------------------------------------------------
-     רכס דק בזווית, שמתעוות לאורך הרדיוס בשלושה סינוסים בתדרים
-     שונים — זה מה שנותן את הצורה המשוננת. דעיכה רדיאלית + הבהוב.
-     שלושה סינוסים במקום fbm: אותה תחושה, עשירית מהעלות.
-     ============================================================ */
-  /* גל משולש — פינות חדות. זה ההבדל בין ברק לחוט עשן:
-     סינוס מתעגל, משולש שובר. */
-  float tri(float x){ return abs(fract(x) - 0.5) * 4.0 - 1.0; }
-
-  float bolt(vec2 q, float seed, float t){
-    float r = length(q);
-    if(r > 1.7) return 0.0;
-
-    float a    = atan(q.y, q.x);
-    float base = seed * 2.3999632;              /* זווית הזהב — פיזור אחיד */
-    float jag  = tri(r * 1.55 - t*0.55 + seed*0.7) * 0.250
-               + tri(r * 3.70 + t*0.41 + seed*1.9) * 0.120
-               + tri(r * 8.10 - t*0.29 + seed*3.1) * 0.052
-               + tri(r * 17.3 + t*0.19 + seed*5.3) * 0.021;
-
-    float da = a - base - jag;
-    da = abs(mod(da + 3.14159265, 6.28318531) - 3.14159265);
-
-    /* דק בהרבה מקודם — ליבה חדה במקום מריחה רכה */
-    float w    = 0.0045 + r * 0.0035;
-    float line = pow(w / (da * r + w), 1.55);
-    float fall = exp(-r * 1.30) * smoothstep(0.07, 0.24, r);
-    float life = 0.28 + 0.72 * pow(max(0.0, sin(t * 2.4 + seed * 1.7)), 4.0);
-    return line * fall * life;
-  }
-
-  /* שדה חשמלי סביב שני הגבישים.
-     כל ברק ראשי מקבל הסתעפות דקה בזווית קרובה. */
-  float electric(vec2 uv, float t){
-    vec2 qa = uv - proj(pA());
-    vec2 qb = uv - proj(pB());
-    float e = 0.0;
-    for(int i=0;i<3;i++){
-      float f = float(i);
-      e += bolt(qa, f + 0.30, t);
-      e += bolt(qb, f + 5.70, t * 1.13 + 2.0);
-      e += bolt(qa, f + 0.47, t * 0.87 + 4.0) * 0.55;   /* הסתעפות */
-      e += bolt(qb, f + 5.88, t * 1.31 + 1.0) * 0.55;
-    }
-    return e;
-  }
-
-  vec2 sph(vec3 ro, vec3 rd, vec3 ce, float ra){
-    vec3 oc = ro - ce;
-    float b = dot(oc, rd);
-    float c = dot(oc, oc) - ra*ra;
-    float h = b*b - c;
-    if(h < 0.0) return vec2(1.0, -1.0);
-    h = sqrt(h);
-    return vec2(-b - h, -b + h);
-  }
-
-  float marchIn(vec3 ro, vec3 rd){
-    float t = 0.02;
-    for(int i=0;i<26;i++){
-      float d = -map(ro + rd*t);
-      if(d < 0.0025) break;
-      t += max(d, 0.02);
-      if(t > 9.0) break;
-    }
-    return t;
-  }
-
-  /* מסלול מלא של קרן בתוך הזכוכית, עבור מקדם שבירה אחד.
-     קוראים לזה שלוש פעמים עם שלושה מקדמים — וזה הפיזור. */
-  vec3 refr(vec3 p, vec3 n, vec3 rd, float ior){
-    vec3 r1 = refract(rd, n, 1.0/ior);
-    if(dot(r1,r1) < 0.0001) return env(reflect(rd, n));
-
-    vec3 ip = p - n*0.012;
-    float it = marchIn(ip, r1);
-    vec3 ep = ip + r1*it;
-    vec3 en = -nrm(ep);
-
-    /* בליעה לפי אורך המסלול (חוק בר). חלקים עבים יוצאים כהים יותר —
-       זה מה שנותן עומק במקום צבע אחיד. */
-    vec3 absorb = exp(-vec3(0.16, 0.11, 0.07) * it);
-
-    vec3 r2 = refract(r1, en, ior);
-    if(dot(r2,r2) > 0.0001) return env(r2) * absorb;
-
-    /* החזרה פנימית מלאה — הקרן ממשיכה בתוך הזכוכית ונשברת בפאה הבאה.
-       זה מה שמייצר את המבנה הפנימי המורכב, ובלעדיו הגביש נראה שטוח. */
-    vec3 rb  = reflect(r1, en);
-    vec3 ip2 = ep + rb*0.02;
-    float t2 = marchIn(ip2, rb);
-    vec3 ep2 = ip2 + rb*t2;
-    vec3 en2 = -nrm(ep2);
-
-    vec3 r3 = refract(rb, en2, ior);
-    if(dot(r3,r3) < 0.0001) r3 = reflect(rb, en2);
-    return env(r3) * absorb * exp(-vec3(0.16, 0.11, 0.07) * t2);
-  }
-
-  void main(){
-    vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;
-    vec3 ro = vec3(0.0, 0.0, -9.0);
-    vec3 rd = normalize(vec3(uv, 1.55));
-
-    /* החשמל מחושב לפני בדיקת הספירה החוסמת — הברקים יוצאים
-       הרחק מהגביש, ואם חותכים אותם בגבול הספירה מתקבלת טבעת
-       כהה גלויה לעין. */
-    float elec = electric(uv, uTime);
-
-    /* ספירות חוסמות: פיקסל שלא פוגע בהן מדלג על ה-raymarch.
-       זה מה שמאפשר לאפקט כזה יקר לרוץ בזמן אמת. */
-    vec2 ba = sph(ro, rd, pA(), 3.9);
-    vec2 bb = sph(ro, rd, pB(), 3.3);
-    float FAR = 100000.0;
-    float tmin = min(ba.x > 0.0 ? ba.x : FAR, bb.x > 0.0 ? bb.x : FAR);
-    float tmax = max(ba.y, bb.y);
-
-    if(tmax <= 0.0 || tmin >= FAR){
-      if(elec < 0.002){ gl_FragColor = vec4(0.0); return; }
-      vec3 ec = mix(vec3(0.45, 0.24, 1.00), vec3(1.0), min(1.0, elec*3.2));
-      vec3 gc = ec * elec * (2.4 + uCharge*4.0);
-      gc = gc / (1.0 + gc);
-      gc = pow(max(gc, 0.0), vec3(0.4545));
-      gl_FragColor = vec4(gc, clamp(elec*2.6, 0.0, 1.0));
-      return;
-    }
-
-    float t = max(tmin, 0.0);
-    bool hit = false;
-    float near = 1000.0;          /* המרחק המזערי של הקרן מהגביש */
-
-    /* ==== חשוב: הצעד מוכפל ב-0.82 ====
-       ב-raymarching של SDF, קרן שמגיעה לפאה בזווית משיקית "מדלגת"
-       מעליה כי הצעד גדול מדי, ואז פיקסלים סמוכים פוגעים ומחטיאים
-       לסירוגין. **זה בדיוק מה שיצר את הקווים המקווקווים בקצה.**
-       צעד מקוצר + סף שגדל עם המרחק פותרים את זה. */
-    for(int i=0;i<110;i++){
-      vec3 p = ro + rd*t;
-      float d = map(p);
-      near = min(near, d);
-      if(d < 0.0010 + t*0.00035){ hit = true; break; }
-      t += d * 0.82;
-      if(t > tmax) break;
-    }
-
-    /* קרן שהחטיאה: הילה רכה + הברקים. ההילה גם ממלאת את
-       הפיקסלים שנשארו על גבול הפגיעה, כך שהקצה נראה רציף. */
-    if(!hit){
-      float g  = exp(-near * 3.1) * smoothstep(0.95, 0.20, near);
-      vec3  gc = vec3(0.40, 0.28, 0.88) * g * (0.75 + uCharge*2.2);
-
-      /* ליבה לבנה עם הילה סגולה — ככה נראה חשמל */
-      vec3 ec = mix(vec3(0.45, 0.24, 1.00), vec3(1.00, 1.00, 1.00), min(1.0, elec*3.2));
-      gc += ec * elec * (2.4 + uCharge*4.0);
-
-      /* אותו טון-מאפינג וגמא כמו בענף הפגיעה.
-         בלי זה הברקים וההילה יוצאים כהים פי כמה מהגביש עצמו. */
-      gc = gc / (1.0 + gc);
-      gc = pow(max(gc, 0.0), vec3(0.4545));
-
-      float a = clamp(max(g*0.95, min(1.0, elec*2.6)), 0.0, 1.0);
-      gl_FragColor = vec4(gc, a);
-      return;
-    }
-
-    vec3 p = ro + rd*t;
-    vec3 n = nrm(p);
-
-    /* אי-סדירות עדינה מאוד בפאה — רק כדי לשבור מישוריות מושלמת.
-       בתדר גבוה יותר היא מכפילה את הפסים של הסביבה והתוצאה
-       נראית כמו שיש, לא כמו זכוכית. */
-    n = normalize(n + (vec3(
-          noise(p*3.4),
-          noise(p*3.4 + 37.2),
-          noise(p*3.4 + 71.9)) - 0.5) * 0.022);
-
-    float fres = pow(1.0 - max(0.0, dot(-rd, n)), 4.0);
-
-    /* שבירה נפרדת לכל ערוץ = פיזור כרומטי.
-       ההפרש בין המקדמים מוגזם ביחס לקוורץ אמיתי — בכוונה.
-       זה מה שהופך את הקשת לנראית במקום רמוזה. */
-    vec3 cr = refr(p, n, rd, 1.375);
-    vec3 cg = refr(p, n, rd, 1.470);
-    vec3 cb = refr(p, n, rd, 1.605);
-    vec3 trans = vec3(cr.r, cg.g, cb.b);
-
-    /* פחות צבע בתוך הגביש. הקשת נשארת בקצוות, שם היא אמורה להיות —
-       הפנים נרגע לכיוון אפור-כסוף ונותן לברקים שמסביב להוביל. */
-    float lum = dot(trans, vec3(0.299, 0.587, 0.114));
-    trans = mix(vec3(lum), trans, 0.55);
-
-    vec3 refl = env(reflect(rd, n));
-    vec3 col  = mix(trans, refl, clamp(fres, 0.0, 1.0) * 0.7 + 0.08);
-
-    /* סדקים פנימיים — מישורים דקים, לא כתמים.
-       הגרסה הקודמת השתמשה ב-smoothstep על רעש והתקבלו נקודות לבנות. */
-    float w  = dot(p, vec3(2.9, 1.7, 3.7)) + noise(p*2.2)*5.0;
-    float cw = abs(fract(w) - 0.5);
-    col += vec3(0.85, 0.93, 1.0) * smoothstep(0.035, 0.0, cw) * 0.35 * (0.35 + fres);
-
-    /* קצה שתופס אור */
-    col += vec3(1.0) * pow(fres, 5.0) * 3.4;
-
-    /* הברקים עוברים גם מעל הגביש עצמו, אחרת הם נחתכים בקצה שלו */
-    col += vec3(0.90, 0.96, 1.0) * elec * 2.0;
-
-    /* הטעינה החשמלית */
-    float pulse = 0.5 + 0.5*sin(uTime*7.0 + p.z*2.4);
-    col *= 1.0 + uCharge*1.5;
-    col += vec3(0.62, 0.34, 1.0) * uCharge * (0.45 + pulse*0.55) * smoothstep(0.15, 0.85, fres);
-
-    /* מנמיכים לפני הטון-מאפינג. בלי זה רוב הערכים נכנסים לאזור
-       הרוויה של col/(1+col) ונמעכים ללבן — שם נולדים גושי הצבע. */
-    col *= 0.74;
-
-    col = col / (1.0 + col);                 /* טון-מאפינג */
-    col = pow(max(col, 0.0), vec3(0.4545));  /* גמא */
-
-    gl_FragColor = vec4(col, 1.0);
-  }
-  `;
-
-  function shader(type, src){
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
-      console.warn('shader:', gl.getShaderInfoLog(s));
-      return null;
-    }
-    return s;
-  }
-
-  const vs = shader(gl.VERTEX_SHADER, VERT);
-  const fs = shader(gl.FRAGMENT_SHADER, FRAG);
-  if(!vs || !fs) return;
-
-  const prog = gl.createProgram();
-  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
-    console.warn('link:', gl.getProgramInfoLog(prog));
-    return;
-  }
-  gl.useProgram(prog);
-
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
-  const aP = gl.getAttribLocation(prog, 'aP');
-  gl.enableVertexAttribArray(aP);
-  gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 0, 0);
-
-  const uRes    = gl.getUniformLocation(prog, 'uRes');
-  const uTime   = gl.getUniformLocation(prog, 'uTime');
-  const uCharge = gl.getUniformLocation(prog, 'uCharge');
-
-  /* רזולוציה מופחתת עם תקרה מוחלטת.
-     raymarching עם שלוש שבירות הוא יקר, והעלות גדלה עם מספר
-     הפיקסלים — אז חוסמים אותו בתקרה קשיחה ולא רק ביחס.
-     הטשטוש הקל שמתקבל מההגדלה דווקא מיטיב עם מראה הזכוכית. */
-  /* בנייד המסך צר אבל ה-GPU חלש בהרבה — תקרה נמוכה יותר */
-  let MAXW = innerWidth < 700 ? 480 : 880;
-  function resize(){
-    const r = cv.getBoundingClientRect();
-    if(!r.width || !r.height) return;
-    const w = Math.max(1, Math.round(Math.min(r.width, MAXW)));
-    const h = Math.max(1, Math.round(w * r.height / r.width));
-    if(cv.width !== w || cv.height !== h){
-      cv.width = w; cv.height = h;
-      gl.viewport(0, 0, w, h);
-    }
-  }
-  addEventListener('resize', resize, { passive:true });
-  resize();
-
-  /* עוצר כשה-hero לא על המסך */
-  let visible = true;
-  const hero = cv.closest('section');
-  if(hero && 'IntersectionObserver' in window){
-    new IntersectionObserver(e => { visible = e[0].isIntersecting; }, { threshold:0 }).observe(hero);
-  }
-
-  const CHARGE_MS = 4000;
-  const t0 = performance.now();
-  let last = 0, prev = 0;
-  const MIN_FRAME = 1000/36;
-
-  /* אם המכשיר לא עומד בקצב — מורידים רזולוציה פעם אחת ובודקים שוב.
-     עדיף קריסטל מעט רך מאשר דף שנתקע. */
-  let samples = 0, slow = 0, downgrades = 0;
-
-  function frame(now){
-    requestAnimationFrame(frame);
-    if(!visible){ prev = 0; return; }
-    if(now - last < MIN_FRAME) return;
-    last = now;
-
-    if(prev && downgrades < 2){
-      samples++;
-      if(now - prev > 46) slow++;
-      if(samples >= 40){
-        if(slow > 22){ MAXW = Math.round(MAXW * 0.68); downgrades++; resize(); }
-        samples = 0; slow = 0;
-      }
-    }
-    prev = now;
-
-    resize();
-    const el = (now - t0) / 1000;
-    const charge = Math.max(0, 1 - (now - t0) / CHARGE_MS);
-
-    gl.uniform2f(uRes, cv.width, cv.height);
-    gl.uniform1f(uTime, el);
-    gl.uniform1f(uCharge, charge * charge);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  }
-  requestAnimationFrame(frame);
-
-  document.body.classList.add('has-gl');
-  requestAnimationFrame(() => cv.classList.add('is-on'));
+  const setOpen = on => {
+    panel.toggleAttribute('open', on);
+    btn.setAttribute('aria-expanded', String(on));
+    if(on) panel.querySelector('button').focus();
+  };
+
+  btn.addEventListener('click', () => setOpen(!panel.hasAttribute('open')));
+  document.getElementById('a11yClose').addEventListener('click', () => { setOpen(false); btn.focus(); });
+
+  addEventListener('keydown', e => {
+    if(e.key === 'Escape' && panel.hasAttribute('open')){ setOpen(false); btn.focus(); }
+  });
+  addEventListener('click', e => {
+    if(panel.hasAttribute('open') && !panel.contains(e.target) && !btn.contains(e.target)) setOpen(false);
+  });
+
+  apply();
 })();
 
-/* ============================================================
-   טעינה חשמלית — ארבע שניות
-   כל האפקט חי ב-CSS תחת body.charging. כאן רק מדליקים ומכבים,
-   כדי שהאנימציות יישארו על ה-compositor ולא יעמיסו על ה-JS.
-   ============================================================ */
-(function charge(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const CHARGE_MS = 4000;          // ← משך הטעינה
-  document.body.classList.add('charging');
-  setTimeout(() => document.body.classList.remove('charging'), CHARGE_MS);
-})();
+
 
 </script>
 </body>
