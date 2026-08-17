@@ -201,8 +201,45 @@ vec2 sph(vec3 ro, vec3 rd, vec3 ce, float ra){
   h=sqrt(h); return vec2(-b-h,-b+h);
 }
 
-/* ---------- ברקי חשמל ---------- */
+/* ---------- התלקחויות עדשה ----------
+   מה שיוצא מהגבישים ברפרנס הוא לא ברק חשמלי אלא flare של עדשה:
+   ליבה לוהטת + פס אנאמורפי אופקי + קרני כוכב + הילה רכה.
+   הפס האופקי הוא החתימה של עדשה אנאמורפית — הוא מה שגורם
+   לזה להיראות כמו צילום של אובייקט אמיתי ולא כמו ציור. */
 vec2 proj(vec3 wp){ return wp.xy*1.55/(wp.z+9.0); }
+
+/* קודקודי הגבישים בעולם. mX ממפה עולם→מקומי, ולכן ההיפוך
+   הוא M*L: קודקוד מקומי (0,0,±h) חוזר לקואורדינטות העולם. */
+vec3 tip(vec3 c, mat3 m, float h, float sgn){ return c + m*vec3(0.0,0.0,sgn*h); }
+
+vec3 flare(vec2 uv, vec2 c, float s, vec3 tint){
+  vec2 d = uv - c;
+  float r = length(d);
+
+  float core = exp(-r*r/(0.00055*s));                       /* ליבה */
+  float ana  = exp(-(d.y*d.y)/(0.000115*s))                 /* פס אנאמורפי */
+             * exp(-abs(d.x)/(0.050*sqrt(s)));
+  float a    = atan(d.y,d.x);
+  float star = pow(max(0.0,abs(cos(a*3.0))),26.0)           /* קרני כוכב */
+             * exp(-r/(0.075*sqrt(s)));
+  float halo = exp(-r/(0.040*sqrt(s)));                     /* הילה */
+
+  return tint*(core*3.2 + star*0.85)
+       + vec3(0.62,0.80,1.00)*ana*1.7
+       + vec3(0.50,0.62,1.00)*halo*0.13;
+}
+
+/* חמישה מוקדים — שני קודקודים לכל גביש גדול, ואחד לקטן */
+vec3 flares(vec2 uv){
+  vec3 f=vec3(0.0);
+  f += flare(uv, proj(tip(pA(),mA(),2.10, 1.0)), 1.00, vec3(1.00,0.97,0.92));
+  f += flare(uv, proj(tip(pA(),mA(),2.10,-1.0)), 0.62, vec3(0.92,0.95,1.00));
+  f += flare(uv, proj(tip(pB(),mB(),1.85, 1.0)), 0.88, vec3(1.00,0.94,0.98));
+  f += flare(uv, proj(tip(pB(),mB(),1.85,-1.0)), 0.55, vec3(0.90,0.96,1.00));
+  f += flare(uv, proj(tip(pC(),mC(),0.78, 1.0)), 0.34, vec3(1.00,0.96,1.00));
+  return f;
+}
+
 float tri(float x){ return abs(fract(x)-0.5)*4.0-1.0; }
 
 float bolt(vec2 q, float seed, float t){
@@ -226,9 +263,9 @@ float electric(vec2 uv, float t){
   float e=0.0;
   for(int i=0;i<2;i++){
     float f=float(i);
-    e+=bolt(qa,f+0.30,t);
-    e+=bolt(qb,f+5.70,t*1.13+2.0);
-    e+=bolt(qc,f+3.10,t*1.05+3.0)*0.40;
+    e+=bolt(qa,f+0.30,t)*0.30;
+    e+=bolt(qb,f+5.70,t*1.13+2.0)*0.30;
+    e+=bolt(qc,f+3.10,t*1.05+3.0)*0.14;
   }
   /* המרכז נשאר נקי — שם יושבת הכותרת */
   return e * smoothstep(0.16, 0.78, length(uv*vec2(0.62,1.0)));
@@ -238,6 +275,7 @@ vec4 shade(vec2 uv){
   vec3 ro=vec3(0.0,0.0,-9.0);
   vec3 rd=normalize(vec3(uv,1.55));
   float elec=electric(uv,uTime);
+  vec3  fl  =flares(uv);
 
   vec2 ba=sph(ro,rd,pA(),4.2), bb=sph(ro,rd,pB(),3.6), bc=sph(ro,rd,pC(),1.7);
   float FAR=1e5;
@@ -245,10 +283,11 @@ vec4 shade(vec2 uv){
   float tmax=max(max(ba.y,bb.y),bc.y);
 
   if(tmax<=0.0||tmin>=FAR){
-    if(elec<0.0015) return vec4(0.0);
+    float fm=max(max(fl.r,fl.g),fl.b);
+    if(elec<0.0015 && fm<0.0015) return vec4(0.0);
     vec3 ec=mix(vec3(0.45,0.24,1.0),vec3(1.0),min(1.0,elec*3.2));
-    vec3 g=ec*elec*2.6; g=g/(1.0+g); g=pow(max(g,0.0),vec3(0.4545));
-    return vec4(g, clamp(elec*2.6,0.0,1.0));
+    vec3 g=ec*elec*2.6+fl; g=g/(1.0+g); g=pow(max(g,0.0),vec3(0.4545));
+    return vec4(g, clamp(max(elec*2.6, fm*2.2),0.0,1.0));
   }
 
   float t=max(tmin,0.0); bool hit=false; float near=1000.0;
@@ -264,9 +303,10 @@ vec4 shade(vec2 uv){
     float g=exp(-near*3.1)*smoothstep(0.95,0.20,near);
     vec3 gc=vec3(0.40,0.28,0.88)*g*0.85;
     vec3 ec=mix(vec3(0.45,0.24,1.0),vec3(1.0),min(1.0,elec*3.2));
-    gc+=ec*elec*2.6;
+    gc+=ec*elec*2.6+fl;
+    float fm=max(max(fl.r,fl.g),fl.b);
     gc=gc/(1.0+gc); gc=pow(max(gc,0.0),vec3(0.4545));
-    return vec4(gc, clamp(max(g*0.95,min(1.0,elec*2.6)),0.0,1.0));
+    return vec4(gc, clamp(max(max(g*0.95,min(1.0,elec*2.6)), fm*2.2),0.0,1.0));
   }
 
   vec3 p=ro+rd*t;
@@ -298,6 +338,7 @@ vec4 shade(vec2 uv){
 
   col+=vec3(1.0)*pow(fres,4.5)*3.0;
   col+=vec3(0.90,0.96,1.0)*elec*2.0;
+  col+=fl*0.55;
 
   col*=0.68;
   col=col/(1.0+col);
