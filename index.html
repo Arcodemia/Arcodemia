@@ -331,12 +331,17 @@ section{padding-block:var(--s8)}
 .hero{position:relative; padding-block:var(--s9) var(--s8); text-align:center; overflow:hidden}
 .hero__in{position:relative; z-index:2; max-width:1040px; margin-inline:auto}
 .hero h1{font-size:var(--t-display); margin-block:var(--s4) var(--s5); text-wrap:balance}
-/* הדגשה דו-גונית, בלי צבע.
-   גרדיאנט קשת על טקסט הוא הסימן המובהק ביותר לדף שנוצר
-   אוטומטית, והוא גם מתחרה בקריסטלים — הצבע שייך להם.
-   במקום זה: המשפט הראשון עמום, המשפט שנושא את המסר לבן מלא.
-   ההיררכיה נוצרת מהניגודיות בלבד. */
-.hero h1{color:rgba(255,255,255,.62)}
+/* לבן זוהר.
+   שתי הילות: אחת צמודה שמחדדת את הקצה, ואחת רחבה ורכה שנותנת
+   את הזוהר. הרחבה בסגול קלוש — היא קושרת את הכותרת לקריסטלים
+   בלי להכניס צבע לאותיות עצמן. */
+.hero h1{
+  color:#fff;
+  text-shadow:
+    0 0 18px rgba(255,255,255,.34),
+    0 0 52px rgba(214,196,255,.28),
+    0 0 96px rgba(177,75,255,.20);
+}
 .hero h1 em{font-style:normal; color:#fff}
 .hero .lead{max-width:56ch; margin-inline:auto}
 .hero__cta{display:flex; flex-wrap:wrap; gap:var(--s2); justify-content:center; margin-block:var(--s7) var(--s5)}
