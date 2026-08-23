@@ -2,10 +2,10 @@
 
 דף נחיתה לסוכנות דו-אנושית שמוכרת **דפי נחיתה בלבד** לבעלי עסקים מקומיים. פרויקט אישי, נוצר 2026-07-29.
 
-- **URL חי:** — (הכל מוכן לפריסה. ראו [DEPLOY.md](DEPLOY.md))
+- **URL חי:** https://arcodemia.vercel.app
 - **סטאק:** Next.js 16 · App Router · TypeScript strict · React 19. **עבר מ-`index.html` יחיד ב-2026-08-17**
 - **שפה:** עברית, RTL
-- **מטרה נוכחית:** 🔴 **חסום על הלקוח** — פתיחת חשבון Resend + Vercel ואז `vercel --prod`. אין שום דבר אחר שחוסם עלייה לאוויר.
+- **מטרה נוכחית:** פריסה ל-Vercel. הטופס פותח וואטסאפ או `mailto:` אצל המבקר, והפנייה נרשמת ב-Supabase.
 
 ## מבנה הפרויקט
 
@@ -13,11 +13,11 @@
 app/layout.tsx            metadata, JSON-LD, next/font, סקריפט ה-intro
 app/page.tsx              מרכיב את כל החתכים
 app/globals.css           כל ה-CSS. 46 טוקנים, תכונות לוגיות ל-RTL
-app/api/contact/route.ts  Route Handler ששולח את המייל דרך Resend
+app/api/contact/route.ts  Route Handler שרושם את הפנייה ב-Supabase
 app/fonts/                Heebo מתארח אצלנו — אין Google Fonts
 components/               רכיב לכל חתך + Dialog + A11yWidget + icons
 hooks/                    useA11yPreferences · useReveal · useScrolledPast
-lib/                      config · whatsapp · types
+lib/                      config · whatsapp · mailto · types
 public/img/               תמונות הקריסטלים (רחב + לאורך)
 next.config.mjs           כותרות אבטחה + מטמון (החליף את vercel.json)
 DEPLOY.md                 ההוראות ללקוח, שלב אחר שלב
@@ -175,14 +175,12 @@ nav → hero (תמונת קריסטלים) → "למה בכלל צריך דף נ
 
 ## פתוחים
 
-- [ ] 🔴 **`RESEND_API_KEY` עדיין `REPLACE_ME` ב-`.env.local`.** שאר חמשת המשתנים מולאו
-- [ ] 🔴 **המיגרציות טרם הוחלו** — `supabase db push`. Supabase מגיב אבל `public.leads` לא קיימת
-- [ ] 🔴 **הלקוח: לפתוח Resend + Vercel ולהריץ `vercel --prod`.** ראו [DEPLOY.md](DEPLOY.md). זה הדבר היחיד שחוסם
+- [ ] 🔴 **הלקוח: להריץ `npx vercel --prod`.** ראו [DEPLOY.md](DEPLOY.md)
 - [ ] 🔴 **לפתוח עוסק פטור לפני התשלום הראשון.** האתר עצמו חוקי — הוא לא גובה תשלום ואין בו סליקה, וזה כתוב במפורש בתנאי השימוש
 - [ ] 🔴 **עורך דין שיעבור על שלושת המסמכים.** נכתבו כתבניות סבירות בלי מציני מקום, לא כייעוץ משפטי
 - [ ] לאשר את נוסח הסרת הסיכון ("לא אהבתם? נפרדים כידידים")
 - [ ] לוגו אמיתי (כרגע משולש SVG עם קו סגול)
-- [ ] דומיין משלו — ואז לאמת אותו ב-Resend ולעדכן `MAIL_FROM`, אחרת סיכון לספאם
+- [ ] דומיין משלו — ואז לעדכן ב-`robots.txt` את שורת ה-Sitemap
 - [ ] לצלם את הדף במכשיר אמיתי — headless לא מרנדר את הקריסטלים ואוכף רוחב מינימלי
 
 ## דפים

@@ -1,91 +1,69 @@
 # איך מעלים את האתר לאוויר
 
-**זמן משוער: 10–15 דקות.** הכל כבר מוכן ומותקן במחשב. מה שנשאר זה שלושה חשבונות שרק אתה יכול לפתוח — הם דורשים את המייל שלך, סיסמה ואישור תנאי שימוש.
+**זמן משוער: 10–15 דקות.** הכל כבר מוכן ומותקן במחשב. מה שנשאר זה חשבון Vercel שרק אתה יכול לפתוח — הוא דורש את המייל שלך, סיסמה ואישור תנאי שימוש.
 
 **מה כבר מותקן אצלך:** Node 24 · npm 11 · git · Vercel CLI 58.
 
 > **האתר עבר ל-Next.js.** אין יותר `index.html` — הדף נבנה מרכיבים תחת `app/` ו-`components/`.
 > לפני העלאה מריצים `npm install` פעם אחת. Vercel מזהה Next.js לבד ובונה עם `next build`.
 
----
-
-## שלב 1 · Resend — שליחת המייל מהטופס (5 דקות)
-
-זה מה שגורם לטופס לשלוח לך מייל מסודר.
-
-1. היכנס ל־**[resend.com/signup](https://resend.com/signup)** והירשם עם `arcodemia.il@gmail.com`
-   *(החינמי: 3,000 מיילים בחודש, 100 ביום. הרבה מעבר למה שצריך)*
-2. אשר את המייל שיישלח אליך
-3. בתפריט השמאלי → **API Keys** → **Create API Key**
-   - שם: `arcodemia-site`
-   - הרשאה: **Sending access**
-4. **העתק את המפתח** (מתחיל ב־`re_`). הוא מוצג פעם אחת בלבד — שמור אותו זמנית
-
-> אין צורך לאמת דומיין בשלב הזה. עד שיהיה לך דומיין, המיילים יישלחו מכתובת ברירת המחדל של Resend והם יגיעו אליך תקין.
+הטופס פותח אצל המבקר וואטסאפ (`wa.me`) או את תוכנת המייל (`mailto:`). הפנייה נרשמת ב-Supabase. אין שירות דיוור חיצוני.
 
 ---
 
-## שלב 2 · Vercel — האירוח (5 דקות)
+## שלב 1 · Vercel — האירוח (5 דקות)
 
-1. היכנס ל־**[vercel.com/signup](https://vercel.com/signup)** והירשם עם אותו מייל
+1. היכנס ל־**[vercel.com/signup](https://vercel.com/signup)** והירשם עם `arcodemia.il@gmail.com`
    *(בחר Hobby — חינם. אל תבחר Pro)*
 2. פתח טרמינל בתיקיית הפרויקט והרץ:
 
 ```bash
-cd "c:\Users\hezie\OneDrive\Desktop\Projects\Personal\site-1"
-vercel login
+npx vercel login
 ```
 
 יישלח לך מייל אישור — לחץ עליו וחזור לטרמינל.
 
-3. עכשיו העלה:
+3. חבר את התיקייה לפרויקט שכבר קיים בלוח הבקרה:
 
 ```bash
-vercel --prod
+npx vercel link
 ```
 
-ענה על השאלות:
-- `Set up and deploy?` → **Y**
-- `Which scope?` → החשבון שלך
-- `Link to existing project?` → **N**
-- `Project name?` → `arcodemia`
-- `In which directory is your code?` → **Enter** (ברירת מחדל `./`)
-- `Want to modify settings?` → **N**
+4. עכשיו העלה:
+
+```bash
+npx vercel --prod
+```
 
 בסוף תקבל כתובת כמו `https://arcodemia.vercel.app` — **האתר באוויר.**
 
 ---
 
-## שלב 3 · לחבר את המייל (3 דקות)
+## שלב 2 · לחבר את Supabase (3 דקות)
 
-הטופס עדיין לא ישלח מייל עד שנכניס את המפתח.
-
-```bash
-vercel env add RESEND_API_KEY production
-```
-הדבק את המפתח מ־Resend ← Enter
+הטופס יפתח וואטסאפ/מייל גם בלי זה, אבל הפניות לא יישמרו במסד עד שהמשתנים ייכנסו.
 
 ```bash
-vercel env add MAIL_TO production
+npx vercel env add SUPABASE_URL production
 ```
-הקלד `arcodemia.il@gmail.com` ← Enter
+הדבק את ה-Project URL מ-Supabase ← Enter
 
 ```bash
-vercel env add MAIL_FROM production
+npx vercel env add SUPABASE_SERVICE_ROLE_KEY production
 ```
-הקלד `ARCODEMIA <onboarding@resend.dev>` ← Enter
+הדבק את מפתח ה-`service_role` מ-Supabase ← Enter
 
 ואז פרוס מחדש כדי שהמשתנים ייכנסו לתוקף:
 
 ```bash
-vercel --prod
+npx vercel --prod
 ```
 
-**בדוק:** היכנס לאתר, מלא את הטופס בפרטים שלך, ותוודא שהמייל הגיע.
+**בדוק:** היכנס לאתר, מלא את הטופס בפרטים שלך, ותוודא שנפתח הוואטסאפ או תוכנת המייל, ושהשורה הופיעה בטבלת `leads` ב-Supabase.
 
 ---
 
-## שלב 4 · דומיין (אופציונלי, עולה כסף)
+## שלב 3 · דומיין (אופציונלי, עולה כסף)
 
 `arcodemia.vercel.app` עובד מצוין ולא עולה כלום. אם תרצה דומיין משלך:
 
@@ -93,8 +71,6 @@ vercel --prod
 2. ב־Vercel: **Project → Settings → Domains → Add** והדבק את הדומיין
 3. Vercel יראה לך אילו רשומות DNS להגדיר אצל הרשם
 4. אחרי שהדומיין פעיל, עדכן ב־`robots.txt` את שורת ה־Sitemap
-
-**אם קנית דומיין — כדאי לאמת אותו גם ב־Resend** (Domains → Add Domain), ואז לשנות את `MAIL_FROM` ל־`ARCODEMIA <hello@הדומיין-שלך>`. זה מוריד את הסיכוי שהמייל ייפול לספאם.
 
 ---
 
@@ -104,7 +80,7 @@ vercel --prod
 
 ```bash
 npm run build     # לוודא שנבנה נקי
-vercel --prod
+npx vercel --prod
 ```
 
 זהו. כל פריסה מקבלת כתובת משלה, ואפשר לחזור לגרסה קודמת מלוח הבקרה של Vercel בלחיצה אחת.
@@ -116,7 +92,7 @@ vercel --prod
 | | |
 |---|---|
 | `next.config.mjs` | כותרות אבטחה מלאות + מטמון. **מחליף את `vercel.json`** |
-| `app/api/contact/route.ts` | הפונקציה ששולחת את המייל, כולל תבנית מעוצבת |
+| `app/api/contact/route.ts` | Route Handler שרושם את הפנייה ב-Supabase |
 | `robots.txt` | מרשה לגוגל לסרוק, חוסם את `/api/` |
 | `.gitignore` | מונע העלאה בטעות של מפתחות |
 | `.env.example` | רשימת המשתנים הנדרשים |
@@ -128,7 +104,7 @@ vercel --prod
 
 1. **תפתח עוסק פטור.** האתר חוקי כמו שהוא — הוא לא גובה תשלום ואין בו סליקה. אבל **לקבל כסף בלי להירשם זו עבירת מס.** הרישום חינמי ואונליין.
 2. **תעבור על שלושת המסמכים המשפטיים** בתחתית האתר. הם כתובים ברמה סבירה ובלי מציני מקום, אבל אני לא עורך דין.
-3. **תבדוק את הטופס בעצמך** אחרי שלב 3.
+3. **תבדוק את הטופס בעצמך** אחרי שלב 2.
 
 ---
 
@@ -136,8 +112,8 @@ vercel --prod
 
 | תסמין | מה לבדוק |
 |---|---|
-| הטופס אומר "לא הצלחנו לשלוח" | המשתנים לא הוגדרו, או ששכחת `vercel --prod` אחריהם |
-| המייל לא מגיע | תיקיית ספאם. ואז: Resend → Logs |
+| הטופס נפתח אבל אין שורה ב-`leads` | המשתנים לא הוגדרו ב-Vercel, או ששכחת `npx vercel --prod` אחריהם |
+| תוכנת המייל לא נפתחת | חסימת חלונות קופצים, או שאין יישום דואר ברירת מחדל במכשיר |
 | הקריסטלים לא מופיעים | הם תמונה סטטית ב-`public/img/`. לבדוק שהקבצים קיימים ושה-build לא נכשל |
 | `npm run build` נכשל | להריץ `npm run typecheck` — הוא מצביע על השורה המדויקת |
 | הכל נראה שבור | `vercel rollback` מחזיר לגרסה הקודמת |

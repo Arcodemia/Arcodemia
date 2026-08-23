@@ -2,6 +2,7 @@
 
 import { useRef, useState, type FormEvent } from 'react';
 import { CONFIG } from '@/lib/config';
+import { openMailto } from '@/lib/mailto';
 import { openWhatsApp } from '@/lib/whatsapp';
 import type { ContactMode, ContactPayload } from '@/lib/types';
 import { useLegal } from './LegalDialogs';
@@ -38,19 +39,21 @@ export function ContactForm() {
       _gotcha: String(fd.get('_gotcha') ?? ''),
     };
 
-    /* ⚠️ במצב וואטסאפ פותחים את הקישור **מיד**, בתוך אותו tick של
-       אירוע הלחיצה. window.open אחרי await נחשב לא-מגובה-במחווה
-       וחוסמי חלונות קופצים יבלעו אותו.
-       הרישום ב-API רץ במקביל ולא משנה את מה שהמבקר רואה. */
-    if (mode === 'whatsapp') {
-      openWhatsApp(d);
-    }
+    /* ⚠️ פותחים את הקישור **מיד**, בתוך אותו tick של אירוע הלחיצה.
+       window.open אחרי await נחשב לא-מגובה-במחווה וחוסמי חלונות
+       קופצים יבלעו אותו. הרישום ב-API רץ במקביל ולא משנה אם
+       הוואטסאפ או תוכנת המייל נפתחו. */
+    if (mode === 'whatsapp') openWhatsApp(d);
+    else openMailto(d);
 
-    /* אין endpoint מוגדר → ישר לוואטסאפ, כדי שהטופס יעבוד
-       מהיום הראשון גם בלי שרת.
-       במצב וואטסאפ הקישור כבר נפתח למעלה — לא לפתוח פעמיים. */
+    const openedCopy =
+      mode === 'whatsapp'
+        ? 'פתחנו לכם וואטסאפ עם הפרטים.'
+        : 'פתחנו לכם את תוכנת המייל עם הפרטים.';
+
+    /* אין endpoint מוגדר → הקישור כבר נפתח למעלה. אין מה לרשום. */
     if (!CONFIG.endpoint) {
-      if (mode !== 'whatsapp') openWhatsApp(d);
+      setStatus({ text: openedCopy, isError: false });
       return;
     }
 
@@ -64,31 +67,15 @@ export function ContactForm() {
 
       if (res.ok) {
         form.reset();
-        setStatus({
-          text:
-            mode === 'whatsapp'
-              ? 'פתחנו לכם וואטסאפ עם הפרטים.'
-              : 'קיבלנו! נחזור אליכם בהקדם.',
-          isError: false,
-        });
+        setStatus({ text: openedCopy, isError: false });
       } else if (res.status === 429) {
         setStatus({ text: 'שלחתם הודעה ממש עכשיו. חכו רגע ונסו שוב.', isError: true });
       } else {
         throw new Error(String(res.status));
       }
     } catch {
-      /* כל כשל אחר במצב מייל — נופלים לוואטסאפ עם הפרטים מוכנים,
-         כדי שהטופס לעולם לא יוביל למבוי סתום.
-         במצב וואטסאפ הקישור כבר נפתח למעלה, ואין למה ליפול. */
-      if (mode === 'whatsapp') {
-        setStatus({ text: 'פתחנו לכם וואטסאפ עם הפרטים.', isError: false });
-      } else {
-        setStatus({
-          text: 'לא הצלחנו לשלוח מכאן — פותחים לכם וואטסאפ עם הפרטים.',
-          isError: true,
-        });
-        openWhatsApp(d);
-      }
+      /* הרישום נכשל — היישום כבר נפתח, וזה מה שהמבקר צריך לראות. */
+      setStatus({ text: openedCopy, isError: false });
     } finally {
       setSending(false);
     }

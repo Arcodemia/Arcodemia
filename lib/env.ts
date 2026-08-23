@@ -13,13 +13,10 @@ import 'server-only';
                      ואסור לו לחסום פנייה של מבקר.
 
    'REPLACE_ME' נחשב חסר. אחרת קובץ סביבה שלא מולא היה נראה
-   תקין עד לכשל הראשון מול Resend או Supabase.
+   תקין עד לכשל הראשון מול Supabase.
    ============================================================ */
 
 export const ENV_KEYS = [
-  'RESEND_API_KEY',
-  'MAIL_TO',
-  'MAIL_FROM',
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'SUPABASE_PROJECT_REF',

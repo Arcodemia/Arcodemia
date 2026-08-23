@@ -5,6 +5,8 @@
 >
 > **Generated:** 2026-08-17 · **Commit at time of writing:** `a0ccf32`
 > **Repo root:** `c:\Users\hezie\OneDrive\Desktop\Projects\Personal\site-1`
+>
+> **Superseded:** this snapshot describes a later-removed server-side transactional email path. The current app opens `mailto:` / WhatsApp on the client and logs leads to Supabase. Follow `PROJECT_BRAIN.md` and `DEPLOY.md`, not the email/env setup below.
 
 ---
 
@@ -74,7 +76,7 @@ One Vercel Serverless Function: `api/contact.js`.
 
 - Node ≥ 20 (`package.json` → `engines`)
 - ESM (`package.json` → `"type": "module"`)
-- **Zero npm dependencies** — uses global `fetch` to call the Resend REST API
+- **Zero npm dependencies** — uses global `fetch`
 
 ### Database — none
 
@@ -109,7 +111,6 @@ No Dockerfile, no CI workflow, no GitHub Actions.
 
 | Service | Role |
 |---|---|
-| **Resend** (`api.resend.com/emails`) | Transactional email. Raw `fetch`, no SDK. Free tier 3,000/mo, 100/day. |
 | **wa.me** | WhatsApp deep links with `encodeURIComponent`-escaped prefilled text. |
 | **Vercel** | Static hosting + serverless runtime + security headers. |
 
@@ -131,7 +132,7 @@ site-1/
 ├── package.json                  scripts + engines only, no deps
 ├── vercel.json                   security headers + cache policy
 ├── robots.txt                    allows all, disallows /api/
-├── .env.example                  RESEND_API_KEY, MAIL_TO, MAIL_FROM
+├── .env.example                  SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PROJECT_REF
 ├── .gitignore                    node_modules, .vercel, .env*, *.log, tools/_render.html
 ├── DEPLOY.md                     Hebrew step-by-step launch runbook
 ├── MEMORY.md                     project memory / index
@@ -139,7 +140,7 @@ site-1/
 ├── TECHNICAL-SUMMARY.md          this file
 │
 ├── api/
-│   └── contact.js                161 lines — POST /api/contact → Resend
+│   └── contact.js                161 lines — POST /api/contact
 │
 ├── fonts/                        10 files, 164 KB total — self-hosted Heebo
 │   ├── heebo-hebrew-400.woff2    ~12 KB
@@ -355,24 +356,17 @@ Default-exported Vercel handler. Pipeline in order:
      **prevents email header injection** through form fields.
    - `esc(s)` HTML-escapes `& < > " '` → prevents markup injection into the email body.
 6. **Validation** → `400` with `error: 'name' | 'phone'`.
-7. **Config check** — missing `RESEND_API_KEY` → `500 not_configured`.
+7. **Config check** — (removed in the current app; the handler no longer sends mail).
 8. **Compose** — RTL HTML email (table-based layout, dark gradient header, ARCODEMIA
    wordmark, field rows, quoted message block, "Reply on WhatsApp" + "Call" buttons)
    plus a plain-text alternative. Timestamp via
    `toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem' })`. A `wa.me` reply link is
    auto-derived from the submitted phone number.
-9. **Send** — `fetch` to `https://api.resend.com/emails` with `Bearer` auth.
-   Non-OK → `502 send_failed`. Network throw → `502 send_failed`.
+9. **Send** — (removed in the current app; the visitor opens `mailto:` / WhatsApp).
 
 #### Environment variables
 
-| Var | Required | Default |
-|---|---|---|
-| `RESEND_API_KEY` | **yes** | — (500 if missing) |
-| `MAIL_TO` | no | `arcodemia.il@gmail.com` |
-| `MAIL_FROM` | no | `ARCODEMIA <onboarding@resend.dev>` |
-
-Template lives in `.env.example`; real values go into Vercel project settings.
+See `.env.example` in the current tree (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PROJECT_REF`). Real values go into Vercel project settings.
 
 #### Response contract
 
@@ -382,8 +376,6 @@ Template lives in `.env.example`; real values go into Vercel project settings.
 | `400` | `{ok:false, error:'bad_json'\|'bad_body'\|'name'\|'phone'}` | Validation failure |
 | `405` | `{ok:false, error:'method_not_allowed'}` | Wrong method |
 | `429` | `{ok:false, error:'too_many'}` | Rate limited |
-| `500` | `{ok:false, error:'not_configured'}` | Missing API key |
-| `502` | `{ok:false, error:'send_failed'}` | Resend rejected or network error |
 
 ### Client-side submit handler
 
@@ -549,8 +541,7 @@ npm run dev        # → vercel dev
 npm run deploy     # → vercel --prod
 ```
 
-`DEPLOY.md` contains the complete first-time runbook in Hebrew: Resend signup → API key →
-Vercel signup → `vercel login` → `vercel --prod` → three `vercel env add` commands →
+`DEPLOY.md` contains the complete first-time runbook in Hebrew: Vercel signup → `npx vercel login` → `npx vercel --prod` → two `npx vercel env add` commands for Supabase →
 redeploy.
 
 ### Regenerate the hero art

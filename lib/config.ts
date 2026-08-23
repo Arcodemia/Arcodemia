@@ -13,7 +13,7 @@ export interface SiteConfig {
   /** למה שהטלפון באמת מחייג */
   readonly phoneDial: string;
   readonly email: string;
-  /** פונקציית השרת ששולחת את המייל. ריק = נפילה לוואטסאפ */
+  /** Route Handler שרושם את הפנייה. ריק = בלי רישום, רק פתיחת וואטסאפ/מייל */
   readonly endpoint: string;
 }
 

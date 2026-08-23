@@ -17,16 +17,14 @@ export interface ContactPayload {
   _gotcha: string;
 }
 
-/** קודי השגיאה שהשרת מחזיר. זהים למה שהיה ב-api/contact.js. */
+/** קודי השגיאה שהשרת מחזיר. */
 export type ContactErrorCode =
   | 'bad_json'
   | 'bad_body'
   | 'name'
   | 'phone'
   | 'method_not_allowed'
-  | 'too_many'
-  | 'not_configured'
-  | 'send_failed';
+  | 'too_many';
 
 export type ContactResponse =
   | { ok: true; mode: ContactMode }
