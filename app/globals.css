@@ -357,6 +357,34 @@ section{padding-block:var(--s8)}
 }
 .form__ok.is-err{background:rgba(255,90,90,.1); border-color:rgba(255,90,90,.35); color:#FFB4B4}
 
+/* ============================================================
+   בורר אמצעי הקשר
+   ------------------------------------------------------------
+   שני כפתורים במצב aria-pressed. הנבחר מקבל את הסגול הניאון —
+   אותו דגש לחיץ יחיד שקיים בכל שאר הדף, בלי צבע חדש.
+   ============================================================ */
+.method{border:none; padding:0; margin:0; min-inline-size:0}
+.method legend{
+  padding:0; margin-block-end:10px;
+  font-size:.95rem; font-weight:800; color:var(--ink); letter-spacing:-.015em;
+}
+.method__opts{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.method__btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  min-block-size:52px; padding-inline:var(--s3);
+  background:rgba(255,255,255,.035); border:1px solid var(--hairline-2);
+  border-radius:var(--r-sm); color:var(--soft);
+  font-size:var(--t-sm); font-weight:700; cursor:pointer; text-align:center;
+  transition:background-color .2s, border-color .2s, color .2s, box-shadow .2s;
+}
+.method__btn svg{inline-size:19px; block-size:19px; flex:none}
+.method__btn:hover{background:rgba(255,255,255,.07); color:var(--ink)}
+.method__btn[aria-pressed="true"]{
+  background:var(--neon-soft); border-color:var(--neon);
+  color:var(--ink); box-shadow:0 0 0 3px var(--neon-soft);
+}
+@media (max-width:400px){ .method__opts{grid-template-columns:1fr} }
+
 .consent{display:flex; gap:10px; align-items:flex-start; font-size:var(--t-xs); color:var(--muted); line-height:1.5}
 .consent input{inline-size:20px; block-size:20px; flex:none; margin-block-start:2px; accent-color:var(--neon)}
 .consent a{color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}

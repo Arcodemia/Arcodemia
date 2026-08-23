@@ -3,8 +3,9 @@
 import { useRef, useState, type FormEvent } from 'react';
 import { CONFIG } from '@/lib/config';
 import { openWhatsApp } from '@/lib/whatsapp';
-import type { ContactPayload } from '@/lib/types';
+import type { ContactMode, ContactPayload } from '@/lib/types';
 import { useLegal } from './LegalDialogs';
+import { MailIcon, WhatsAppIcon } from './icons';
 
 interface Status {
   text: string;
@@ -18,6 +19,8 @@ export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState<Status | null>(null);
+  /* ברירת המחדל היא מייל — אותה התנהגות שהייתה עד היום. */
+  const [mode, setMode] = useState<ContactMode>('email');
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,13 +34,23 @@ export function ContactForm() {
       phone: String(fd.get('phone') ?? ''),
       business: String(fd.get('business') ?? ''),
       message: String(fd.get('message') ?? ''),
+      mode,
       _gotcha: String(fd.get('_gotcha') ?? ''),
     };
 
-    /* אין endpoint מוגדר → ישר לוואטסאפ, כדי שהטופס יעבוד
-       מהיום הראשון גם בלי שרת. */
-    if (!CONFIG.endpoint) {
+    /* ⚠️ במצב וואטסאפ פותחים את הקישור **מיד**, בתוך אותו tick של
+       אירוע הלחיצה. window.open אחרי await נחשב לא-מגובה-במחווה
+       וחוסמי חלונות קופצים יבלעו אותו.
+       הרישום ב-API רץ במקביל ולא משנה את מה שהמבקר רואה. */
+    if (mode === 'whatsapp') {
       openWhatsApp(d);
+    }
+
+    /* אין endpoint מוגדר → ישר לוואטסאפ, כדי שהטופס יעבוד
+       מהיום הראשון גם בלי שרת.
+       במצב וואטסאפ הקישור כבר נפתח למעלה — לא לפתוח פעמיים. */
+    if (!CONFIG.endpoint) {
+      if (mode !== 'whatsapp') openWhatsApp(d);
       return;
     }
 
@@ -51,20 +64,31 @@ export function ContactForm() {
 
       if (res.ok) {
         form.reset();
-        setStatus({ text: 'קיבלנו! נחזור אליכם בהקדם.', isError: false });
+        setStatus({
+          text:
+            mode === 'whatsapp'
+              ? 'פתחנו לכם וואטסאפ עם הפרטים.'
+              : 'קיבלנו! נחזור אליכם בהקדם.',
+          isError: false,
+        });
       } else if (res.status === 429) {
         setStatus({ text: 'שלחתם הודעה ממש עכשיו. חכו רגע ונסו שוב.', isError: true });
       } else {
         throw new Error(String(res.status));
       }
     } catch {
-      /* כל כשל אחר — נופלים לוואטסאפ עם הפרטים מוכנים,
-         כדי שהטופס לעולם לא יוביל למבוי סתום. */
-      setStatus({
-        text: 'לא הצלחנו לשלוח מכאן — פותחים לכם וואטסאפ עם הפרטים.',
-        isError: true,
-      });
-      openWhatsApp(d);
+      /* כל כשל אחר במצב מייל — נופלים לוואטסאפ עם הפרטים מוכנים,
+         כדי שהטופס לעולם לא יוביל למבוי סתום.
+         במצב וואטסאפ הקישור כבר נפתח למעלה, ואין למה ליפול. */
+      if (mode === 'whatsapp') {
+        setStatus({ text: 'פתחנו לכם וואטסאפ עם הפרטים.', isError: false });
+      } else {
+        setStatus({
+          text: 'לא הצלחנו לשלוח מכאן — פותחים לכם וואטסאפ עם הפרטים.',
+          isError: true,
+        });
+        openWhatsApp(d);
+      }
     } finally {
       setSending(false);
     }
@@ -108,6 +132,31 @@ export function ContactForm() {
         </label>
         <textarea id="f-msg" name="message" placeholder="למשל: שאנשים יקבעו תור בלי להתקשר" />
       </div>
+
+      {/* בחירת ערוץ. ברירת המחדל היא מייל — ההתנהגות שהייתה עד היום. */}
+      <fieldset className="method">
+        <legend>איך נוח לכם שנמשיך?</legend>
+        <div className="method__opts">
+          <button
+            type="button"
+            className="method__btn"
+            aria-pressed={mode === 'whatsapp'}
+            onClick={() => setMode('whatsapp')}
+          >
+            <WhatsAppIcon />
+            שלח לי וואטסאפ
+          </button>
+          <button
+            type="button"
+            className="method__btn"
+            aria-pressed={mode === 'email'}
+            onClick={() => setMode('email')}
+          >
+            <MailIcon />
+            שלח לי במייל
+          </button>
+        </div>
+      </fieldset>
 
       <label className="consent">
         <input type="checkbox" id="f-ok" name="consent" required />

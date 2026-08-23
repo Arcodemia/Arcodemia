@@ -10,7 +10,7 @@ export type ContactMethod = 'email' | 'whatsapp';
 export type LeadStatus = 'new' | 'contacted' | 'closed';
 
 /** שורה בטבלת leads כפי שהיא חוזרת מ-select */
-export interface LeadRow {
+export type LeadRow = {
   id: string;
   created_at: string;
   name: string;
@@ -23,7 +23,7 @@ export interface LeadRow {
 }
 
 /** מה שמותר לשלוח ב-insert. שאר השדות מקבלים default במסד. */
-export interface LeadInsert {
+export type LeadInsert = {
   name: string;
   phone: string;
   business?: string | null;
@@ -33,7 +33,7 @@ export interface LeadInsert {
   source?: string;
 }
 
-export interface PortfolioItemRow {
+export type PortfolioItemRow = {
   id: string;
   created_at: string;
   title: string;
@@ -43,7 +43,7 @@ export interface PortfolioItemRow {
   published: boolean;
 }
 
-export interface PortfolioItemInsert {
+export type PortfolioItemInsert = {
   title: string;
   image_url?: string | null;
   project_url?: string | null;
@@ -51,22 +51,32 @@ export interface PortfolioItemInsert {
   published?: boolean;
 }
 
-export interface Database {
+/* ⚠️ כל הטיפוסים כאן הם type ולא interface, בכוונה.
+   postgrest-js דורש שה-schema יתאים ל-Record<string, ...>, ו-interface
+   בלי index signature לא מקיים את זה. התוצאה היא נפילה שקטה ל-never
+   ושגיאה מטעה: "LeadInsert is not assignable to never[]".
+   זה נכון גם לטיפוסי השורות עצמם — GenericTable דורש
+   Row/Insert/Update מסוג Record<string, unknown>. */
+export type Database = {
   public: {
     Tables: {
       leads: {
         Row: LeadRow;
         Insert: LeadInsert;
         Update: Partial<LeadInsert>;
+        /* נדרש על ידי postgrest-js. אין מפתחות זרים בסכמה. */
+        Relationships: [];
       };
       portfolio_items: {
         Row: PortfolioItemRow;
         Insert: PortfolioItemInsert;
         Update: Partial<PortfolioItemInsert>;
+        Relationships: [];
       };
     };
-    Views: Record<never, never>;
-    Functions: Record<never, never>;
-    Enums: Record<never, never>;
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
+    Enums: { [_ in never]: never };
+    CompositeTypes: { [_ in never]: never };
   };
 }
