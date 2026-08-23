@@ -247,7 +247,10 @@ section{padding-block:var(--s8)}
   transition:transform .3s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s;
 }
 .card::before{content:''; position:absolute; inset-block-start:0; inset-inline:16%; block-size:1px; background:linear-gradient(to left, transparent, var(--hair-hi), transparent)}
-.card:hover{transform:translateY(-5px); border-color:rgba(177,75,255,.4); box-shadow:var(--shadow-float)}
+.card:hover,
+.stepc:hover,
+.faq details:hover,
+.dline:hover{transform:translateY(-5px); border-color:rgba(177,75,255,.4); box-shadow:var(--shadow-float)}
 .card h3{font-size:var(--t-h3); margin-block-end:var(--s2)}
 .card p{color:var(--muted); font-size:var(--t-sm)}
 .card__icon{
@@ -263,7 +266,7 @@ section{padding-block:var(--s8)}
    ============================================================ */
 .steps{counter-reset:st; display:grid; gap:var(--s3)}
 @media (min-width:834px){ .steps{grid-template-columns:repeat(4,1fr)} }
-.stepc{position:relative; padding:var(--s5) var(--s4); border:1px solid var(--hairline); border-radius:var(--r-md); background:rgba(12,11,16,.55)}
+.stepc{position:relative; padding:var(--s5) var(--s4); border:1px solid var(--hairline); border-radius:var(--r-md); background:rgba(12,11,16,.55); transition:transform .3s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s}
 .stepc::before{
   counter-increment:st; content:'0' counter(st);
   font-family:var(--mono); font-size:1rem; font-weight:700; letter-spacing:.1em;
@@ -296,14 +299,7 @@ section{padding-block:var(--s8)}
 .faq{max-width:820px; margin-inline:auto; display:grid; gap:10px}
 .faq details{
   border:1px solid var(--hairline); border-radius:var(--r-sm); background:rgba(12,11,16,.5);
-  transition:border-color .25s, background-color .25s, box-shadow .3s, transform .25s cubic-bezier(.2,.8,.3,1);
-}
-/* זוהר ב-hover, כמו בשאר הרכיבים הלחיצים באתר */
-.faq details:hover{
-  transform:translateY(-2px);
-  border-color:rgba(177,75,255,.55);
-  background:rgba(19,17,24,.72);
-  box-shadow:0 0 0 1px rgba(177,75,255,.2), 0 16px 38px -20px var(--neon-glow);
+  transition:transform .3s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s, background-color .25s;
 }
 .faq details:hover summary::after{border-color:var(--neon-hi)}
 .faq details[open]{border-color:rgba(177,75,255,.36); background:rgba(19,17,24,.65)}
@@ -394,9 +390,8 @@ section{padding-block:var(--s8)}
   display:flex; align-items:center; gap:var(--s3);
   padding:var(--s4) var(--s3); border:1px solid var(--hairline); border-radius:var(--r-md);
   background:rgba(12,11,16,.5);
-  transition:transform .25s cubic-bezier(.2,.8,.3,1), border-color .25s, box-shadow .25s, background-color .25s;
+  transition:transform .3s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s;
 }
-.dline:hover{transform:translateY(-3px); border-color:rgba(177,75,255,.45); background:rgba(19,17,24,.7); box-shadow:var(--shadow-float)}
 .dline__ic{inline-size:46px; block-size:46px; border-radius:12px; display:grid; place-items:center; flex:none}
 .dline__ic svg{inline-size:22px; block-size:22px}
 .dline__ic--wa{background:rgba(37,211,102,.14); border:1px solid rgba(37,211,102,.34); color:var(--wa)}
