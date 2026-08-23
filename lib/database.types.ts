@@ -51,6 +51,20 @@ export type PortfolioItemInsert = {
   published?: boolean;
 }
 
+export type RateLimitRow = {
+  ip: string;
+  window_start: string;
+  count: number;
+  last_request_at: string;
+}
+
+export type RateLimitInsert = {
+  ip: string;
+  window_start?: string;
+  count?: number;
+  last_request_at?: string;
+}
+
 /* ⚠️ כל הטיפוסים כאן הם type ולא interface, בכוונה.
    postgrest-js דורש שה-schema יתאים ל-Record<string, ...>, ו-interface
    בלי index signature לא מקיים את זה. התוצאה היא נפילה שקטה ל-never
@@ -73,9 +87,20 @@ export type Database = {
         Update: Partial<PortfolioItemInsert>;
         Relationships: [];
       };
+      rate_limits: {
+        Row: RateLimitRow;
+        Insert: RateLimitInsert;
+        Update: Partial<RateLimitInsert>;
+        Relationships: [];
+      };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      consume_rate_limit: {
+        Args: { p_ip: string };
+        Returns: boolean;
+      };
+    };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
   };

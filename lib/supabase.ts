@@ -12,7 +12,7 @@ import type { Database } from './database.types';
      · שם המשתנה בלי קידומת NEXT_PUBLIC_, כך ש-Next לא יטמיע
        אותו ב-bundle גם בטעות.
 
-   טבלת leads בלי אף policy: רק הלקוח הזה ניגש אליה.
+   טבלאות leads ו-rate_limits בלי אף policy: רק הלקוח הזה ניגש אליהן.
    ============================================================ */
 
 let cached: SupabaseClient<Database> | null = null;
