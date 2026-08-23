@@ -26,7 +26,7 @@ export function RiskReversal() {
         <div className="risk rv">
           <span className="eyebrow">בלי סיכון</span>
           <h2>קודם רואים. רק אחר כך משלמים.</h2>
-          <p className="lead" style={{ maxWidth: '54ch' }}>
+          <p className="lead">
             אנחנו צוות צעיר ונחוש שמבין את עולם הדיגיטל, ומקדם כל עסק כאילו הוא שלנו.
             אנחנו יודעים שזה אומר שצריך להוכיח את עצמנו — אז הורדנו לכם את הסיכון לאפס.
           </p>

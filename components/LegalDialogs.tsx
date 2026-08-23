@@ -39,7 +39,7 @@ function UpdatedStamp({ label }: { label: string }) {
   );
   return (
     <p className="doc__updated">
-      {label} <span className="js-updated">{formatted}</span>
+      {label} <span>{formatted}</span>
     </p>
   );
 }
