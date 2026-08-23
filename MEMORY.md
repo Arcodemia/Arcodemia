@@ -3,20 +3,27 @@
 דף נחיתה לסוכנות דו-אנושית שמוכרת **דפי נחיתה בלבד** לבעלי עסקים מקומיים. פרויקט אישי, נוצר 2026-07-29.
 
 - **URL חי:** — (הכל מוכן לפריסה. ראו [DEPLOY.md](DEPLOY.md))
-- **קובץ ראשי:** [index.html](index.html) — עדיין קובץ אחד בלי build
+- **סטאק:** Next.js 16 · App Router · TypeScript strict · React 19. **עבר מ-`index.html` יחיד ב-2026-08-17**
 - **שפה:** עברית, RTL
 - **מטרה נוכחית:** 🔴 **חסום על הלקוח** — פתיחת חשבון Resend + Vercel ואז `vercel --prod`. אין שום דבר אחר שחוסם עלייה לאוויר.
 
 ## מבנה הפרויקט
 
 ```
-index.html        הדף. CSS + JS, הכל בפנים
-api/contact.js    פונקציית Vercel ששולחת את המייל דרך Resend
-fonts/            Heebo מתארח אצלנו — אין Google Fonts
-img/              תמונות הקריסטלים (רחב + לאורך)
-vercel.json       כותרות אבטחה + מטמון
-DEPLOY.md         ההוראות ללקוח, שלב אחר שלב
+app/layout.tsx            metadata, JSON-LD, next/font, סקריפט ה-intro
+app/page.tsx              מרכיב את כל החתכים
+app/globals.css           כל ה-CSS. 46 טוקנים, תכונות לוגיות ל-RTL
+app/api/contact/route.ts  Route Handler ששולח את המייל דרך Resend
+app/fonts/                Heebo מתארח אצלנו — אין Google Fonts
+components/               רכיב לכל חתך + Dialog + A11yWidget + icons
+hooks/                    useA11yPreferences · useReveal · useScrolledPast
+lib/                      config · whatsapp · types
+public/img/               תמונות הקריסטלים (רחב + לאורך)
+next.config.mjs           כותרות אבטחה + מטמון (החליף את vercel.json)
+DEPLOY.md                 ההוראות ללקוח, שלב אחר שלב
 ```
+
+**פקודות:** `npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint`
 **כלים שכבר מותקנים במחשב:** Node 24 · npm 11 · git · Vercel CLI 58 · Python+fonttools (לחיתוך פונטים)
 
 > **המותג היה "Aristocraft" עד 2026-08-06.** אם צצה המילה הזו איפשהו — היא שריד, למחוק.
@@ -33,7 +40,7 @@ DEPLOY.md         ההוראות ללקוח, שלב אחר שלב
 | בידול | צוות צעיר ונחוש, מבין דיגיטל, מקדם עסקים כאילו הם שלנו |
 | זמן אספקה | לא מתחייבים למספר — נאמר בשיחה הראשונה |
 | המרה | וואטסאפ ראשי · טלפון · אימייל · טופס · כפתור וואטסאפ צף |
-| סטאק | HTML/CSS/JS סטטי, קובץ אחד |
+| סטאק | Next.js App Router + TypeScript strict |
 
 **פרטי קשר (אמיתיים, ב-`CONFIG` בראש ה-`<script>`):**
 טלפון/וואטסאפ `050-867-4870` (בינלאומי `972508674870`) · אימייל `arcodemia.il@gmail.com`
@@ -142,7 +149,7 @@ nav → hero (תמונת קריסטלים) → "למה בכלל צריך דף נ
 
 ## אבטחה
 
-⚠️ **ה-CSP יושב ב-`vercel.json` ולא ב-`<meta>`.** שתי סיבות: header יכול לאכוף `frame-ancestors` ש-meta מתעלם ממנו; ומעשית — תחת `file://` המקור אטום, `'self'` לא תואם, וה-meta **חסם את הפונטים המקומיים בכל פתיחה של הקובץ לבדיקה**.
+⚠️ **ה-CSP יושב ב-`next.config.mjs` ולא ב-`<meta>`.** שתי סיבות: header יכול לאכוף `frame-ancestors` ש-meta מתעלם ממנו; ומעשית — תחת `file://` המקור אטום, `'self'` לא תואם, וה-meta **חסם את הפונטים המקומיים בכל פתיחה של הקובץ לבדיקה**.
 
 כותרות שנאכפות: CSP · HSTS (preload) · X-Content-Type-Options · X-Frame-Options · Referrer-Policy · COOP · CORP · Permissions-Policy (הכל מושבת).
 
@@ -151,7 +158,10 @@ nav → hero (תמונת קריסטלים) → "למה בכלל צריך דף נ
 - מלכודת ספאם `_gotcha`, מוסתרת ב-`clip-path`. **לא במיקום שלילי** — `-9999px` בלי הורה ממוקם מותח את רוחב הדף וגורם לגלישה בנייד
 - האימייל מוזרק ב-JS מ-`CONFIG` → לא ב-HTML הסטטי, סורקי ספאם לא מוצאים אותו
 - אין בקשה לאף שרת חיצוני. הפונטים אצלנו, אין אנליטיקה, אין cookies
-- `api/contact.js`: ולידציה, בריחת HTML, ניקוי תווי בקרה מכותרות (header injection), הגבלת קצב, `_gotcha` שמחזיר "הצליח" כדי שהבוט לא ילמד
+- `app/api/contact/route.ts`: ולידציה, בריחת HTML, ניקוי תווי בקרה מכותרות (header injection), הגבלת קצב, `_gotcha` שמחזיר "הצליח" כדי שהבוט לא ילמד
+- 🔴 **`clean()` מכיל בתי בקרה גולמיים** (`NUL`–`0x1F`, `DEL`) שאינם נראים בעורך. **אסור לשכתב את השורה "לפי מה שרואים"** — מה שנראה כמו `[
+ -]` יסנן רווחים ומקפים במקום תווי בקרה, ויהרוס גם את ההגנה וגם מספרי טלפון
+- ⚠️ **`'unsafe-eval'` נדרש ל-React בפיתוח בלבד.** ההבחנה היא לפי `phase` ולא לפי `NODE_ENV` — עם `NODE_ENV` זה דלף לייצור. **לבדוק עם `curl -sI` ולא בעין**
 
 ## ביצועים
 
