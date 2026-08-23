@@ -2,7 +2,8 @@
 
 import { useRef, useState, type FormEvent } from 'react';
 import { CONFIG } from '@/lib/config';
-import { openMailto } from '@/lib/mailto';
+import { isMobile } from '@/lib/device';
+import { gmailComposeURL, openMailto } from '@/lib/mailto';
 import { openWhatsApp } from '@/lib/whatsapp';
 import type { ContactMode, ContactPayload } from '@/lib/types';
 import { useLegal } from './LegalDialogs';
@@ -44,7 +45,8 @@ export function ContactForm() {
        קופצים יבלעו אותו. הרישום ב-API רץ במקביל ולא משנה אם
        הוואטסאפ או תוכנת המייל נפתחו. */
     if (mode === 'whatsapp') openWhatsApp(d);
-    else openMailto(d);
+    else if (isMobile()) openMailto(d);
+    else window.open(gmailComposeURL(d), '_blank', 'noopener');
 
     const openedCopy =
       mode === 'whatsapp'

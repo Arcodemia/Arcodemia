@@ -16,13 +16,28 @@ export function toMailtoBody(d: MailtoFields): string {
     .join('\n');
 }
 
+function toMailSubject(d: MailtoFields): string {
+  return `פנייה מדף הנחיתה של ${BRAND} — ${d.name}${d.business ? ` · ${d.business}` : ''}`;
+}
+
+function encodedMailParts(d: MailtoFields): { subject: string; body: string } {
+  return {
+    subject: encodeURIComponent(toMailSubject(d)),
+    body: encodeURIComponent(toMailtoBody(d)),
+  };
+}
+
 /** בונה קישור mailto עם נושא וגוף מוכנים. כל הערכים מקודדים. */
 export function mailtoURL(d: MailtoFields): string {
-  const subject = encodeURIComponent(
-    `פנייה מדף הנחיתה של ${BRAND} — ${d.name}${d.business ? ` · ${d.business}` : ''}`,
-  );
-  const body = encodeURIComponent(toMailtoBody(d));
+  const { subject, body } = encodedMailParts(d);
   return `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
+}
+
+/** טאב Gmail compose — אותו נושא וגוף כמו ב-mailto. לדסקטופ בלבד. */
+export function gmailComposeURL(d: MailtoFields): string {
+  const { subject, body } = encodedMailParts(d);
+  const to = encodeURIComponent(CONFIG.email);
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
 }
 
 export function openMailto(d: MailtoFields): void {
