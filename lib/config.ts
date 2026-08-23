@@ -27,5 +27,7 @@ export const CONFIG: SiteConfig = {
 
 export const BRAND = 'ARCODEMIA' as const;
 
+/** תאריך כתיבת המסמכים המשפטיים (גרסה ראשונה באתר). */
+export const LEGAL_WRITTEN = '2026-08-06' as const;
 /** תאריך עדכון המסמכים המשפטיים. מוצג בתחתית כל מסמך. */
-export const LEGAL_UPDATED = '2026-08-06' as const;
+export const LEGAL_UPDATED = '2026-08-23' as const;

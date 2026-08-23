@@ -155,6 +155,10 @@ export function ContactForm() {
           <button type="button" className="linklike" onClick={() => open('docPrivacy')}>
             מדיניות הפרטיות
           </button>
+          {' '}ואת{' '}
+          <button type="button" className="linklike" onClick={() => open('docTerms')}>
+            תנאי השימוש
+          </button>
           , ומסכים/ה שתיצרו איתי קשר בנוגע לפנייה הזו.
         </span>
       </label>

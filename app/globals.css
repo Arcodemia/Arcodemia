@@ -452,7 +452,7 @@ section{padding-block:var(--s8)}
   border:1px solid var(--hairline-2); border-radius:var(--r-lg);
   background:var(--surface); color:var(--soft);
   max-inline-size:min(760px, 92vw); inline-size:100%;
-  max-block-size:86vh; padding:0;
+  max-block-size:86vh; padding:0; overflow:auto;
 }
 .doc::backdrop{background:rgba(0,0,0,.82); backdrop-filter:blur(6px)}
 .doc__bar{
