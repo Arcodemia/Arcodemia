@@ -154,3 +154,20 @@
 
 ### מה נבדק בפועל
 `npm run build` נקי · `typecheck` אפס שגיאות · `lint` אפס שגיאות · ה-CSP בייצור **זהה מילה במילה** ל-`vercel.json` המקורי · כל קודי השגיאה של ה-API זהים · אפס גלישה אופקית ב-1440 וב-390 · אפס שגיאות קונסולה.
+
+## 2026-08-23 — Phase 2 (חלקי): תשתית Supabase
+
+**⚠️ ההנחיה הגיעה קטועה פעמיים.** מה שנבנה כאן הוא רק החלק שהוגדר במלואו.
+
+**נבנה:**
+- `supabase/migrations/` — שתי מיגרציות. ה-DDL **אומת תו-בתו** מול הספסיפיקציה שנמסרה (`diff`), אחרי שבמעבר ל-Next.js תעתוק לפי העין כמעט הרס את `clean()`.
+- `leads`: RLS פעיל **בלי אף policy** — רק service-role ניגש. הדפדפן לעולם לא מדבר ישירות עם Supabase בשביל leads.
+- `portfolio_items`: RLS + policy ציבורית לקריאה של שורות `published` בלבד.
+- `lib/supabase.ts` — לקוח service-role. מייבא `server-only` כדי שייבוא בטעות מרכיב לקוח **ישבור את הבנייה** במקום לדלוף. שם המשתנה בלי `NEXT_PUBLIC_` בכוונה.
+- `lib/database.types.ts` · `supabase/config.toml` (`project_id = "arcodemia"`) · `.env.example` + `.env.local` מסונכרנים (6 מפתחות).
+
+**🔴 ההנחיה נקטעה באמצע ה-policy** (`... create policy "public can view published portfolio items" on`). הושלם כ-`for select using (published = true)` — ההשלמה היחידה שמתיישבת עם השם ועם ההערה. **ממתין לאישור.**
+
+**לא נבנה, כי הספסיפיקציה לא הגיעה:** לוגיקת ה-API של בחירת אמצעי הקשר. ארבע התנהגויות נחלקות ומשנות את המימוש מהותית — ראו את השאלות שנמסרו ללקוח. לא נוחשו.
+
+**לא בוצע:** אין remote, אין `supabase link`, אין `db push`, אין פריסה.
