@@ -15,6 +15,8 @@ export interface ContactPayload {
   mode: ContactMode;
   /** מלכודת ספאם. בני אדם לא רואים אותה ולכן היא תמיד ריקה. */
   _gotcha: string;
+  /** חייב להיות true — נאכף גם בשרת, לא רק ב-required בדפדפן. */
+  consent: boolean;
 }
 
 /** קודי השגיאה שהשרת מחזיר. */
@@ -23,6 +25,7 @@ export type ContactErrorCode =
   | 'bad_body'
   | 'name'
   | 'phone'
+  | 'consent'
   | 'method_not_allowed'
   | 'too_many';
 

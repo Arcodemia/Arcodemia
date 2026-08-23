@@ -38,6 +38,7 @@ export function ContactForm() {
       message: String(fd.get('message') ?? ''),
       mode,
       _gotcha: String(fd.get('_gotcha') ?? ''),
+      consent: fd.get('consent') === 'on',
     };
 
     /* ⚠️ פותחים את הקישור **מיד**, בתוך אותו tick של אירוע הלחיצה.

@@ -6,9 +6,7 @@
    ============================================================ */
 :root{
   --bg:        #000000;
-  --bg-2:      #050507;
   --surface:   #0C0B10;
-  --surface-2: #131118;
   --hairline:  rgba(255,255,255,.09);
   --hairline-2:rgba(255,255,255,.17);
   --hair-hi:   rgba(255,255,255,.26);
@@ -25,7 +23,7 @@
   --ink:   #FFFFFF;
   --soft:  #C9C6D2;
   --muted: #8E8A9B;
-  --faint: #605C6E;
+  --faint: #7A7688;
 
   --wa:    #25D366;
   --wa-hi: #1FBE59;
@@ -37,7 +35,6 @@
   --t-display: clamp(2.05rem, 5.6vw, 4.15rem);
   --t-h2:      clamp(1.75rem, 4.2vw, 2.9rem);
   --t-h3:      clamp(1.1rem, 2.4vw, 1.3rem);
-  --t-stat:    clamp(3rem, 9vw, 5.6rem);
   --t-body:    1.0625rem;
   --t-sm:      .9375rem;
   --t-xs:      .8125rem;
@@ -48,7 +45,6 @@
   --r-sm:10px; --r-md:16px; --r-lg:24px; --r-pill:999px;
 
   --shadow-float: 0 22px 50px -22px rgba(0,0,0,.95);
-  --shadow-glow:  0 12px 34px -10px var(--neon-glow);
   --lock: 1240px;
   --gut: clamp(16px, 4vw, 40px);
 }
@@ -357,7 +353,6 @@ section{padding-block:var(--s8)}
 }
 .field input::placeholder,.field textarea::placeholder{color:var(--faint); font-weight:400}
 .form__note{font-size:var(--t-xs); color:var(--faint)}
-.form__note a{color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}
 .form__ok{
   display:none; padding:var(--s3); border-radius:var(--r-sm);
   background:rgba(37,211,102,.12); border:1px solid rgba(37,211,102,.35);
@@ -395,7 +390,10 @@ section{padding-block:var(--s8)}
 
 .consent{display:flex; gap:10px; align-items:flex-start; font-size:var(--t-xs); color:var(--muted); line-height:1.5}
 .consent input{inline-size:20px; block-size:20px; flex:none; margin-block-start:2px; accent-color:var(--neon)}
-.consent a{color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}
+.consent a,.consent .linklike{
+  background:none; border:none; padding:0; font:inherit; cursor:pointer;
+  color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px;
+}
 
 .direct{display:grid; gap:var(--s2); align-content:start}
 .dline{
@@ -438,10 +436,10 @@ section{padding-block:var(--s8)}
   background:var(--wa); color:#03210E; border:none; cursor:pointer;
   display:grid; place-items:center;
   box-shadow:0 14px 34px -10px rgba(37,211,102,.6), inset 0 1px 0 rgba(255,255,255,.3);
-  transition:transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s, opacity .3s;
-  opacity:0; pointer-events:none;
+  transition:transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s, opacity .3s, visibility .3s;
+  opacity:0; pointer-events:none; visibility:hidden;
 }
-.fab.is-on{opacity:1; pointer-events:auto}
+.fab.is-on{opacity:1; pointer-events:auto; visibility:visible}
 .fab:hover{transform:scale(1.06); box-shadow:0 18px 42px -10px rgba(37,211,102,.7)}
 .fab:active{transform:scale(.97)}
 .fab svg{inline-size:30px; block-size:30px}
@@ -632,6 +630,4 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   html{scroll-behavior:auto}
   .rv{opacity:1; transform:none}
   .grain{display:none}
-  .cr svg{animation:none}
-  .cr{animation:none}
 }

@@ -17,6 +17,8 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="פתחו שיחת וואטסאפ"
+      aria-hidden={!visible}
+      tabIndex={visible ? undefined : -1}
     >
       <WhatsAppIcon />
     </a>
