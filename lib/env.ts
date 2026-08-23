@@ -37,7 +37,24 @@ export class EnvError extends Error {
 }
 
 function read(key: EnvKey): string | null {
-  const raw = process.env[key];
+  /* Next משבץ רק גישה סטטית ל-process.env.NAME. process.env[key]
+     נזרק מה-bundle, ובייצור המשתנים נראו חסרים למרות שהוגדרו. */
+  let raw: string | undefined;
+  switch (key) {
+    case 'SUPABASE_URL':
+      raw = process.env.SUPABASE_URL;
+      break;
+    case 'SUPABASE_SERVICE_ROLE_KEY':
+      raw = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      break;
+    case 'SUPABASE_PROJECT_REF':
+      raw = process.env.SUPABASE_PROJECT_REF;
+      break;
+    default: {
+      const _exhaustive: never = key;
+      throw new Error(`unhandled env key: ${_exhaustive}`);
+    }
+  }
   if (raw === undefined) return null;
   const v = raw.trim();
   if (v === '' || v === 'REPLACE_ME') return null;
