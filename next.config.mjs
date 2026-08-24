@@ -94,10 +94,9 @@ export default function config(phase) {
           ],
         },
 
-        /* התמונות ב-public/img נטענות בשם קבוע. הן משתנות רק
-           כשמרנדרים אותן מחדש, ואז אפשר לשנות גם את שם הקובץ.
-           הפונטים עוברים דרך next/font ומקבלים hash בשם הקובץ,
-           ולכן Next כבר מגיש אותם מ-/_next/static עם immutable. */
+        /* התמונות ב-public/img נשמרות שנה כ-immutable. הן חייבות
+           hash בשם הקובץ (hero-wide.<hash>.webp). רנדר מחדש בלי
+           לשנות את השם ישאיר אצל המבקרים את הקובץ הישן. */
         {
           source: '/img/:path*',
           headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],

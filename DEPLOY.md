@@ -85,6 +85,10 @@ npx vercel --prod
 
 זהו. כל פריסה מקבלת כתובת משלה, ואפשר לחזור לגרסה קודמת מלוח הבקרה של Vercel בלחיצה אחת.
 
+### רנדר מחדש של הקריסטלים
+
+`public/img/hero-wide.*.webp` ו-`hero-tall.*.webp` נשמרים בדפדפן לשנה (`Cache-Control: immutable`). אחרי `node tools/render-crystals.cjs …` והפקת ה-WebP, **חובה לתת לקובץ שם חדש עם hash של הבתים** (למשל `hero-wide.a1b2c3.webp`) ולעדכן את ההפניות ב-`components/Hero.tsx` וב-`app/layout.tsx`. דריסה על אותו שם קובץ לא תגיע למבקרים שכבר ראו את התמונה.
+
 ---
 
 ## מה כבר מוגדר בשבילך

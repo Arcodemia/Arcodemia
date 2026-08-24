@@ -46,12 +46,14 @@ export function Hero() {
 
   return (
     <section className="hero">
+      {/* שם הקובץ כולל hash של הבתים. /img/* נשמר שנה כ-immutable —
+         רנדר מחדש חייב לייצר שם חדש, אחרת הדפדפן ישאיר את התמונה הישנה. */}
       <picture className="hero__art">
-        <source media="(max-width:833px)" srcSet="/img/hero-tall.webp" width={900} height={1150} />
+        <source media="(max-width:833px)" srcSet="/img/hero-tall.729564.webp" width={900} height={1150} />
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
-          src="/img/hero-wide.webp"
+          src="/img/hero-wide.9ce60a.webp"
           alt=""
           aria-hidden="true"
           width={1800}
