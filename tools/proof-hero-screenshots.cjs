@@ -94,6 +94,8 @@ async function waitForHeroVisible(cdp) {
         if (!loaded) return { s: "loading", src: img.currentSrc || img.src };
         document.documentElement.classList.remove("intro");
         img.classList.add("is-on");
+        img.style.transition = "none";
+        img.style.opacity = "1";
         return {
           s: "ready",
           src: img.currentSrc,
@@ -107,7 +109,7 @@ async function waitForHeroVisible(cdp) {
     const v = result.value;
     console.log("hero wait", JSON.stringify(v));
     if (v && v.s === "ready") {
-      await sleep(1300); /* .hero__art img fades in over 1.1s */
+      await sleep(2000);
       return;
     }
     await sleep(200);

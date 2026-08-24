@@ -165,17 +165,24 @@ float marchIn(vec3 ro, vec3 rd){
   return t;
 }
 
+vec3 envDir(vec3 d, bool a){
+  vec3 c=env(d);
+  /* אותו כיוון כמו אור הציאן שהשמאלי כבר רואה — סגול במקום לבהיר את הסופטבוקס */
+  if(a) c+=vec3(0.95,0.12,1.00)*pow(max(0.0,dot(d,normalize(vec3(-0.52,-0.44,0.72)))),22.0)*22.0;
+  return c;
+}
+
 /* מסלול קרן בזכוכית עבור מקדם שבירה אחד, עד שלוש החזרות פנימיות */
-vec3 refr(vec3 p, vec3 n, vec3 rd, float ior){
+vec3 refr(vec3 p, vec3 n, vec3 rd, float ior, bool a){
   vec3 r1=refract(rd,n,1.0/ior);
-  if(dot(r1,r1)<1e-5) return env(reflect(rd,n));
+  if(dot(r1,r1)<1e-5) return envDir(reflect(rd,n),a);
   vec3 ip=p-n*0.010;
   float it=marchIn(ip,r1);
   vec3 ep=ip+r1*it, en=-nrm(ep);
   vec3 ab=exp(-vec3(0.085,0.055,0.035)*it);
 
   vec3 r2=refract(r1,en,ior);
-  if(dot(r2,r2)>1e-5) return env(r2)*ab;
+  if(dot(r2,r2)>1e-5) return envDir(r2,a)*ab;
 
   vec3 rb=reflect(r1,en);
   vec3 ip2=ep+rb*0.015;
@@ -184,7 +191,7 @@ vec3 refr(vec3 p, vec3 n, vec3 rd, float ior){
   ab*=exp(-vec3(0.085,0.055,0.035)*t2);
 
   vec3 r3=refract(rb,en2,ior);
-  if(dot(r3,r3)>1e-5) return env(r3)*ab;
+  if(dot(r3,r3)>1e-5) return envDir(r3,a)*ab;
 
   vec3 rc=reflect(rb,en2);
   vec3 ip3=ep2+rc*0.015;
@@ -192,7 +199,7 @@ vec3 refr(vec3 p, vec3 n, vec3 rd, float ior){
   vec3 ep3=ip3+rc*t3, en3=-nrm(ep3);
   vec3 r4=refract(rc,en3,ior);
   if(dot(r4,r4)<1e-5) r4=reflect(rc,en3);
-  return env(r4)*ab*exp(-vec3(0.085,0.055,0.035)*t3);
+  return envDir(r4,a)*ab*exp(-vec3(0.085,0.055,0.035)*t3);
 }
 
 vec2 sph(vec3 ro, vec3 rd, vec3 ce, float ra){
@@ -232,8 +239,8 @@ vec3 flare(vec2 uv, vec2 c, float s, vec3 tint){
 /* חמישה מוקדים — שני קודקודים לכל גביש גדול, ואחד לקטן */
 vec3 flares(vec2 uv){
   vec3 f=vec3(0.0);
-  f += flare(uv, proj(tip(pA(),mA(),2.10, 1.0)), 1.00, vec3(1.00,0.97,0.92));
-  f += flare(uv, proj(tip(pA(),mA(),2.10,-1.0)), 0.62, vec3(0.92,0.95,1.00));
+  f += flare(uv, proj(tip(pA(),mA(),2.10, 1.0)), 1.50, vec3(1.00,0.97,0.92));
+  f += flare(uv, proj(tip(pA(),mA(),2.10,-1.0)), 0.90, vec3(0.92,0.95,1.00));
   f += flare(uv, proj(tip(pB(),mB(),1.85, 1.0)), 0.88, vec3(1.00,0.94,0.98));
   f += flare(uv, proj(tip(pB(),mB(),1.85,-1.0)), 0.55, vec3(0.90,0.96,1.00));
   f += flare(uv, proj(tip(pC(),mC(),0.78, 1.0)), 0.34, vec3(1.00,0.96,1.00));
@@ -269,6 +276,18 @@ float electric(vec2 uv, float t){
   }
   /* המרכז נשאר נקי — שם יושבת הכותרת */
   return e * smoothstep(0.16, 0.78, length(uv*vec2(0.62,1.0)));
+}
+
+vec3 hueRot(vec3 col, float a){
+  float c=cos(a), s=sin(a);
+  vec3 k=vec3(0.57735027);
+  return col*c + cross(k,col)*s + k*dot(k,col)*(1.0-c);
+}
+bool hitA(vec3 p){
+  float a=sdCrystal((p-pA())*mA(), 2.10, 0.86);
+  float b=sdCrystal((p-pB())*mB(), 1.85, 0.75);
+  float c=sdCrystal((p-pC())*mC(), 0.78, 0.30);
+  return a<=b && a<=c;
 }
 
 vec4 shade(vec2 uv){
@@ -313,6 +332,7 @@ vec4 shade(vec2 uv){
   vec3 n=nrm(p);
   n=normalize(n+(vec3(noise(p*3.4),noise(p*3.4+37.2),noise(p*3.4+71.9))-0.5)*0.020);
   float fres=pow(1.0-max(0.0,dot(-rd,n)),4.0);
+  bool a=hitA(p);
 
   /* פיזור ספקטרלי בשמונה אורכי גל */
   vec3 trans=vec3(0.0), wsum=vec3(0.0);
@@ -320,25 +340,30 @@ vec4 shade(vec2 uv){
     float s=(float(i)+0.5)/8.0;
     float ior=1.372+s*0.246;
     vec3 wgt=wl(s);
-    trans+=refr(p,n,rd,ior)*wgt;
+    trans+=refr(p,n,rd,ior,a)*wgt;
     wsum+=wgt;
   }
   trans/=max(wsum,vec3(0.0001));
   float lum=dot(trans,vec3(0.299,0.587,0.114));
   trans=mix(vec3(lum),trans,0.78);
 
-  vec3 refl=env(reflect(rd,n));
+  vec3 refl=envDir(reflect(rd,n),a);
   vec3 col=mix(trans,refl,clamp(fres,0.0,1.0)*0.70+0.08);
 
   /* רשת השברים לאורך המסלול הפנימי */
   vec3 rIn=refract(rd,n,1.0/1.47);
   vec3 pIn=p-n*0.010;
   float lIn=marchIn(pIn,rIn);
-  col+=vec3(0.90,0.95,1.00)*crackGlow(pIn,pIn+rIn*lIn)*2.6;
+  col+=vec3(0.90,0.95,1.00)*crackGlow(pIn,pIn+rIn*lIn)*(a?4.8:2.6);
 
   col+=vec3(1.0)*pow(fres,4.5)*3.0;
   col+=vec3(0.90,0.96,1.0)*elec*2.0;
   col+=fl*0.55;
+
+  /* הגביש השמאלי רואה בעיקר את אור הציאן ב-env; הזזה לסגול בלי לגעת בימין.
+     0.90 rad ≈ 52° על ציר הלומיננס. אחרי הסיבוב מהאור הראשי הוא גם כהה
+     יותר — הגברה מקומית מחזירה עושר בלי להחזיר פאה שטוחה לסופטבוקס. */
+  if(a){ col=hueRot(col, 0.90); col*=1.25; }
 
   col*=0.68;
   col=col/(1.0+col);
