@@ -47,15 +47,15 @@ export function Hero() {
   return (
     <section className="hero">
       <picture className="hero__art">
-        <source media="(max-width:833px)" srcSet="/img/hero-tall.webp" width={900} height={1100} />
+        <source media="(max-width:833px)" srcSet="/img/hero-tall.webp" width={900} height={1150} />
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
           src="/img/hero-wide.webp"
           alt=""
           aria-hidden="true"
-          width={1920}
-          height={840}
+          width={1800}
+          height={1120}
           fetchPriority="high"
           decoding="async"
         />
@@ -74,7 +74,7 @@ export function Hero() {
         </p>
         <div className="hero__cta">
           <a
-            className="btn btn--wa"
+            className="btn btn--hero-wa"
             href={waURL(HERO_CTA_MSG)}
             target="_blank"
             rel="noopener noreferrer"

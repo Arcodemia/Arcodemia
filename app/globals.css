@@ -178,6 +178,14 @@ section{padding-block:var(--s8)}
 .btn--wa:hover{background:var(--wa-hi); transform:translateY(-2px)}
 .btn--wa:active{transform:translateY(0) scale(.985)}
 
+/* רק כפתור הוואטסאפ במרכז ה-hero — ניאון הסגול, לא ירוק המותג */
+.btn--hero-wa{
+  background:var(--neon); color:#fff; font-weight:900;
+  box-shadow:0 12px 32px -14px var(--neon-glow), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.btn--hero-wa:hover{background:var(--neon-hi); transform:translateY(-2px)}
+.btn--hero-wa:active{transform:translateY(0) scale(.985)}
+
 .btn--ghost{background:rgba(255,255,255,.03); border-color:var(--hairline-2); color:var(--ink); backdrop-filter:blur(8px)}
 .btn--ghost:hover{background:rgba(255,255,255,.08); border-color:var(--ink); transform:translateY(-2px)}
 .btn--ghost:active{transform:translateY(0) scale(.985)}
