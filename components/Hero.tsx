@@ -53,7 +53,7 @@ export function Hero() {
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
-          src="/img/hero-wide.9ce60a.webp"
+          src="/img/hero-wide.c7cd87.webp"
           alt=""
           aria-hidden="true"
           width={1800}

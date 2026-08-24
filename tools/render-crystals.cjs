@@ -67,7 +67,7 @@ vec3 pA(){ return vec3(-ax()*1.00,  0.75,  0.40); }
 vec3 pB(){ return vec3( ax()*1.05, -0.95, -0.60); }
 vec3 pC(){ return vec3( ax()*0.66,  2.30, -3.10); }
 
-mat3 mA(){ return rotZ(-0.60)*rotY( 1.30)*rotZ(0.55); }
+mat3 mA(){ return rotZ(-0.60)*rotY( 1.30)*rotZ(0.28); } /* 0.55 pointed the end-cap at the key softbox and blew the face out */
 mat3 mB(){ return rotZ( 0.46)*rotY(-1.22)*rotZ(0.72); }
 mat3 mC(){ return rotZ(-1.15)*rotY( 0.95)*rotZ(2.05); }
 
