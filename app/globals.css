@@ -54,7 +54,12 @@
    ============================================================ */
 *,*::before,*::after{box-sizing:border-box}
 *{margin:0}
-html{-webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-block-start:96px}
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+  scroll-padding-block-start:96px;
+  -webkit-tap-highlight-color:transparent;
+}
 body{
   font-family:var(--font);
   font-size:var(--t-body);
@@ -189,7 +194,7 @@ section{padding-block:var(--s8)}
   border-block-end:1px solid var(--hairline);
 }
 .nav__in{display:flex; align-items:center; gap:var(--s4); min-block-size:76px}
-.logo{display:flex; align-items:center; gap:var(--s2); font-weight:900; font-size:1.1rem; letter-spacing:.16em; color:var(--ink)}
+.logo{display:flex; align-items:center; gap:var(--s2); min-block-size:44px; font-weight:900; font-size:1.1rem; letter-spacing:.16em; color:var(--ink)}
 .logo svg{inline-size:26px; block-size:26px; flex:none}
 .nav__links{display:none; gap:var(--s5); margin-inline-start:auto; font-size:var(--t-sm); color:var(--muted); font-weight:700}
 .nav__links a{position:relative; padding-block:6px; transition:color .2s}
@@ -257,6 +262,19 @@ section{padding-block:var(--s8)}
    Without this the scale/lift never applies after the reveal animation. */
 .rv-on :is(.card, .stepc, .faq details).rv.is-in:hover{
   transform:translateY(-6px) scale(1.03);
+}
+
+@keyframes spotlight-glow {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+  }
+  50% {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: var(--shadow-float), 0 0 52px rgba(177,75,255,.35);
+    border-color: rgba(177,75,255,.4);
+    z-index: 2;
+  }
 }
 .card h3{font-size:var(--t-h3); margin-block-end:var(--s2)}
 .card p{color:var(--muted); font-size:var(--t-sm)}
@@ -423,7 +441,7 @@ section{padding-block:var(--s8)}
 @media (min-width:834px){ .foot__in{grid-template-columns:1fr auto; align-items:center} }
 .foot__legal{display:flex; flex-wrap:wrap; gap:var(--s2) var(--s4)}
 .foot__legal button{
-  background:none; border:none; padding:0; cursor:pointer;
+  background:none; border:none; padding:0; min-block-size:44px; cursor:pointer;
   color:var(--muted); font-size:var(--t-sm); font-weight:700;
   text-decoration:underline; text-underline-offset:4px; text-decoration-color:var(--hairline-2);
   transition:color .2s, text-decoration-color .2s;
@@ -431,7 +449,9 @@ section{padding-block:var(--s8)}
 .foot__legal button:hover{color:var(--ink); text-decoration-color:var(--line)}
 
 .fab{
-  position:fixed; inset-block-end:20px; inset-inline-end:20px;
+  position:fixed;
+  inset-block-end:calc(20px + env(safe-area-inset-bottom, 0px));
+  inset-inline-end:calc(20px + env(safe-area-inset-inline-end, 0px));
   z-index:60;
   inline-size:60px; block-size:60px; border-radius:50%;
   background:var(--wa); color:#03210E; border:none; cursor:pointer;
@@ -464,7 +484,7 @@ section{padding-block:var(--s8)}
 }
 .doc__bar h2{font-size:1.24rem; letter-spacing:-.02em}
 .doc__x{
-  inline-size:40px; block-size:40px; flex:none; border-radius:50%;
+  inline-size:44px; block-size:44px; flex:none; border-radius:50%;
   background:rgba(255,255,255,.06); border:1px solid var(--hairline-2);
   color:var(--ink); cursor:pointer; display:grid; place-items:center; font-size:1.1rem;
   transition:background-color .2s, transform .2s;
@@ -485,7 +505,10 @@ section{padding-block:var(--s8)}
    שהבחירה תשרוד רענון. הכפתור יושב בצד ההפוך מהוואטסאפ.
    ============================================================ */
 .a11y-btn{
-  position:fixed; inset-block-end:20px; inset-inline-start:20px; z-index:70;
+  position:fixed;
+  inset-block-end:calc(20px + env(safe-area-inset-bottom, 0px));
+  inset-inline-start:calc(20px + env(safe-area-inset-inline-start, 0px));
+  z-index:70;
   inline-size:54px; block-size:54px; border-radius:50%;
   background:var(--ink); color:#000; border:none; cursor:pointer;
   display:grid; place-items:center;
@@ -497,7 +520,10 @@ section{padding-block:var(--s8)}
 .a11y-btn svg{inline-size:30px; block-size:30px}
 
 .a11y-panel{
-  position:fixed; inset-block-end:86px; inset-inline-start:20px; z-index:71;
+  position:fixed;
+  inset-block-end:calc(86px + env(safe-area-inset-bottom, 0px));
+  inset-inline-start:calc(20px + env(safe-area-inset-inline-start, 0px));
+  z-index:71;
   inline-size:min(310px, calc(100vw - 40px));
   background:var(--surface); border:1px solid var(--hairline-2);
   border-radius:var(--r-lg); box-shadow:var(--shadow-float);
@@ -518,7 +544,7 @@ section{padding-block:var(--s8)}
 .a11y-grid button:hover{background:rgba(177,75,255,.12); border-color:var(--neon); color:var(--ink)}
 .a11y-grid button[aria-pressed="true"]{background:var(--neon); border-color:var(--neon-hi); color:#fff}
 .a11y-foot{margin-block-start:var(--s3); padding-block-start:var(--s3); border-block-start:1px solid var(--hairline); display:flex; justify-content:space-between; gap:var(--s2); align-items:center}
-.a11y-foot button{background:none; border:none; padding:0; cursor:pointer; font-size:var(--t-xs); font-weight:700; color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}
+.a11y-foot button{background:none; border:none; padding:0; min-block-size:44px; cursor:pointer; font-size:var(--t-xs); font-weight:700; color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}
 
 /* ---- ההעדפות עצמן ---- */
 html[data-fs="1"]{font-size:112%}
@@ -552,7 +578,10 @@ html.a11y-readable :is(body,h1,h2,h3,p,span,a,button,label,input,textarea,summar
 }
 html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 
-@media (max-width:520px){ .a11y-grid{grid-template-columns:1fr 1fr} .a11y-panel{inset-block-end:82px} }
+@media (max-width:520px){
+  .a11y-grid{grid-template-columns:1fr 1fr}
+  .a11y-panel{inset-block-end:calc(82px + env(safe-area-inset-bottom, 0px))}
+}
 
 /* ============================================================
    חשיפה בגלילה
@@ -604,14 +633,26 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   .faq summary{padding:var(--s3); font-size:.98rem}
 
   /* שני הכפתורים הצפים קטנים יותר, ולא מכסים תוכן */
-  .fab{inline-size:52px; block-size:52px; inset-block-end:14px; inset-inline-end:14px}
+  .fab{
+    inline-size:52px; block-size:52px;
+    inset-block-end:calc(14px + env(safe-area-inset-bottom, 0px));
+    inset-inline-end:calc(14px + env(safe-area-inset-inline-end, 0px));
+  }
   .fab svg{inline-size:26px; block-size:26px}
-  .a11y-btn{inline-size:46px; block-size:46px; inset-block-end:14px; inset-inline-start:14px}
+  .a11y-btn{
+    inline-size:46px; block-size:46px;
+    inset-block-end:calc(14px + env(safe-area-inset-bottom, 0px));
+    inset-inline-start:calc(14px + env(safe-area-inset-inline-start, 0px));
+  }
   .a11y-btn svg{inline-size:24px; block-size:24px}
-  .a11y-panel{inset-block-end:70px; inset-inline-start:14px; padding:var(--s3)}
+  .a11y-panel{
+    inset-block-end:calc(70px + env(safe-area-inset-bottom, 0px));
+    inset-inline-start:calc(14px + env(safe-area-inset-inline-start, 0px));
+    padding:var(--s3);
+  }
 
   /* מרווח בתחתית הדף כדי שהכפתורים הצפים לא יסתירו את הקרדיט */
-  .foot{padding-block-end:var(--s8)}
+  .foot{padding-block-end:calc(var(--s8) + env(safe-area-inset-bottom, 0px))}
 
   .doc__body{padding:var(--s4)}
   .doc__bar{padding:var(--s3) var(--s4)}
@@ -631,4 +672,38 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   html{scroll-behavior:auto}
   .rv{opacity:1; transform:none}
   .grain{display:none}
+  /* animation-duration לא מבטל animation-timeline: view() — צריך לכבות את השם */
+  .card, .stepc, .faq details, .dline{animation-name:none}
+}
+
+/* ============================================================
+   זרקור בגלילה — מובייל בלבד
+   ------------------------------------------------------------
+   animation-timeline: view() מריץ את אותו מצב שיא של ה-hover
+   כשהכרטיס עובר במרכז החלון. דסקטופ לא נכנס לכאן בכלל.
+   בלי תמיכה או עם prefers-reduced-motion — פשוט אין אנימציה.
+   ============================================================ */
+@media (max-width:833px) and (prefers-reduced-motion: no-preference) {
+  :is(.card, .stepc, .faq details, .dline).is-tapped {
+    animation: none;
+    transition: none;
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: var(--shadow-float), 0 0 52px rgba(177,75,255,.35);
+    border-color: rgba(177,75,255,.4);
+    z-index: 2;
+  }
+  .rv-on :is(.card, .stepc, .faq details).rv.is-in.is-tapped {
+    transform: translateY(-6px) scale(1.03);
+  }
+
+  @supports (animation-timeline: view()) {
+    .card, .stepc, .faq details, .dline {
+      animation-name: spotlight-glow;
+      animation-timing-function: linear;
+      animation-duration: auto;
+      animation-timeline: view();
+      animation-range: cover;
+      animation-fill-mode: both;
+    }
+  }
 }

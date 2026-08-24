@@ -1,6 +1,7 @@
 'use client';
 
 import { useReveal } from '@/hooks/useReveal';
+import { useTapSpotlight } from '@/hooks/useTapSpotlight';
 import { LegalProvider } from '@/components/LegalDialogs';
 import { Nav } from '@/components/Nav';
 import { Hero } from '@/components/Hero';
@@ -15,6 +16,7 @@ import { A11yWidget } from '@/components/A11yWidget';
 
 export default function Page() {
   useReveal();
+  useTapSpotlight();
 
   return (
     <LegalProvider>
