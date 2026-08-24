@@ -1,4 +1,4 @@
-/* GPU-render tools/_render.html via Chrome and extract the WebP data-URI. */
+/* GPU-render tools/_render.html via Chrome and extract the image data-URI. */
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -37,13 +37,14 @@ const r = spawnSync(
 
 fs.writeFileSync(tmpDom, r.stdout || "");
 const title = ((r.stdout || "").match(/<title>([^<]*)/) || [])[1];
-const m = (r.stdout || "").match(/data:image\/webp;base64,([A-Za-z0-9+/=]+)/);
+const m = (r.stdout || "").match(/data:image\/(webp|png);base64,([A-Za-z0-9+/=]+)/);
 console.log("title", title, "status", r.status, "stdoutBytes", (r.stdout || "").length);
 if (!m) {
   const head = (r.stdout || "").slice(0, 300);
-  console.error("no webp. head:", head, "stderr:", (r.stderr || "").slice(0, 400));
+  console.error("no image data-URI. head:", head, "stderr:", (r.stderr || "").slice(0, 400));
   process.exit(1);
 }
-const buf = Buffer.from(m[1], "base64");
+const mime = m[1];
+const buf = Buffer.from(m[2], "base64");
 fs.writeFileSync(dest, buf);
-console.log("wrote", dest, buf.length, "bytes");
+console.log("wrote", dest, buf.length, "bytes", mime);

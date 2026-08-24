@@ -7,6 +7,7 @@ node_modules/
 Thumbs.db
 tools/_render.html
 tools/_proof/
+tools/_layers/
 
 # Next.js
 .next/

@@ -5,8 +5,11 @@
    הרנדר נעשה פעם אחת ונאפה לתמונה, כך שעלות הריצה בדף היא אפס.
 
    שימוש:
-     node tools/render-crystals.js 1800 1120 450 wide
-     node tools/render-crystals.js  900 1150 450 tall
+     node tools/render-crystals.cjs 1800 1120 450          # סצנה מלאה (webp)
+     node tools/render-crystals.cjs 1800 1120 450 noA      # בלי הגביש השמאלי (png)
+     node tools/render-crystals.cjs 1800 1120 450 onlyB 800  # הימני + עמודות ימינה בלי לחתוך את הגוף
+     node tools/render-crystals.cjs 1800 1120 450 onlyA    # רק השמאלי על שחור (png)
+   argv[5] wide|tall נשמרים ככינוי ל-full, כדי לא לשבור פקודות ישנות.
    ואז:
      chrome --headless=new --use-angle=d3d11 --virtual-time-budget=90000 \
             --dump-dom tools/_render.html > out.txt
@@ -22,6 +25,28 @@ const path = require('path');
 const W    = Number(process.argv[2] || 1800);
 const H    = Number(process.argv[3] || 1120);
 const TILE = Number(process.argv[4] || 450);
+/* full (ברירת מחדל) = הסצנה הרגילה. שכבות לקומפוזיט 2D בלבד:
+   noA = בלי הגביש השמאלי, onlyB = רק הימני, onlyA = רק השמאלי. */
+const LAYERS = {
+  full:  { a: 1, b: 1, c: 1 },
+  noA:   { a: 0, b: 1, c: 1 },
+  onlyB: { a: 0, b: 1, c: 0 },
+  onlyA: { a: 1, b: 0, c: 0 },
+};
+const LAYER_ARG = process.argv[5] || 'full';
+const LAYER = LAYER_ARG === 'wide' || LAYER_ARG === 'tall' ? 'full' : LAYER_ARG;
+if (!LAYERS[LAYER]) {
+  throw new Error('unknown layer "' + LAYER_ARG + '" (full|noA|onlyB|onlyA)');
+}
+const SHOW = LAYERS[LAYER];
+const ARG6 = process.argv[6];
+const EXTRA_RIGHT = Number(ARG6) > 0 ? Number(ARG6) : 0;
+const OUT_PNG = LAYER !== 'full' || ARG6 === 'png';
+/* uFull נשאר בגודל ה-hero המקורי — עמודות נוספות ממשיכות את אותה
+   מצלמה ימינה בלי למרכז מחדש. בלי זה onlyB נחתך בקצה הקנבס, והחיתוך
+   הופך לקו אנכי חד אחרי ההדבקה בתוך הפריים. */
+const VIEW_W = W;
+const CANVAS_W = W + EXTRA_RIGHT;
 
 const VERT = `attribute vec2 aP; void main(){ gl_Position = vec4(aP,0.,1.); }`;
 
@@ -30,6 +55,14 @@ precision highp float;
 uniform vec2  uFull;
 uniform vec2  uOff;
 uniform float uTime;
+/* דגלים לרנדר שכבות מבודדות. ברירת המחדל (full) לא משתנה.
+   למה זה קיים: התאמת פרמטרי 3D בין pA ל-pB לא יכולה להגיע לזהות
+   פיקסלים — דגימת ה-env-map תלויה בזווית הראייה. קומפוזיט 2D
+   אחרי הרנדר מעתיק את פיקסלי pB למיקום pA; הדגלים האלה מייצרים
+   את שלוש השכבות לכלי tools/composite-left-from-right.cjs. */
+const float SHOW_A=${SHOW.a}.0;
+const float SHOW_B=${SHOW.b}.0;
+const float SHOW_C=${SHOW.c}.0;
 
 mat3 rotY(float a){ float s=sin(a),c=cos(a); return mat3(c,0.,s, 0.,1.,0., -s,0.,c); }
 mat3 rotZ(float a){ float s=sin(a),c=cos(a); return mat3(c,-s,0., s,c,0., 0.,0.,1.); }
@@ -72,9 +105,9 @@ mat3 mB(){ return rotZ( 0.46)*rotY(-1.22)*rotZ(0.72); }
 mat3 mC(){ return rotZ(-1.15)*rotY( 0.95)*rotZ(2.05); }
 
 float map(vec3 p){
-  float a=sdCrystal((p-pA())*mA(), 2.10, 0.86);
-  float b=sdCrystal((p-pB())*mB(), 1.85, 0.75);
-  float c=sdCrystal((p-pC())*mC(), 0.78, 0.30);
+  float a=SHOW_A>0.5 ? sdCrystal((p-pA())*mA(), 2.10, 0.86) : 1e5;
+  float b=SHOW_B>0.5 ? sdCrystal((p-pB())*mB(), 1.85, 0.75) : 1e5;
+  float c=SHOW_C>0.5 ? sdCrystal((p-pC())*mC(), 0.78, 0.30) : 1e5;
   return min(min(a,b),c);
 }
 vec3 nrm(vec3 p){
@@ -239,11 +272,17 @@ vec3 flare(vec2 uv, vec2 c, float s, vec3 tint){
 /* חמישה מוקדים — שני קודקודים לכל גביש גדול, ואחד לקטן */
 vec3 flares(vec2 uv){
   vec3 f=vec3(0.0);
-  f += flare(uv, proj(tip(pA(),mA(),2.10, 1.0)), 1.50, vec3(1.00,0.97,0.92));
-  f += flare(uv, proj(tip(pA(),mA(),2.10,-1.0)), 0.90, vec3(0.92,0.95,1.00));
-  f += flare(uv, proj(tip(pB(),mB(),1.85, 1.0)), 0.88, vec3(1.00,0.94,0.98));
-  f += flare(uv, proj(tip(pB(),mB(),1.85,-1.0)), 0.55, vec3(0.90,0.96,1.00));
-  f += flare(uv, proj(tip(pC(),mC(),0.78, 1.0)), 0.34, vec3(1.00,0.96,1.00));
+  if(SHOW_A>0.5){
+    f += flare(uv, proj(tip(pA(),mA(),2.10, 1.0)), 1.50, vec3(1.00,0.97,0.92));
+    f += flare(uv, proj(tip(pA(),mA(),2.10,-1.0)), 0.90, vec3(0.92,0.95,1.00));
+  }
+  if(SHOW_B>0.5){
+    f += flare(uv, proj(tip(pB(),mB(),1.85, 1.0)), 0.88, vec3(1.00,0.94,0.98));
+    f += flare(uv, proj(tip(pB(),mB(),1.85,-1.0)), 0.55, vec3(0.90,0.96,1.00));
+  }
+  if(SHOW_C>0.5){
+    f += flare(uv, proj(tip(pC(),mC(),0.78, 1.0)), 0.34, vec3(1.00,0.96,1.00));
+  }
   return f;
 }
 
@@ -270,9 +309,9 @@ float electric(vec2 uv, float t){
   float e=0.0;
   for(int i=0;i<2;i++){
     float f=float(i);
-    e+=bolt(qa,f+0.30,t)*0.30;
-    e+=bolt(qb,f+5.70,t*1.13+2.0)*0.30;
-    e+=bolt(qc,f+3.10,t*1.05+3.0)*0.14;
+    if(SHOW_A>0.5) e+=bolt(qa,f+0.30,t)*0.30;
+    if(SHOW_B>0.5) e+=bolt(qb,f+5.70,t*1.13+2.0)*0.30;
+    if(SHOW_C>0.5) e+=bolt(qc,f+3.10,t*1.05+3.0)*0.14;
   }
   /* המרכז נשאר נקי — שם יושבת הכותרת */
   return e * smoothstep(0.16, 0.78, length(uv*vec2(0.62,1.0)));
@@ -296,7 +335,9 @@ vec4 shade(vec2 uv){
   float elec=electric(uv,uTime);
   vec3  fl  =flares(uv);
 
-  vec2 ba=sph(ro,rd,pA(),4.2), bb=sph(ro,rd,pB(),3.6), bc=sph(ro,rd,pC(),1.7);
+  vec2 ba=SHOW_A>0.5 ? sph(ro,rd,pA(),4.2) : vec2(1.0,-1.0);
+  vec2 bb=SHOW_B>0.5 ? sph(ro,rd,pB(),3.6) : vec2(1.0,-1.0);
+  vec2 bc=SHOW_C>0.5 ? sph(ro,rd,pC(),1.7) : vec2(1.0,-1.0);
   float FAR=1e5;
   float tmin=min(min(ba.x>0.0?ba.x:FAR, bb.x>0.0?bb.x:FAR), bc.x>0.0?bc.x:FAR);
   float tmax=max(max(ba.y,bb.y),bc.y);
@@ -387,7 +428,7 @@ void main(){
 const S = '<' + 'script>', E = '<' + '/script>';
 
 const driver = `
-var W=${W}, H=${H}, T=${TILE};
+var W=${CANVAS_W}, H=${H}, T=${TILE}, VIEW_W=${VIEW_W};
 var out=document.getElementById('out');
 var big=document.createElement('canvas'); big.width=W; big.height=H;
 var bctx=big.getContext('2d');
@@ -407,7 +448,7 @@ else{
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
   var a=gl.getAttribLocation(p,'aP'); gl.enableVertexAttribArray(a);
   gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
-  gl.uniform2f(gl.getUniformLocation(p,'uFull'),W,H);
+  gl.uniform2f(gl.getUniformLocation(p,'uFull'),VIEW_W,H);
   gl.uniform1f(gl.getUniformLocation(p,'uTime'),3.10);
   var uOff=gl.getUniformLocation(p,'uOff');
   gl.viewport(0,0,T,T);
@@ -434,7 +475,7 @@ else{
       oc.globalAlpha=0.16; oc.drawImage(bl2,0,0);
       oc.globalAlpha=1.0; oc.globalCompositeOperation='source-over';
 
-      out.textContent=o.toDataURL('image/webp',0.93);
+      out.textContent=o.toDataURL(${OUT_PNG ? "'image/png'" : "'image/webp',0.93"});
       document.title='done';
       return;
     }
@@ -457,5 +498,7 @@ const page =
   S + driver + E + '</body>';
 
 fs.writeFileSync(path.join(__dirname, '_render.html'), page);
-console.log('tools/_render.html · ' + W + 'x' + H + ' · טייל ' + TILE +
-            ' · ' + (Math.ceil(W/TILE)*Math.ceil(H/TILE)) + ' טיילים');
+console.log('tools/_render.html · ' + CANVAS_W + 'x' + H + ' · טייל ' + TILE +
+            ' · ' + (Math.ceil(CANVAS_W/TILE)*Math.ceil(H/TILE)) + ' טיילים · שכבה ' + LAYER +
+            ' · ' + (OUT_PNG ? 'png' : 'webp') +
+            (EXTRA_RIGHT ? ' · extraRight ' + EXTRA_RIGHT : ''));
