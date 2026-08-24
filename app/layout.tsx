@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { CONFIG } from '@/lib/config';
 import './globals.css';
 
 /* ============================================================
@@ -91,8 +92,8 @@ const JSON_LD = {
       name: 'ARCODEMIA',
       description:
         'בניית דפי נחיתה לעסקים מקומיים. דף אחד שנטען מהר, מותאם לנייד, ומוביל את הגולש ליצור קשר.',
-      email: 'arcodemia.il@gmail.com',
-      telephone: '+972-50-867-4870',
+      email: CONFIG.email,
+      telephone: CONFIG.phoneDial,
       areaServed: { '@type': 'Country', name: 'IL' },
       availableLanguage: ['he'],
       knowsAbout: ['דפי נחיתה', 'בניית אתרים', 'שיווק דיגיטלי לעסקים מקומיים'],

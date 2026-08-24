@@ -8,7 +8,7 @@
 export interface SiteConfig {
   /** פורמט בינלאומי, בלי + ובלי 0 מוביל */
   readonly whatsapp: string;
-  /** לתצוגה. להחלפה ל-'+972-50-867-4870' אם מעדיפים בינלאומי */
+  /** לתצוגה. להחלפה ל-'+972-52-382-2083' אם מעדיפים בינלאומי */
   readonly phone: string;
   /** למה שהטלפון באמת מחייג */
   readonly phoneDial: string;
@@ -18,9 +18,9 @@ export interface SiteConfig {
 }
 
 export const CONFIG: SiteConfig = {
-  whatsapp: '972508674870',
-  phone: '050-867-4870',
-  phoneDial: '+972508674870',
+  whatsapp: '972523822083',
+  phone: '052-382-2083',
+  phoneDial: '+972523822083',
   email: 'arcodemia.il@gmail.com',
   endpoint: '/api/contact',
 } as const;

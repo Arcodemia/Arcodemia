@@ -44,9 +44,9 @@ The page *is* the product demo. There is no real client portfolio in the UI. Con
 
 | Field | Value | Constant |
 |---|---|---|
-| WhatsApp (international, no `+`) | `972508674870` | `CONFIG.whatsapp` |
-| Phone display | `050-867-4870` | `CONFIG.phone` |
-| Phone dial | `+972508674870` | `CONFIG.phoneDial` |
+| WhatsApp (international, no `+`) | `972523822083` | `CONFIG.whatsapp` |
+| Phone display | `052-382-2083` | `CONFIG.phone` |
+| Phone dial | `+972523822083` | `CONFIG.phoneDial` |
 | Email | `arcodemia.il@gmail.com` | `CONFIG.email` |
 | Form endpoint | `/api/contact` | `CONFIG.endpoint` |
 | Brand string | `ARCODEMIA` | `BRAND` |

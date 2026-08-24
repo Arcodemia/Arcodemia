@@ -46,7 +46,7 @@ The commercial premise is documented in `MEMORY.md` §הבריף (the brief):
 ### Owner contact (hardcoded, real values)
 
 - Email: `arcodemia.il@gmail.com`
-- Phone (display): `050-867-4870` · (dial/WhatsApp): `+972508674870` / `972508674870`
+- Phone (display): `052-382-2083` · (dial/WhatsApp): `+972523822083` / `972523822083`
 
 ### Deployment status
 
