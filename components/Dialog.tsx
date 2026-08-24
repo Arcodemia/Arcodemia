@@ -8,6 +8,8 @@ interface DialogProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  /** נוסף על `.doc` — למשל פאנל הניווט, בלי לשנות את המסמכים המשפטיים. */
+  className?: string;
 }
 
 /* ============================================================
@@ -21,7 +23,7 @@ interface DialogProps {
    נפרד, ולכן e.target הוא ה-dialog גם כשלוחצים מחוץ לתיבה
    ובדיקה רגילה של target הייתה סוגרת תמיד.
    ============================================================ */
-export function Dialog({ id, title, open, onClose, children }: DialogProps) {
+export function Dialog({ id, title, open, onClose, children, className }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -51,7 +53,13 @@ export function Dialog({ id, title, open, onClose, children }: DialogProps) {
   };
 
   return (
-    <dialog className="doc" id={id} ref={ref} aria-labelledby={`${id}T`} onClick={onBackdropClick}>
+    <dialog
+      className={className ? `doc ${className}` : 'doc'}
+      id={id}
+      ref={ref}
+      aria-labelledby={`${id}T`}
+      onClick={onBackdropClick}
+    >
       <div className="doc__bar">
         <h2 id={`${id}T`}>{title}</h2>
         <button type="button" className="doc__x" onClick={onClose} aria-label="סגירה">

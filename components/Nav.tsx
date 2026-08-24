@@ -1,5 +1,9 @@
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { waURL } from '@/lib/whatsapp';
-import { LogoMark, WhatsAppIcon } from './icons';
+import { Dialog } from './Dialog';
+import { LogoMark, MenuIcon, WhatsAppIcon } from './icons';
 
 const NAV_CTA_MSG =
   'שלום, הגעתי מהאתר של ARCODEMIA ואשמח לשמוע פרטים על דף נחיתה לעסק שלי.';
@@ -13,6 +17,22 @@ const LINKS = [
 ] as const;
 
 export function Nav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
+
+  /* אחרי שה-<dialog> נסגר (אפקט הילד רץ קודם) — מחזירים מיקוד לכפתור. */
+  useEffect(() => {
+    if (menuOpen) {
+      wasOpen.current = true;
+      return;
+    }
+    if (!wasOpen.current) return;
+    wasOpen.current = false;
+    btnRef.current?.focus();
+  }, [menuOpen]);
+
   return (
     <header className="nav">
       <div className="wrap nav__in">
@@ -20,6 +40,18 @@ export function Nav() {
           <LogoMark />
           <bdi>ARCODEMIA</bdi>
         </a>
+
+        <button
+          type="button"
+          className="nav__menu-btn"
+          ref={btnRef}
+          aria-label="תפריט ניווט"
+          aria-expanded={menuOpen}
+          aria-controls="navMenu"
+          onClick={() => setMenuOpen(true)}
+        >
+          <MenuIcon />
+        </button>
 
         <nav className="nav__links" aria-label="ניווט ראשי">
           {LINKS.map((l) => (
@@ -39,6 +71,20 @@ export function Nav() {
           וואטסאפ
         </a>
       </div>
+
+      <Dialog id="navMenu" title="ניווט" open={menuOpen} onClose={closeMenu} className="nav-dialog">
+        <nav aria-label="ניווט ראשי">
+          <ul className="nav-menu">
+            {LINKS.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} onClick={closeMenu}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </Dialog>
     </header>
   );
 }

@@ -201,10 +201,21 @@ section{padding-block:var(--s8)}
 .nav__links a:hover{color:var(--ink)}
 .nav__links a::after{content:''; position:absolute; inset-block-end:0; inset-inline:0; block-size:1px; background:var(--line); transform:scaleX(0); transition:transform .25s}
 .nav__links a:hover::after{transform:scaleX(1)}
-.nav__cta{margin-inline-start:auto}
+.nav__cta{margin-inline-start:auto; flex:none}
+.nav__menu-btn{
+  display:grid; place-items:center; flex:none;
+  inline-size:44px; block-size:44px;
+  border-radius:var(--r-sm);
+  background:rgba(255,255,255,.04); border:1px solid var(--hairline-2);
+  color:var(--ink); cursor:pointer;
+  transition:background-color .2s, border-color .2s;
+}
+.nav__menu-btn svg{inline-size:22px; block-size:22px}
+.nav__menu-btn:hover{background:rgba(255,255,255,.08); border-color:var(--hair-hi)}
 @media (min-width:900px){
   .nav__links{display:flex}
   .nav__cta{margin-inline-start:0}
+  .nav__menu-btn{display:none}
 }
 
 /* ============================================================
@@ -498,6 +509,23 @@ section{padding-block:var(--s8)}
 .doc__body a{color:var(--neon-hi); text-decoration:underline; text-underline-offset:3px}
 .doc__body bdi{direction:ltr; unicode-bidi:isolate}
 .doc__updated{margin-block-start:var(--s5); padding-block-start:var(--s3); border-block-start:1px solid var(--hairline); font-size:var(--t-xs); color:var(--faint)}
+
+.nav-dialog{max-inline-size:min(420px, 92vw)}
+.nav-dialog .doc__body{padding:var(--s3)}
+.nav-dialog .nav-menu{
+  list-style:none; padding:0; margin:0;
+  display:grid; gap:var(--s1);
+}
+.nav-dialog .nav-menu a{
+  display:flex; align-items:center;
+  min-block-size:44px; padding:var(--s3) var(--s4);
+  border-radius:var(--r-sm); border:1px solid transparent;
+  color:var(--ink); font-weight:800; font-size:1.02rem; letter-spacing:-.02em;
+  transition:background-color .2s, border-color .2s;
+}
+.nav-dialog .nav-menu a:hover{
+  background:var(--neon-soft); border-color:rgba(177,75,255,.3);
+}
 /* ============================================================
    תפריט נגישות
    ------------------------------------------------------------
@@ -662,6 +690,9 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 @media (max-width:360px){
   :root{--t-display: clamp(1.9rem, 10.5vw, 2.5rem)}
   .btn{padding-inline:var(--s3); font-size:.95rem}
+  .nav__in{gap:var(--s1)}
+  .logo{font-size:.82rem; letter-spacing:.04em}
+  .nav__cta{padding-inline:var(--s3)}
 }
 
 /* ============================================================
