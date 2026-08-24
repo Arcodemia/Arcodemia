@@ -151,15 +151,11 @@ const IMAGES = ${JSON.stringify(images)};
   return JSON.parse(raw);
 }
 
-const images = {
-  wide: dataUri(path.resolve("public/img/hero-wide.9ce60a.webp")),
-  tall: dataUri(path.resolve("public/img/hero-tall.729564.webp")),
-};
-const freshWide = path.join(os.tmpdir(), "fresh-hero-wide.webp");
-const committedWide = path.join(os.tmpdir(), "committed-hero-wide.webp");
-if (fs.existsSync(freshWide) && fs.existsSync(committedWide)) {
-  images.freshWide = dataUri(freshWide);
-  images.committedWide = dataUri(committedWide);
+const imgDir = path.resolve("public/img");
+const images = {};
+for (const name of fs.readdirSync(imgDir).filter((f) => f.endsWith(".webp"))) {
+  const key = name.replace(/\.webp$/, "").replace(/[^a-zA-Z0-9]+/g, "_");
+  images[key] = dataUri(path.join(imgDir, name));
 }
 
 const stats = dumpStats(images);

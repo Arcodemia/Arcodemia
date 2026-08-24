@@ -107,7 +107,7 @@ async function waitForHeroVisible(cdp) {
     const v = result.value;
     console.log("hero wait", JSON.stringify(v));
     if (v && v.s === "ready") {
-      await sleep(400);
+      await sleep(1300); /* .hero__art img fades in over 1.1s */
       return;
     }
     await sleep(200);

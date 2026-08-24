@@ -49,7 +49,7 @@ export function Hero() {
       {/* שם הקובץ כולל hash של הבתים. /img/* נשמר שנה כ-immutable —
          רנדר מחדש חייב לייצר שם חדש, אחרת הדפדפן ישאיר את התמונה הישנה. */}
       <picture className="hero__art">
-        <source media="(max-width:833px)" srcSet="/img/hero-tall.729564.webp" width={900} height={1150} />
+        <source media="(max-width:833px)" srcSet="/img/hero-tall.830089.webp" width={900} height={1150} />
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
