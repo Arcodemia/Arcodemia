@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Same geometry as the previous inline favicon / LogoMark: black rounded square, white triangle, purple bar. -->
+  <rect width="32" height="32" rx="7" fill="#000"/>
+  <path d="M16 4 27 28H5z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M11.4 21h9.2" stroke="#B14BFF" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

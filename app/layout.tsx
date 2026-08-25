@@ -45,31 +45,39 @@ const heeboLatin = localFont({
   declarations: [{ prop: 'unicode-range', value: 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD' }],
 });
 
-const FAVICON =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000'/%3E%3Cpath d='M16 4 27 28H5z' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linejoin='round'/%3E%3Cpath d='M11.4 21h9.2' stroke='%23B14BFF' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E";
-
 const DESCRIPTION =
-  'הלקוחות שלך כבר מחפשים אותך באינטרנט. אנחנו בונים לעסקים מקומיים דף נחיתה אחד שנטען מהר, נראה מצוין בנייד, וגורם ללקוח ליצור קשר. רואים את העיצוב לפני שמשלמים שקל.';
-const OG_DESCRIPTION = 'דף אחד שהופך גולשים ללקוחות. רואים את העיצוב לפני שמשלמים שקל.';
-const TITLE = 'ARCODEMIA — דפי נחיתה לעסקים מקומיים';
+  'בונים לכם דף נחיתה מקצועי תוך ימים ספורים. רואים את העיצוב לפני שמשלמים — בלי סיכון. דברו איתנו בוואטסאפ.';
+/* כותרת לחיפוש/שיתוף כפי שסומנה לשינוי הזה. על האתר עצמו המותג
+   נשאר ARCODEMIA באותיות גדולות — אם גם כאן צריך caps, זה לפני העלייה. */
+const TITLE = 'Arcodemia - דפי נחיתה ואתרים';
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   authors: [{ name: 'ARCODEMIA' }],
   robots: { index: true, follow: true, 'max-image-preview': 'large' },
-  icons: { icon: FAVICON },
+  /* קבצים ב-/public, לא תחת /img — כלל המטמון לשנה שם דורש hash,
+     ו-Google דורש URL יציב ל-favicon. ראו tools/generate-favicons.cjs. */
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   openGraph: {
     type: 'website',
     title: TITLE,
-    description: OG_DESCRIPTION,
+    description: DESCRIPTION,
     locale: 'he_IL',
     siteName: 'ARCODEMIA',
   },
   twitter: {
     card: 'summary_large_image',
     title: TITLE,
-    description: OG_DESCRIPTION,
+    description: DESCRIPTION,
   },
 };
 
