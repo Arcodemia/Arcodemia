@@ -51,10 +51,12 @@ const DESCRIPTION =
 const TITLE = 'ARCODEMIA - דפי נחיתה ואתרים';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(CONFIG.siteUrl),
   title: TITLE,
   description: DESCRIPTION,
   authors: [{ name: 'ARCODEMIA' }],
   robots: { index: true, follow: true, 'max-image-preview': 'large' },
+  alternates: { canonical: '/' },
   /* קבצים ב-/public, לא תחת /img — כלל המטמון לשנה שם דורש hash,
      ו-Google דורש URL יציב ל-favicon. ראו tools/generate-favicons.cjs. */
   icons: {
@@ -70,6 +72,7 @@ export const metadata: Metadata = {
     type: 'website',
     title: TITLE,
     description: DESCRIPTION,
+    url: '/',
     locale: 'he_IL',
     siteName: 'ARCODEMIA',
   },

@@ -1,14 +1,11 @@
 'use client';
 
-import { useScrolledPast } from '@/hooks/useScrolledPast';
+import { FAB_SHOW_AFTER_PX, useScrolledPast } from '@/hooks/useScrolledPast';
 import { DEFAULT_MSG, waURL } from '@/lib/whatsapp';
 import { WhatsAppIcon } from './icons';
 
-/** מופיע אחרי גלילה מה-hero, כדי לא להתחרות ב-CTA הראשי */
-const SHOW_AFTER_PX = 460;
-
 export function WhatsAppFab() {
-  const visible = useScrolledPast(SHOW_AFTER_PX);
+  const visible = useScrolledPast(FAB_SHOW_AFTER_PX);
 
   return (
     <a

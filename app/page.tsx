@@ -12,6 +12,7 @@ import { FAQ } from '@/components/FAQ';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFab } from '@/components/WhatsAppFab';
+import { ShareFab } from '@/components/ShareFab';
 import { A11yWidget } from '@/components/A11yWidget';
 
 export default function Page() {
@@ -43,6 +44,7 @@ export default function Page() {
 
       <Footer />
       <WhatsAppFab />
+      <ShareFab />
       <A11yWidget />
     </LegalProvider>
   );

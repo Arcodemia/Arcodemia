@@ -15,6 +15,8 @@ export interface SiteConfig {
   readonly email: string;
   /** Route Handler שרושם את הפנייה. ריק = בלי רישום, רק פתיחת וואטסאפ/מייל */
   readonly endpoint: string;
+  /** כתובת הייצור הקנונית — metadata, OG, ושיתוף. מקור אחד. */
+  readonly siteUrl: string;
 }
 
 export const CONFIG: SiteConfig = {
@@ -23,6 +25,7 @@ export const CONFIG: SiteConfig = {
   phoneDial: '+972523822083',
   email: 'arcodemia.il@gmail.com',
   endpoint: '/api/contact',
+  siteUrl: 'https://arcodemia.com',
 } as const;
 
 export const BRAND = 'ARCODEMIA' as const;
