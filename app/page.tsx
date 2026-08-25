@@ -5,6 +5,7 @@ import { useTapSpotlight } from '@/hooks/useTapSpotlight';
 import { LegalProvider } from '@/components/LegalDialogs';
 import { Nav } from '@/components/Nav';
 import { Hero } from '@/components/Hero';
+import { Spiders } from '@/components/Spiders';
 import { PainPoints } from '@/components/PainPoints';
 import { Process } from '@/components/Process';
 import { RiskReversal } from '@/components/RiskReversal';
@@ -34,11 +35,21 @@ export default function Page() {
       <main id="main">
         <a id="top" />
         <Hero />
-        <PainPoints />
-        <Process />
+
+        {/* ============================================================
+            הרצועה שבין ה-hero ל"בלי סיכון": רשת היי-טק, דעיכת הזוהר
+            הסגול לשחור, והעכבישים. כולם ברקע, מתחת לכל טקסט.
+            ============================================================ */}
+        <div className="techbg">
+          <Spiders />
+          <PainPoints />
+          <Process />
+        </div>
+
         <RiskReversal />
-        <FAQ />
         <ContactSection />
+        {/* השאלות הנפוצות יורדות לתחתית — מיד מעל ה-footer */}
+        <FAQ />
       </main>
 
       <Footer />

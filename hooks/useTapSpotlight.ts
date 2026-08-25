@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 
 const SELECTOR = '.card, .stepc, .faq details, .dline';
 const TAP_MS = 500;
+/* רצף הפטיש/אבן/וי נמשך ~2.2 שניות. עם 500ms המחלקה הייתה יורדת
+   באמצע והאנימציה נקטעת, ולכן לכרטיסי התהליך יש חלון ארוך יותר. */
+const TAP_MS_STEP = 2600;
 
 /** משוב מיידי בלחיצה בנייד. הזרקור בגלילה נשאר CSS בלבד. */
 export function useTapSpotlight(): void {
@@ -26,7 +29,7 @@ export function useTapSpotlight(): void {
       if (!next) return;
       current = next;
       next.classList.add('is-tapped');
-      timer = window.setTimeout(clear, TAP_MS);
+      timer = window.setTimeout(clear, next.classList.contains('stepc') ? TAP_MS_STEP : TAP_MS);
     };
 
     document.addEventListener('touchstart', onTouchStart, { passive: true });

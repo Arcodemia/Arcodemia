@@ -12,6 +12,13 @@
   --hair-hi:   rgba(255,255,255,.26);
   --line:      rgba(255,255,255,.55);
 
+  /* ⚠️ דגש שני, מכוון ומתועד. לא הפרה של "סגול אחד" — הוא שמור
+     אך ורק להקשרי אובדן ודחיפות (הפסד לקוחות, ✕ בכרטיסי הכאב).
+     אין להשתמש בו ל-CTA, לקישור או לכל אלמנט לחיץ. */
+  --danger-red:      #FF3B4E;
+  --danger-red-soft: rgba(255,59,78,.14);
+  --danger-red-glow: rgba(255,59,78,.42);
+
   --neon:      #B14BFF;
   --neon-hi:   #C97BFF;
   --neon-soft: rgba(177,75,255,.13);
@@ -333,6 +340,11 @@ section{padding-block:var(--s8)}
 .risk::before{content:''; position:absolute; inset-block-start:0; inset-inline:0; block-size:1px; background:linear-gradient(to left, transparent, var(--line), transparent)}
 @media (min-width:834px){ .risk{padding:var(--s9) var(--s8)} }
 .risk h2{font-size:var(--t-h2); margin-block:var(--s3) var(--s4); max-width:18ch}
+/* h1–h3 כבר ב-900, ולכן אי אפשר "להדגיש" בתוך הכותרת כלפי מעלה.
+   מורידים את שאר הכותרת ל-700 כדי שהמשפט המודגש יבלוט.
+   רק המשקל משתנה — הצבע והניגודיות זהים לחלוטין. */
+.risk__h2{font-weight:700}
+.risk__h2 strong{font-weight:900}
 .risk .lead{max-width:54ch}
 .risk__list{display:grid; gap:var(--s4); margin-block:var(--s6); max-width:660px}
 .risk__list li{display:flex; gap:var(--s3); align-items:flex-start; list-style:none}
@@ -706,6 +718,214 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 }
 
 /* ============================================================
+   רקע היי-טק — בין ה-hero ל"בלי סיכון"
+   ------------------------------------------------------------
+   עוטף את #why ואת #process. שלוש שכבות, כולן CSS בלבד כדי
+   לא להוסיף ולו בייט אחד לתעבורה:
+     ::before — רשת קווים דקה, ממוסכת כך שהיא נמוגה כלפי מטה
+     ::after  — הזוהר הסגול של ה-hero נמוג לשחור מוחלט
+     .spiders — צלליות עכביש ב-SVG מוטבע
+   ============================================================ */
+.techbg{position:relative; isolation:isolate}
+.techbg > section{position:relative; z-index:1}
+
+.techbg::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    repeating-linear-gradient(to right,  rgba(255,255,255,.045) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(to bottom, rgba(255,255,255,.045) 0 1px, transparent 1px 72px);
+  -webkit-mask-image:linear-gradient(to bottom, #000, #000 52%, transparent 92%);
+          mask-image:linear-gradient(to bottom, #000, #000 52%, transparent 92%);
+}
+
+/* הזוהר הסגול ממשיך מה-hero ונמוג לשחור */
+.techbg::after{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:linear-gradient(to bottom,
+    rgba(177,75,255,.17),
+    rgba(177,75,255,.055) 28%,
+    rgba(0,0,0,0) 64%);
+}
+
+/* ---------- עכבישים ---------- */
+.spiders{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.spider{
+  position:absolute;
+  color:var(--line);
+  opacity:.12;
+  will-change:transform;
+  animation:spider-walk linear infinite;
+}
+.spider svg{display:block; inline-size:100%; block-size:auto}
+/* הרגליים נעות בנפרד מהגוף — שתי אנימציות, בלי JS */
+.spider__legs{transform-origin:50% 40%; animation:spider-legs .85s ease-in-out infinite}
+
+@keyframes spider-walk{
+  from{transform:translate3d(-14vw,0,0)}
+  to  {transform:translate3d(114vw,0,0)}
+}
+@keyframes spider-legs{
+  0%,100%{transform:rotate(-4deg)}
+  50%    {transform:rotate(4deg)}
+}
+/* כל עכביש בגובה, גודל, קצב והשהיה משלו — אחרת הם צועדים במקהלה */
+.spider--1{inset-block-start:14%; inline-size:52px; animation-duration:78s;  animation-delay:-6s}
+.spider--2{inset-block-start:38%; inline-size:34px; animation-duration:96s;  animation-delay:-38s; opacity:.09}
+.spider--3{inset-block-start:63%; inline-size:44px; animation-duration:66s;  animation-delay:-22s; opacity:.13}
+.spider--4{inset-block-start:82%; inline-size:28px; animation-duration:110s; animation-delay:-71s; opacity:.08}
+.spider--3 .spider__legs{animation-duration:.62s}
+.spider--2 .spider__legs{animation-duration:1.05s}
+.spider--4 .spider__legs{animation-duration:.94s}
+
+/* ============================================================
+   רצף קינטי — כותרת "אתה מפסיד לקוחות עכשיו"
+   ============================================================ */
+.kin{transition:opacity .5s ease, text-shadow .5s ease}
+.rv-on .kin{opacity:.82}
+.kin.is-lit{opacity:1; text-shadow:0 0 26px rgba(255,255,255,.28)}
+
+.kin__danger{transition:color .6s ease, text-shadow .6s ease}
+.kin.is-danger .kin__danger{
+  color:var(--danger-red);
+  text-shadow:0 0 22px var(--danger-red-glow);
+}
+.kin__anchor{position:relative}
+
+/* החלקיק "− ₪" — יוצא מהמילה "לקוחות" ונח בתוך החתך, לא בתחתית
+   החלון. ⚠️ אחרת הוא מתנגש בכפתור הוואטסאפ הצף ובטולטיפ שלו. */
+.coin{
+  position:absolute; z-index:3; pointer-events:none;
+  inset-block-start:0; inset-inline-start:50%;
+  font-weight:900; font-size:1.05rem; letter-spacing:-.02em; white-space:nowrap;
+  color:var(--danger-red);
+  text-shadow:0 0 16px var(--danger-red-glow);
+  animation:coin-arc 1.15s cubic-bezier(.32,.9,.36,1) forwards,
+            coin-fade .55s ease 3.4s forwards;
+}
+/* קשת ונחיתה בלי מנוע פיזיקה — רק עקומת האטה אחת */
+@keyframes coin-arc{
+  0%  {transform:translate(0,0) rotate(0) scale(.7); opacity:0}
+  12% {opacity:1; transform:translate(-6px,-14px) rotate(-8deg) scale(1)}
+  55% {transform:translate(-26px,-30px) rotate(-16deg) scale(1.04)}
+  78% {transform:translate(-40px,26px) rotate(-6deg) scale(1)}
+  88% {transform:translate(-44px,14px) rotate(-2deg) scale(1)}
+  100%{transform:translate(-48px,32px) rotate(0) scale(1)}
+}
+@keyframes coin-fade{ to{opacity:0; transform:translate(-48px,44px) scale(.9)} }
+
+/* ============================================================
+   כרטיסי הכאב — איקס אדום וזוהר אדום
+   ------------------------------------------------------------
+   חריג מכוון ומתועד לכלל "סגול אחד", מוגבל לחתך הזה בלבד.
+   ============================================================ */
+.pain .card__x{
+  position:absolute; inset-block-start:var(--s4); inset-inline-end:var(--s4);
+  inline-size:20px; block-size:20px; color:var(--danger-red); opacity:.85;
+}
+.pain .card__x svg{inline-size:100%; block-size:100%}
+.pain .card:hover,
+.pain .card.is-tapped{
+  border-color:rgba(255,59,78,.45);
+  box-shadow:var(--shadow-float), 0 0 52px var(--danger-red-glow);
+}
+
+/* ============================================================
+   אמוג׳י בכרטיסי התהליך
+   ------------------------------------------------------------
+   כל אמוג׳י הוא יחידה שלמה. אין פירוק פנימי של גליף.
+   ההפעלה: hover בדסקטופ, is-tapped בנייד (אותו מנגנון קיים).
+   ============================================================ */
+.stepc__fx{
+  position:relative; block-size:44px; margin-block-end:var(--s2);
+  font-size:30px; line-height:1; user-select:none;
+}
+.stepc__fx span{position:absolute; inset-block-start:0; inset-inline-start:0; display:inline-block}
+
+/* 01 + 02 — אותו רעד בדיוק, לשם עקביות */
+@keyframes fx-jitter{
+  0%,100%{transform:rotate(0) translate(0,0)}
+  15%{transform:rotate(-13deg) translate(-2px,1px)}
+  30%{transform:rotate(11deg) translate(2px,-1px)}
+  45%{transform:rotate(-9deg) translate(-2px,0)}
+  60%{transform:rotate(8deg) translate(2px,1px)}
+  75%{transform:rotate(-5deg) translate(-1px,0)}
+}
+:is(.stepc:hover, .stepc.is-tapped) .fx-ring,
+:is(.stepc:hover, .stepc.is-tapped) .fx-eyes{
+  animation:fx-jitter .55s ease-in-out 3;
+}
+
+/* 03 — פטיש, אבן, ואז וי */
+@keyframes fx-hammer{
+  0%,100%{transform:rotate(-32deg)}
+  12%{transform:rotate(6deg)}  22%{transform:rotate(-32deg)}
+  40%{transform:rotate(6deg)}  50%{transform:rotate(-32deg)}
+  68%{transform:rotate(6deg)}  78%{transform:rotate(-28deg)}
+}
+@keyframes fx-rock{
+  0%,8%,26%,36%,54%,64%,100%{transform:translateY(0) scale(1)}
+  14%{transform:translateY(3px) scale(.9)}
+  42%{transform:translateY(3px) scale(.9)}
+  70%{transform:translateY(3px) scale(.88)}
+}
+@keyframes fx-out{ to{opacity:0; transform:scale(.8)} }
+@keyframes fx-in{
+  0%{opacity:0; transform:scale(.4)}
+  70%{opacity:1; transform:scale(1.18)}
+  100%{opacity:1; transform:scale(1)}
+}
+.stepc__fx .fx-hammer{transform-origin:80% 80%}
+.stepc__fx .fx-rock{inset-inline-start:34px}
+.stepc__fx .fx-check{opacity:0; inset-inline-start:6px}
+:is(.stepc:hover, .stepc.is-tapped) .fx-hammer{animation:fx-hammer 1.5s ease-in-out 1, fx-out .3s ease 1.5s forwards}
+:is(.stepc:hover, .stepc.is-tapped) .fx-rock  {animation:fx-rock   1.5s ease-in-out 1, fx-out .3s ease 1.5s forwards}
+:is(.stepc:hover, .stepc.is-tapped) .fx-check {animation:fx-in .45s cubic-bezier(.2,1.4,.4,1) 1.75s forwards}
+
+/* 04 — מטוס נייר. עף שמאלה: זה כיוון ההמשך בפריסת RTL. */
+@keyframes fx-plane{
+  0%  {transform:translate(0,0) rotate(0); opacity:1}
+  35% {transform:translate(-26px,-16px) rotate(-14deg)}
+  70% {transform:translate(-52px,-6px) rotate(-4deg)}
+  100%{transform:translate(-78px,10px) rotate(6deg); opacity:0}
+}
+:is(.stepc:hover, .stepc.is-tapped) .fx-plane{animation:fx-plane 1.25s cubic-bezier(.35,.1,.5,1) 1 forwards}
+
+/* ============================================================
+   טולטיפ הוואטסאפ
+   ============================================================ */
+.fabtip{
+  position:fixed; z-index:61;
+  inset-block-end:92px; inset-inline-end:20px;
+  max-inline-size:min(290px, calc(100vw - 40px));
+  display:flex; align-items:flex-start; gap:10px;
+  padding:13px 14px;
+  background:var(--surface); border:1px solid rgba(37,211,102,.4);
+  border-radius:var(--r-md);
+  box-shadow:var(--shadow-float), 0 0 40px rgba(37,211,102,.18);
+  color:var(--soft); font-size:var(--t-sm); font-weight:700; line-height:1.5;
+  /* אנימציה ולא transition: הרכיב נולד כבר במצבו הסופי, ולכן
+     transition לא היה רץ כלל בלי class שנוסף בפריים נפרד. */
+  animation:fabtip-in .45s cubic-bezier(.2,.8,.3,1) both;
+}
+.fabtip.is-closing{animation:fabtip-out .3s ease both}
+@keyframes fabtip-in{
+  from{opacity:0; transform:translateY(8px)}
+  to  {opacity:1; transform:translateY(0)}
+}
+@keyframes fabtip-out{
+  from{opacity:1; transform:translateY(0)}
+  to  {opacity:0; transform:translateY(6px)}
+}
+.fabtip__x{
+  flex:none; inline-size:26px; block-size:26px; border-radius:50%;
+  background:rgba(255,255,255,.07); border:1px solid var(--hairline-2);
+  color:var(--ink); cursor:pointer; display:grid; place-items:center;
+  font-size:.85rem; line-height:1; transition:background-color .2s;
+}
+.fabtip__x:hover{background:rgba(255,255,255,.15)}
+@media (max-width:400px){ .fabtip{inset-block-end:88px} }
+
+/* ============================================================
    העדפת תנועה מופחתת
    ============================================================ */
 @media (prefers-reduced-motion:reduce){
@@ -715,6 +935,24 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   .grain{display:none}
   /* animation-duration לא מבטל animation-timeline: view() — צריך לכבות את השם */
   .card, .stepc, .faq details, .dline{animation-name:none}
+
+  /* ---- Phase 3 ----
+     העיקרון: לא מבטלים את האלמנט, מקפיאים אותו במצב סטטי.
+     העכבישים נשארים גלויים ועומדים; הרצף הקינטי מבצע רק את
+     מעבר הצבע; החלקיק לא נוצר כלל (נחסם גם ב-JS). */
+  .spider{animation-name:none}
+  .spider--1{transform:translate3d(12vw,0,0)}
+  .spider--2{transform:translate3d(46vw,0,0)}
+  .spider--3{transform:translate3d(72vw,0,0)}
+  .spider--4{transform:translate3d(28vw,0,0)}
+  .spider__legs{animation-name:none}
+  .coin{display:none}
+  .kin{opacity:1}
+  /* מצב הסיום מוצג מיד: וי במקום רצף הפטיש, שאר האמוג׳י סטטיים */
+  .stepc__fx :is(.fx-ring,.fx-eyes,.fx-hammer,.fx-rock,.fx-check,.fx-plane){animation-name:none}
+  .stepc__fx .fx-hammer, .stepc__fx .fx-rock{display:none}
+  .stepc__fx .fx-check{opacity:1}
+  .fabtip{animation:none}
 }
 
 /* ============================================================
