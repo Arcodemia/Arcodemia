@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { CONFIG } from '@/lib/config';
+import { AmbientGlow } from '@/components/AmbientGlow';
 import './globals.css';
 
 /* ============================================================
@@ -213,6 +214,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {/* חייב לרוץ לפני הציור הראשון — ולכן ראשון ב-body */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
+        {/* ילד ישיר של body — position:fixed ביחס לחלון, בלי מלכודת containing-block */}
+        <AmbientGlow />
         {children}
       </body>
     </html>
