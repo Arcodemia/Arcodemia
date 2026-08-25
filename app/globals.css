@@ -227,6 +227,12 @@ section{padding-block:var(--s8)}
   .nav__cta{margin-inline-start:0}
   .nav__menu-btn{display:none}
 }
+/* מתחת ל-900px ההמבורגר גלוי. בלי CTA בוואטסאפ בנאב — הכפתור
+   יושב במקומו משמאל, הלוגו נשאר בימין. order לא משנה את ה-DOM. */
+@media (max-width:899px){
+  .nav__cta{display:none}
+  .nav__menu-btn{order:1; margin-inline-start:auto}
+}
 
 /* ============================================================
    HERO
