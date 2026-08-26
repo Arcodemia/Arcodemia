@@ -1,72 +1,87 @@
 /* ============================================================
-   חיפושיות ברקע — חלקו האחרון של הדף
+   חיפושיות ברקע
    ------------------------------------------------------------
-   אותו עיקרון כמו [[Spiders]]: SVG מוטבע, אפס בקשות רשת, אפס
-   משקל נוסף. דקורטיבי לחלוטין — aria-hidden, pointer-events:none,
-   z-index מתחת לכל טקסט.
+   רכיב אחד לשני האזורים:
+     zone="mid" — הרצועה שבין ה-hero ל"בלי סיכון" (החליף את
+                  העכבישים שהיו כאן).
+     zone="end" — טופס הפנייה והשאלות הנפוצות.
+   אותה חיפושית בדיוק בשניהם. שני עיצובים שונים על אותו דף
+   נראים כמו תקלה, לא כמו כוונה.
 
-   🔑 החיפושית מצוירת **ממבט על**, ולכן הראש שלה מצביע למעלה
-   בתוך ה-viewBox. הזחילה היא אופקית, ולכן יש עטיפה פנימית
-   (.bug__b) שמסובבת את הגוף לכיוון ההליכה. בלי הסיבוב הן היו
-   נראות כמו חיפושיות שמחליקות הצידה.
+   SVG מוטבע ולא תמונות — אפס בקשות רשת, אפס משקל נוסף.
+   דקורטיבי לחלוטין: aria-hidden, pointer-events:none, z-index
+   מתחת לכל טקסט וכרטיס.
 
-   🔑 הרגליים בשתי קבוצות בפאזה הפוכה, בדיוק כמו בעכבישים.
-   קבוצה אחת שמסתובבת יחד נראית כרעידה ולא כזחילה.
+   🔑 החיפושית מצוירת **פונה ימינה**, וזה גם כיוון ההליכה
+   כברירת מחדל. מי שהולכת שמאלה מקבלת scaleX(-1) על הגוף
+   ו-animation-direction:reverse על התנועה — שניהם יחד, אחרת
+   היא צועדת אחורנית.
+
+   🔑 הרגליים בשתי קבוצות בפאזה הפוכה. קבוצה אחת שמסתובבת יחד
+   נראית כרעידה ולא כזחילה.
 
    ⚠️ prefers-reduced-motion: קופאות פרושות לרוחב, לא נעלמות.
    ============================================================ */
 
 function BugGlyph() {
   return (
-    <svg viewBox="0 0 40 52" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      {/* מחושים — ארוכים וסוחפים. זה מה שמבדיל חיפושית מכתם. */}
-      <path d="M17 11 C13 5 9 2.5 4.5 1" opacity=".75" />
-      <path d="M23 11 C27 5 31 2.5 35.5 1" opacity=".75" />
-
-      {/* רגליים ימין — כל אחת עם מפרק, אחרת אלה קווים ולא רגליים */}
+    <svg viewBox="0 0 68 52" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      {/* רגליים עליונות */}
       <g className="bug__legs bug__legs--r">
-        <path d="M27.5 26 L36 22.5 L38.8 26.5" />
-        <path d="M29.5 34 L38.5 34.5 L39.5 40" />
-        <path d="M28 42 L35.5 47 L37 51" />
+        <path d="M15 14 L10 7 L5 3" />
+        <path d="M26 12.5 L24 5 L20 2" />
+        <path d="M38 15 L39 7 L36 3" />
       </g>
-      {/* רגליים שמאל */}
+      {/* רגליים תחתונות */}
       <g className="bug__legs bug__legs--l">
-        <path d="M12.5 26 L4 22.5 L1.2 26.5" />
-        <path d="M10.5 34 L1.5 34.5 L0.5 40" />
-        <path d="M12 42 L4.5 47 L3 51" />
+        <path d="M15 38 L10 45 L5 49" />
+        <path d="M26 39.5 L24 47 L20 50" />
+        <path d="M38 37 L39 45 L36 49" />
       </g>
 
-      {/* ראש */}
-      <ellipse cx="20" cy="12" rx="4.2" ry="3.4" fill="currentColor" stroke="none" opacity=".55" />
-      {/* מגן הצוואר */}
-      <path d="M13.6 16.4 Q20 14 26.4 16.4 L28 22.5 Q20 20 12 22.5 Z" fill="currentColor" stroke="none" opacity=".4" />
-      {/* כנפיים קשות */}
+      {/* גוף */}
+      <ellipse cx="25" cy="26" rx="19" ry="13.5" fill="currentColor" stroke="none" opacity=".32" />
+      <ellipse cx="25" cy="26" rx="19" ry="13.5" />
+      {/* הקו שחוצה את הגוף */}
+      <path d="M8 26 L42 26" strokeWidth="1.9" />
+      {/* הספירלה — הסימן שעל הגב */}
       <path
-        d="M20 21 C29 21 32.5 28 32.5 36 C32.5 45.6 26.8 50.5 20 50.5 C13.2 50.5 7.5 45.6 7.5 36 C7.5 28 11 21 20 21 Z"
-        fill="currentColor"
-        stroke="none"
-        opacity=".3"
+        d="M24 26 L24 23.5 L26.5 23.5 L26.5 28.5 L21.5 28.5 L21.5 21 L29 21 L29 31 L19 31 L19 18.5 L31.5 18.5 L31.5 33.5"
+        strokeWidth="1.9"
       />
-      <path d="M20 21 C29 21 32.5 28 32.5 36 C32.5 45.6 26.8 50.5 20 50.5 C13.2 50.5 7.5 45.6 7.5 36 C7.5 28 11 21 20 21 Z" />
-      {/* התפר שבין שתי הכנפיים */}
-      <path d="M20 24 L20 47" opacity=".6" />
+
+      {/* מגן הצוואר */}
+      <path d="M44 20 Q49 19 51 22 L51 30 Q49 33 44 32 Z" fill="currentColor" stroke="none" opacity=".32" />
+      <path d="M44 20 Q49 19 51 22 L51 30 Q49 33 44 32 Z" />
+      {/* ראש */}
+      <circle cx="57" cy="26" r="5.5" fill="currentColor" stroke="none" opacity=".32" />
+      <circle cx="57" cy="26" r="5.5" />
+      {/* מחושים */}
+      <path d="M60 22.5 C63 19 65 16 66.5 13" />
+      <path d="M60 29.5 C63 33 65 36 66.5 39" />
     </svg>
   );
 }
 
-/** מספר החיפושיות. גודל, גובה, כיוון וקצב לכל אחת ב-CSS. */
-const COUNT = 7;
+/** כמה חיפושיות בכל אזור. גודל, גובה וקצב לכל אחת ב-CSS. */
+const COUNT = { mid: 9, end: 7 } as const;
 
-export function Bugs() {
+/** אלה שהולכות שמאלה. עדר שכולו לכיוון אחד מסגיר לולאה אחת שהועתקה. */
+const LEFTWARD = new Set([2, 4, 7]);
+
+export function Bugs({ zone }: { zone: 'mid' | 'end' }) {
   return (
-    <div className="bugs" aria-hidden="true">
-      {Array.from({ length: COUNT }, (_, i) => (
-        <div className={`bug bug--${i + 1}`} key={i}>
-          <div className="bug__b">
-            <BugGlyph />
+    <div className={`bugs bugs--${zone}`} aria-hidden="true">
+      {Array.from({ length: COUNT[zone] }, (_, i) => {
+        const n = i + 1;
+        return (
+          <div className={`bug bug--${n}${LEFTWARD.has(n) ? ' is-rtl' : ''}`} key={i}>
+            <div className="bug__b">
+              <BugGlyph />
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

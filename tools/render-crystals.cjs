@@ -94,67 +94,20 @@ float sdCrystal(vec3 p, float h, float r){
   return max(d,t);
 }
 
-/* ============================================================
-   מיקום וגודל הגבישים
-   ------------------------------------------------------------
-   ⚠️ הגבישים חייבים להיכנס **במלואם** למסגרת. הגרסה הקודמת
-   גזרה את המיקום מ-ax(), שדחף אותם החוצה ככל שהתמונה רחבה
-   יותר — ולכן שלושתם נחתכו בקצוות ובתחתית.
-
-   כאן המיקום נגזר מההיטל עצמו. המצלמה ב-z=-9 ואורך המוקד 1.55,
-   ולכן נקודה בעולם ממופה ל-uv לפי:  uv = xy * 1.55 / (z + 9)
-   place() הוא ההיפוך: יעד ב-uv → מיקום בעולם.
-   extU() הוא חצי-המוטב המוטל — האלכסון sqrt(L²+r²), כדי שגם
-   בסיבוב הגרוע ביותר הגביש עדיין נכנס.
-
-   המסגרת: uv.x בין ±halfW, uv.y תמיד בין ±0.5. כל גביש ממוקם
-   בדיוק MX/MY מהקצה, ולכן הוא שלם בכל יחס תמונה.
-
-   ⚠️ ככל שהתמונה צרה יותר הגבישים מתקרבים למרכז — אי אפשר גם
-   שלם, גם גדול וגם בפינה במסגרת צרה. זה המחיר של "שלמים",
-   והוא מכוון. אם צריך אותם שוב בפינות, הקטינו את KS.
-   ============================================================ */
-float halfW(){ return 0.5 * uFull.x / uFull.y; }
-
-/* ⚠️ השוליים חייבים לכסות **שני** חיתוכים, לא אחד:
-     1. מסגרת התמונה עצמה.
-     2. החיתוך הנוסף ש-object-fit:cover מבצע בדפדפן, שתלוי ביחס
-        של תיבת ה-hero ומשתנה עם רוחב החלון.
-   עם שוליים אחידים של 0.045 התמונה יצאה מושלמת — והדפדפן חתך
-   אותה שוב: 13.5% ב-1920x1080 ו-9.8% ב-360x780. נמדד ולא נוחש,
-   ראו tools/check-crystal-clipping.cjs. שוליים לכל ציר בנפרד, כי החיתוך תמיד
-   בציר אחד בלבד. */
-float MX(){ return max(0.13, 0.18*halfW()); }
-float MY(){ return 0.115; }
-const float ZA = 0.40, ZB = -0.60, ZC = -3.10;
-
-/* 🔑 הגודל תלוי ביחס התמונה, ולא קבוע.
-   במסגרת צרה אי אפשר גביש שהוא גם שלם, גם גדול וגם מחוץ למרכז —
-   וגביש ענק במרכז חונק את הכותרת. בגרסת המובייל (900x1150) גודל
-   קבוע של 0.62 מילא את כל המסך והכותרת ישבה עליו. לכן הגודל יורד
-   יחד עם היחס. אלה פונקציות ולא const: const ב-GLSL חייב ביטוי
-   קבוע, ו-uFull הוא uniform. */
-float ks(){ return clamp(-0.10 + 0.45*(uFull.x/uFull.y), 0.28, 0.62); }
-vec2 szA(){ return vec2(2.10, 0.86) * ks(); }
-vec2 szB(){ return vec2(1.85, 0.75) * ks(); }
-vec2 szC(){ return vec2(0.78, 0.30) * ks(); }
-
-float extU(float L, float r, float z){ return sqrt(L*L + r*r) * 1.55 / (z + 9.0); }
-vec3  place(vec2 t, float z){ return vec3(t * (z + 9.0) / 1.55, z); }
-
-vec3 pA(){ vec2 z=szA(); float e=extU(z.x,z.y,ZA); return place(vec2(-(halfW()-e-MX()),  0.10), ZA); }
-vec3 pB(){ vec2 z=szB(); float e=extU(z.x,z.y,ZB); return place(vec2(  halfW()-e-MX(),  -0.13), ZB); }
-/* הקטן יושב בפינה התחתונה — ולכן מוגבל גם בציר האנכי */
-vec3 pC(){ vec2 z=szC(); float e=extU(z.x,z.y,ZC); return place(vec2((halfW()-e-MX())*0.72, (0.5-e-MY())*0.86), ZC); }
+/* המיקום האופקי נגזר מיחס התמונה — אותו שיידר משרת רחב ולאורך */
+float ax(){ float a=uFull.x/uFull.y; return max(2.85, a*2.86); }
+vec3 pA(){ return vec3(-ax()*1.00,  0.75,  0.40); }
+vec3 pB(){ return vec3( ax()*1.05, -0.95, -0.60); }
+vec3 pC(){ return vec3( ax()*0.66,  2.30, -3.10); }
 
 mat3 mA(){ return rotZ(-0.60)*rotY( 1.30)*rotZ(0.28); } /* 0.55 pointed the end-cap at the key softbox and blew the face out */
 mat3 mB(){ return rotZ( 0.46)*rotY(-1.22)*rotZ(0.72); }
 mat3 mC(){ return rotZ(-1.15)*rotY( 0.95)*rotZ(2.05); }
 
 float map(vec3 p){
-  float a=SHOW_A>0.5 ? sdCrystal((p-pA())*mA(), szA().x, szA().y) : 1e5;
-  float b=SHOW_B>0.5 ? sdCrystal((p-pB())*mB(), szB().x, szB().y) : 1e5;
-  float c=SHOW_C>0.5 ? sdCrystal((p-pC())*mC(), szC().x, szC().y) : 1e5;
+  float a=SHOW_A>0.5 ? sdCrystal((p-pA())*mA(), 2.10, 0.86) : 1e5;
+  float b=SHOW_B>0.5 ? sdCrystal((p-pB())*mB(), 1.85, 0.75) : 1e5;
+  float c=SHOW_C>0.5 ? sdCrystal((p-pC())*mC(), 0.78, 0.30) : 1e5;
   return min(min(a,b),c);
 }
 vec3 nrm(vec3 p){
@@ -370,9 +323,9 @@ vec3 hueRot(vec3 col, float a){
   return col*c + cross(k,col)*s + k*dot(k,col)*(1.0-c);
 }
 bool hitA(vec3 p){
-  float a=sdCrystal((p-pA())*mA(), szA().x, szA().y);
-  float b=sdCrystal((p-pB())*mB(), szB().x, szB().y);
-  float c=sdCrystal((p-pC())*mC(), szC().x, szC().y);
+  float a=sdCrystal((p-pA())*mA(), 2.10, 0.86);
+  float b=sdCrystal((p-pB())*mB(), 1.85, 0.75);
+  float c=sdCrystal((p-pC())*mC(), 0.78, 0.30);
   return a<=b && a<=c;
 }
 

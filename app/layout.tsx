@@ -183,27 +183,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ו-<head> מפורש מונע ממנו להוסיף חלק מהתגים — בפועל
             viewport-fit=cover נעלם בלי שום שגיאה.
             React מרים <link> ו-<script> להאד לבד. */}
-        {/* טווחי ה-media חייבים להיות זהים לאלה שב-Hero.tsx.
-            אם הם מתפצלים, הדפדפן מקדים לטעון תמונה אחת ומציג אחרת —
-            כלומר משלם פעמיים ומאבד את ה-LCP. */}
         <link
           rel="preload"
           as="image"
-          href="/img/hero-ultra.e6fae8.webp"
-          media="(min-width:1280px)"
+          href="/img/hero-wide.27fe1a.webp"
+          media="(min-width:834px)"
           fetchPriority="high"
         />
         <link
           rel="preload"
           as="image"
-          href="/img/hero-wide.fdb2c1.webp"
-          media="(min-width:834px) and (max-width:1279px)"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/img/hero-tall.023934.webp"
+          href="/img/hero-tall.1494c2.webp"
           media="(max-width:833px)"
           fetchPriority="high"
         />

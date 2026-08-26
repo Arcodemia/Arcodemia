@@ -49,20 +49,12 @@ export function Hero() {
       {/* שם הקובץ כולל hash של הבתים. /img/* נשמר שנה כ-immutable —
          רנדר מחדש חייב לייצר שם חדש, אחרת הדפדפן ישאיר את התמונה הישנה.
          הגביש השמאלי בתמונה האפויה הוא העתק 2D של הימני — ראו log.md. */}
-      {/* ⚠️ שלושה מקורות ולא שניים.
-         תיבת ה-hero היא תמיד 657px גובה ברוחב שולחני, ולכן היחס
-         שלה נע בין 1.6 ל-2.9 — ו-object-fit:cover חותך את ההפרש.
-         עם מקור אחד ל-834px ומעלה הגבישים נחתכו 13.5% ב-1920x1080.
-         כל מקור מרונדר ביחס שקרוב לטווח שהוא משרת, וכך החיתוך
-         הנוסף של הדפדפן נשאר בתוך השוליים שנבנו לתוך התמונה.
-         המדידה: tools/check-crystal-clipping.cjs. */}
       <picture className="hero__art">
-        <source media="(min-width:1280px)" srcSet="/img/hero-ultra.e6fae8.webp" width={1800} height={760} />
-        <source media="(max-width:833px)" srcSet="/img/hero-tall.023934.webp" width={900} height={1150} />
+        <source media="(max-width:833px)" srcSet="/img/hero-tall.1494c2.webp" width={900} height={1150} />
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
-          src="/img/hero-wide.fdb2c1.webp"
+          src="/img/hero-wide.27fe1a.webp"
           alt=""
           aria-hidden="true"
           width={1800}
