@@ -50,11 +50,11 @@ export function Hero() {
          רנדר מחדש חייב לייצר שם חדש, אחרת הדפדפן ישאיר את התמונה הישנה.
          הגביש השמאלי בתמונה האפויה הוא העתק 2D של הימני — ראו log.md. */}
       <picture className="hero__art">
-        <source media="(max-width:833px)" srcSet="/img/hero-tall.1494c2.webp" width={900} height={1150} />
+        <source media="(max-width:833px)" srcSet="/img/hero-tall.e84140.webp" width={900} height={1150} />
         <img
           ref={imgRef}
           className={loaded ? 'is-on' : undefined}
-          src="/img/hero-wide.27fe1a.webp"
+          src="/img/hero-wide.e977b0.webp"
           alt=""
           aria-hidden="true"
           width={1800}

@@ -9,16 +9,6 @@ interface Pain {
   body: string;
 }
 
-/* ✕ כ-SVG מוטבע ולא אמוג׳י — כדי שהצבע יישלט מ-var(--neon)
-   ושהוא ייראה זהה בכל מערכת הפעלה. */
-function CrossIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
-      <path d="M6 6 18 18M18 6 6 18" />
-    </svg>
-  );
-}
-
 const PAINS: Pain[] = [
   {
     icon: (
@@ -214,9 +204,6 @@ export function PainPoints() {
         <div className="grid grid--4">
           {PAINS.map((p) => (
             <article className="card rv" key={p.title}>
-              <span className="card__x" aria-hidden="true">
-                <CrossIcon />
-              </span>
               <div className="card__icon">{p.icon}</div>
               <h3>{p.title}</h3>
               <p>{p.body}</p>

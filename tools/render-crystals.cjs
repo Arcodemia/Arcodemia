@@ -27,8 +27,14 @@ const H    = Number(process.argv[3] || 1120);
 const TILE = Number(process.argv[4] || 450);
 /* full (ברירת מחדל) = הסצנה הרגילה. שכבות לקומפוזיט 2D בלבד:
    noA = בלי הגביש השמאלי, onlyB = רק הימני, onlyA = רק השמאלי. */
+/* ⚠️ full היא הסצנה שנשלחת לדף, ובה נשאר גביש **אחד** בלבד.
+   a (שמאלי) כובה ב-27.8 לבקשת הלקוח — הוא נכנס מהפינה חתוך.
+   c (הקטן מלמטה) כובה מאותה סיבה בדיוק: הוא מציץ חתוך בפינה
+   הימנית-התחתונה ברוחב 1024 ומטה. b הוא היחיד שנשאר, והוא
+   ממוקם כך שהוא שלם בכל רוחב.
+   noA/onlyB/onlyA נשארו לכלי הקומפוזיט הדו-ממדי. */
 const LAYERS = {
-  full:  { a: 1, b: 1, c: 1 },
+  full:  { a: 0, b: 1, c: 0 },
   noA:   { a: 0, b: 1, c: 1 },
   onlyB: { a: 0, b: 1, c: 0 },
   onlyA: { a: 1, b: 0, c: 0 },
@@ -97,8 +103,35 @@ float sdCrystal(vec3 p, float h, float r){
 /* המיקום האופקי נגזר מיחס התמונה — אותו שיידר משרת רחב ולאורך */
 float ax(){ float a=uFull.x/uFull.y; return max(2.85, a*2.86); }
 vec3 pA(){ return vec3(-ax()*1.00,  0.75,  0.40); }
-vec3 pB(){ return vec3( ax()*1.05, -0.95, -0.60); }
 vec3 pC(){ return vec3( ax()*0.66,  2.30, -3.10); }
+
+/* ============================================================
+   הגביש הימני — היחיד שאמור להיראות שלם
+   ------------------------------------------------------------
+   ⚠️ המיקום והגודל נגזרים מיחס התמונה ולא קבועים, כי הבקשה היא
+   שהוא ייכנס במלואו למסגרת. במסגרת צרה אין דרך לעשות את זה בלי
+   להקטין אותו ולמשוך אותו פנימה.
+
+   המצלמה ב-z=-9 ואורך המוקד 1.55, ולכן נקודה בעולם ממופה ל-uv
+   לפי  uv = xy * 1.55 / (z + 9)  — וההיפוך נותן את המיקום.
+   חצי-המסגרת ב-x הוא halfW, וב-y תמיד 0.5.
+   ה-extent הוא האלכסון sqrt(L²+r²), כדי שגם בסיבוב הגרוע ביותר
+   הגביש עדיין נכנס.
+
+   ⚠️ השוליים גדלים ככל שהמסגרת צרה: object-fit:cover בדפדפן
+   חותך את ההפרש בין יחס התמונה ליחס תיבת ה-hero, ובמסגרת לאורך
+   החיתוך האופקי מגיע ל-14%.
+   ============================================================ */
+float halfW(){ return 0.5 * uFull.x / uFull.y; }
+float kB(){ return clamp(0.20 + 0.16*(uFull.x/uFull.y), 0.30, 0.46); }
+vec2  szB(){ return vec2(1.85, 0.75) * kB(); }
+float mgB(){ return 0.05 + 0.24 * clamp(1.2 - uFull.x/uFull.y, 0.0, 1.0); }
+vec3 pB(){
+  vec2 z = szB();
+  float e = sqrt(z.x*z.x + z.y*z.y) * 1.55 / 8.4;
+  float ux = halfW() - e - mgB();
+  return vec3(ux * 8.4 / 1.55, -0.05 * 8.4 / 1.55, -0.60);
+}
 
 mat3 mA(){ return rotZ(-0.60)*rotY( 1.30)*rotZ(0.28); } /* 0.55 pointed the end-cap at the key softbox and blew the face out */
 mat3 mB(){ return rotZ( 0.46)*rotY(-1.22)*rotZ(0.72); }
@@ -106,7 +139,7 @@ mat3 mC(){ return rotZ(-1.15)*rotY( 0.95)*rotZ(2.05); }
 
 float map(vec3 p){
   float a=SHOW_A>0.5 ? sdCrystal((p-pA())*mA(), 2.10, 0.86) : 1e5;
-  float b=SHOW_B>0.5 ? sdCrystal((p-pB())*mB(), 1.85, 0.75) : 1e5;
+  float b=SHOW_B>0.5 ? sdCrystal((p-pB())*mB(), szB().x, szB().y) : 1e5;
   float c=SHOW_C>0.5 ? sdCrystal((p-pC())*mC(), 0.78, 0.30) : 1e5;
   return min(min(a,b),c);
 }
@@ -324,7 +357,7 @@ vec3 hueRot(vec3 col, float a){
 }
 bool hitA(vec3 p){
   float a=sdCrystal((p-pA())*mA(), 2.10, 0.86);
-  float b=sdCrystal((p-pB())*mB(), 1.85, 0.75);
+  float b=sdCrystal((p-pB())*mB(), szB().x, szB().y);
   float c=sdCrystal((p-pC())*mC(), 0.78, 0.30);
   return a<=b && a<=c;
 }
