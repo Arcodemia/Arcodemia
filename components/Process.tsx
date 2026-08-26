@@ -1,11 +1,87 @@
 import type { ReactNode } from 'react';
 
 /* ============================================================
-   כל אמוג׳י הוא יחידה שלמה — אין פירוק פנימי של גליף.
-   האנימציות עצמן ב-globals.css, ומופעלות מ-:hover בדסקטופ
-   ומ-.is-tapped בנייד (useTapSpotlight).
+   אייקוני השלבים
+   ------------------------------------------------------------
+   SVG מוטבע ולא אמוג׳י, משתי סיבות:
+     1. חסרי צבע לגמרי — currentColor, בדיוק כמו אייקוני
+        כרטיסי הכאב. אמוג׳י תמיד מגיע צבוע ואי אפשר לשלוט בו.
+     2. ⚠️ אמוג׳י נראה שונה בכל מערכת: אפל, אנדרואיד, ווינדוס
+        וסמסונג מציירים אותו אחרת. אין דרך לכפות סגנון אחד —
+        גופן האמוג׳י של אפל הוא קנייני ואסור להטמיע אותו.
+        SVG פותר את זה מהשורש: נראה זהה בכל מכשיר.
+
    דקורטיבי בלבד: aria-hidden. המשמעות נמצאת בטקסט של השלב.
+   האנימציות ב-globals.css — :hover בדסקטופ, .is-tapped בנייד.
    ============================================================ */
+
+const SVG = {
+  fill: 'none' as const,
+  stroke: 'currentColor',
+  strokeWidth: 1.7,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+};
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG}>
+      <path d="M11 4.5 8 3 5 6c0 9.4 7.6 17 17 17l3-3-1.5-3-4 1-4.5-4.5 1-4z" />
+      {/* גלי צלצול */}
+      <path d="M20 6.5a7 7 0 0 1 5.5 5.5M19.5 2a11.5 11.5 0 0 1 10.5 10.5" />
+    </svg>
+  );
+}
+
+function EyesIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG}>
+      <path d="M2 16s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z" />
+      <circle cx="11" cy="16" r="2.3" fill="currentColor" stroke="none" />
+      <path d="M30 16s-2.6 4.5-6.7 4.5" opacity=".55" />
+      <path d="M30 16s-2.6-4.5-6.7-4.5" opacity=".55" />
+    </svg>
+  );
+}
+
+function HammerIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG}>
+      <path d="M17 6.5 24 13" />
+      <path d="M20.5 3 29 11.5l-3.5 3.5L17 6.5z" />
+      <path d="m15.5 8-11 11a2.5 2.5 0 0 0 3.5 3.5l11-11" />
+    </svg>
+  );
+}
+
+function RockIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG}>
+      <path d="M4 24 8 13l8-4 10 5 2 10z" />
+      <path d="m8 13 8 5 10-4M16 18v6" opacity=".5" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG} strokeWidth={2.4}>
+      <path d="M5 17.5 12 24 27 8" />
+    </svg>
+  );
+}
+
+/* מטוס נייר — לא מטוס נוסעים. הקיפול האמצעי הוא מה שקורא אותו
+   כנייר מקופל ולא כמשולש. */
+function PaperPlaneIcon() {
+  return (
+    <svg viewBox="0 0 32 32" {...SVG}>
+      <path d="M29 3 2 13.5l9.5 4.2z" />
+      <path d="m29 3-17.5 14.7L14 29l4.6-7.2z" />
+      <path d="m11.5 17.7 7.1 4.1" opacity=".55" />
+    </svg>
+  );
+}
 
 interface Step {
   title: string;
@@ -17,12 +93,20 @@ const STEPS: Step[] = [
   {
     title: 'שיחה קצרה',
     body: 'מספרים לנו על העסק, מי הלקוחות ומה הייתם רוצים שיקרה כשמישהו נוחת על הדף.',
-    fx: <span className="fx-ring">📞</span>,
+    fx: (
+      <span className="fx-ring">
+        <PhoneIcon />
+      </span>
+    ),
   },
   {
     title: 'רואים את העיצוב',
     body: 'אנחנו מעצבים, ואתם רואים בדיוק איך הדף ייראה — לפני שמשלמים. אין התחייבות בשלב הזה.',
-    fx: <span className="fx-eyes">👀</span>,
+    fx: (
+      <span className="fx-eyes">
+        <EyesIcon />
+      </span>
+    ),
   },
   {
     title: 'תיקונים ואישור',
@@ -31,16 +115,26 @@ const STEPS: Step[] = [
     body: 'משנים צבעים, טקסטים, תמונות — עד שזה מרגיש כמו העסק שלכם.',
     fx: (
       <>
-        <span className="fx-hammer">🔨</span>
-        <span className="fx-rock">🪨</span>
-        <span className="fx-check">✔️</span>
+        <span className="fx-hammer">
+          <HammerIcon />
+        </span>
+        <span className="fx-rock">
+          <RockIcon />
+        </span>
+        <span className="fx-check">
+          <CheckIcon />
+        </span>
       </>
     ),
   },
   {
     title: 'עולה לאוויר',
     body: 'מחברים דומיין, מחברים את הוואטסאפ, ומוודאים שהכל עובד בנייד.',
-    fx: <span className="fx-plane">✈️</span>,
+    fx: (
+      <span className="fx-plane">
+        <PaperPlaneIcon />
+      </span>
+    ),
   },
 ];
 

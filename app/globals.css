@@ -734,48 +734,89 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   background-image:
     repeating-linear-gradient(to right,  rgba(255,255,255,.045) 0 1px, transparent 1px 72px),
     repeating-linear-gradient(to bottom, rgba(255,255,255,.045) 0 1px, transparent 1px 72px);
-  -webkit-mask-image:linear-gradient(to bottom, #000, #000 52%, transparent 92%);
-          mask-image:linear-gradient(to bottom, #000, #000 52%, transparent 92%);
+  /* מסכה רדיאלית ולא ליניארית: הרשת חזקה במרכז ונמוגה לכל הכיוונים,
+     כך שאין קו סיום אופקי שנראה כמו קצה של אריח. */
+  -webkit-mask-image:radial-gradient(72% 62% at 50% 46%, #000 18%, transparent 80%);
+          mask-image:radial-gradient(72% 62% at 50% 46%, #000 18%, transparent 80%);
 }
 
-/* הזוהר הסגול ממשיך מה-hero ונמוג לשחור */
+/* ============================================================
+   ערבוב השחור והסגול
+   ------------------------------------------------------------
+   🔑 הרצועה מתחילה **שחורה לגמרי**. אף בלום לא ממוקם מעל 46%,
+   ולכן מיד מתחת לקריסטלים אין שום צבע — הערבוב נכנס רק כשממשיכים
+   לגלול. גרדיאנט ליניארי מלמעלה יצר פס סגול שהתחיל בדיוק בתפר,
+   וזה מה שביקשנו להימנע ממנו.
+
+   כמה בלומים רכים ולא מעבר אחד: ככה הצבע נושם ואין קו ישר
+   שמסגיר גרדיאנט. אותו עיקרון כמו באתר הייחוס.
+   ============================================================ */
 .techbg::after{
   content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background:linear-gradient(to bottom,
-    rgba(177,75,255,.17),
-    rgba(177,75,255,.055) 28%,
-    rgba(0,0,0,0) 64%);
+  background:
+    radial-gradient(46% 30% at 16% 48%, rgba(177,75,255,.15), transparent 72%),
+    radial-gradient(40% 28% at 86% 60%, rgba(177,75,255,.115), transparent 74%),
+    radial-gradient(52% 32% at 50% 76%, rgba(150,64,232,.10), transparent 76%),
+    radial-gradient(30% 22% at 8% 90%,  rgba(177,75,255,.075), transparent 78%),
+    radial-gradient(34% 24% at 92% 94%, rgba(140,60,220,.06), transparent 78%);
 }
 
 /* ---------- עכבישים ---------- */
 .spiders{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
 .spider{
-  position:absolute;
+  /* left פיזי ולא inset-inline-start: הדף RTL, ולכן בלי עוגן מפורש
+     המיקום הסטטי הוא השוליים הימניים — ו-spider-walk הוא translateX
+     פיזי שדוחף משם עוד ימינה. בלי זה תשעה עכבישים יושבים מחוץ למסך. */
+  position:absolute; left:0;
   color:var(--line);
-  opacity:.12;
   will-change:transform;
   animation:spider-walk linear infinite;
 }
 .spider svg{display:block; inline-size:100%; block-size:auto}
-/* הרגליים נעות בנפרד מהגוף — שתי אנימציות, בלי JS */
-.spider__legs{transform-origin:50% 40%; animation:spider-legs .85s ease-in-out infinite}
+
+/* 🔑 שתי קבוצות רגליים בפאזה הפוכה — זה מה שקורא כהליכה.
+   קבוצה אחת שמסתובבת יחד נראית כמו רעידה. transform-box:fill-box
+   נדרש כדי ש-transform-origin יימדד ביחס לקבוצה עצמה ולא ל-SVG. */
+.spider__legs{transform-box:fill-box; transform-origin:center}
+.spider__legs--r{animation:legs-a .62s ease-in-out infinite}
+.spider__legs--l{animation:legs-b .62s ease-in-out infinite}
 
 @keyframes spider-walk{
-  from{transform:translate3d(-14vw,0,0)}
-  to  {transform:translate3d(114vw,0,0)}
+  from{transform:translate3d(-16vw,0,0)}
+  to  {transform:translate3d(116vw,0,0)}
 }
-@keyframes spider-legs{
-  0%,100%{transform:rotate(-4deg)}
-  50%    {transform:rotate(4deg)}
+/* אמפליטודה גדולה מספיק כדי שייראה, קטנה מספיק כדי שלא ייראה שבור */
+@keyframes legs-a{
+  0%,100%{transform:rotate(-9deg) translateY(0)}
+  50%    {transform:rotate(9deg) translateY(-1px)}
 }
-/* כל עכביש בגובה, גודל, קצב והשהיה משלו — אחרת הם צועדים במקהלה */
-.spider--1{inset-block-start:14%; inline-size:52px; animation-duration:78s;  animation-delay:-6s}
-.spider--2{inset-block-start:38%; inline-size:34px; animation-duration:96s;  animation-delay:-38s; opacity:.09}
-.spider--3{inset-block-start:63%; inline-size:44px; animation-duration:66s;  animation-delay:-22s; opacity:.13}
-.spider--4{inset-block-start:82%; inline-size:28px; animation-duration:110s; animation-delay:-71s; opacity:.08}
-.spider--3 .spider__legs{animation-duration:.62s}
-.spider--2 .spider__legs{animation-duration:1.05s}
-.spider--4 .spider__legs{animation-duration:.94s}
+@keyframes legs-b{
+  0%,100%{transform:rotate(9deg) translateY(-1px)}
+  50%    {transform:rotate(-9deg) translateY(0)}
+}
+
+/* תשעה עכבישים. גודל, גובה, קצב והשהיה שונים לכל אחד — אחרת הם
+   צועדים במקהלה וזה מסגיר מיד שזו לולאה אחת. */
+.spider--1{inset-block-start:10%; inline-size:86px;  animation-duration:64s;  animation-delay:-4s;  opacity:.15}
+.spider--2{inset-block-start:26%; inline-size:58px;  animation-duration:86s;  animation-delay:-33s; opacity:.11}
+.spider--3{inset-block-start:41%; inline-size:74px;  animation-duration:57s;  animation-delay:-19s; opacity:.16}
+.spider--4{inset-block-start:55%; inline-size:48px;  animation-duration:98s;  animation-delay:-61s; opacity:.10}
+.spider--5{inset-block-start:68%; inline-size:94px;  animation-duration:71s;  animation-delay:-46s; opacity:.14}
+.spider--6{inset-block-start:79%; inline-size:62px;  animation-duration:52s;  animation-delay:-11s; opacity:.12}
+.spider--7{inset-block-start:88%; inline-size:40px;  animation-duration:112s; animation-delay:-77s; opacity:.09}
+.spider--8{inset-block-start:18%; inline-size:52px;  animation-duration:93s;  animation-delay:-52s; opacity:.10}
+.spider--9{inset-block-start:63%; inline-size:68px;  animation-duration:79s;  animation-delay:-25s; opacity:.13}
+
+/* קצב רגליים שונה לכל אחד — עכביש גדול צועד לאט יותר */
+.spider--1 .spider__legs{animation-duration:.78s}
+.spider--2 .spider__legs{animation-duration:.55s}
+.spider--3 .spider__legs{animation-duration:.68s}
+.spider--4 .spider__legs{animation-duration:.49s}
+.spider--5 .spider__legs{animation-duration:.85s}
+.spider--6 .spider__legs{animation-duration:.60s}
+.spider--7 .spider__legs{animation-duration:.44s}
+.spider--8 .spider__legs{animation-duration:.72s}
+.spider--9 .spider__legs{animation-duration:.64s}
 
 /* ============================================================
    רצף קינטי — כותרת "אתה מפסיד לקוחות עכשיו"
@@ -791,27 +832,43 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 }
 .kin__anchor{position:relative}
 
-/* החלקיק "− ₪" — יוצא מהמילה "לקוחות" ונח בתוך החתך, לא בתחתית
-   החלון. ⚠️ אחרת הוא מתנגש בכפתור הוואטסאפ הצף ובטולטיפ שלו. */
+/* ============================================================
+   החלקיק "− ₪" — נופל לתחתית המסך
+   ------------------------------------------------------------
+   position:fixed ולא absolute, כי היעד הוא תחתית **החלון**.
+   נקודת ההתחלה מגיעה מ-JS (--x / --y, נמדדות מהמילה "לקוחות").
+
+   🔑 מרחק הנפילה מחושב כאן ולא ב-JS: calc(100dvh - --y - 46px).
+   אם --y נמדד תוך כדי גלילה חלקה הוא מיושן — אבל אז גם ה-top
+   מיושן באותה מידה, והחיסור מבטל את הסטייה. הנחיתה תמיד יוצאת
+   באותו מקום ביחס לחלון. עם מרחק שמחושב ב-JS החלקיק נפל 87px
+   מתחת לקצה המסך ונח מחוץ לתצוגה.
+
+   ⚠️ כפתור הוואטסאפ יושב בפינה התחתונה. z-index כאן נמוך משלו
+   ו-pointer-events:none, ולכן גם אם הם נפגשים הכפתור נשאר לחיץ.
+   ============================================================ */
 .coin{
-  position:absolute; z-index:3; pointer-events:none;
-  inset-block-start:0; inset-inline-start:50%;
-  font-weight:900; font-size:1.05rem; letter-spacing:-.02em; white-space:nowrap;
+  position:fixed; z-index:55; pointer-events:none;
+  inset-block-start:var(--y, 50%); inset-inline-start:var(--x, 50%);
+  --fall:calc(100dvh - var(--y, 50vh) - 46px);
+  font-weight:900; font-size:1.15rem; letter-spacing:-.02em; white-space:nowrap;
   color:var(--danger-red);
   text-shadow:0 0 16px var(--danger-red-glow);
-  animation:coin-arc 1.15s cubic-bezier(.32,.9,.36,1) forwards,
-            coin-fade .55s ease 3.4s forwards;
+  animation:coin-drop 1.5s cubic-bezier(.36,.06,.5,1) forwards,
+            coin-fade .5s ease 3.2s forwards;
 }
-/* קשת ונחיתה בלי מנוע פיזיקה — רק עקומת האטה אחת */
-@keyframes coin-arc{
-  0%  {transform:translate(0,0) rotate(0) scale(.7); opacity:0}
-  12% {opacity:1; transform:translate(-6px,-14px) rotate(-8deg) scale(1)}
-  55% {transform:translate(-26px,-30px) rotate(-16deg) scale(1.04)}
-  78% {transform:translate(-40px,26px) rotate(-6deg) scale(1)}
-  88% {transform:translate(-44px,14px) rotate(-2deg) scale(1)}
-  100%{transform:translate(-48px,32px) rotate(0) scale(1)}
+/* נפילה עם ריבאונד קטן — עקומה אחת, בלי מנוע פיזיקה */
+@keyframes coin-drop{
+  0%  {transform:translate(0,0) rotate(0) scale(.6); opacity:0}
+  9%  {opacity:1; transform:translate(-3px,-20px) rotate(-8deg) scale(1.05)}
+  52% {transform:translate(-12px, calc(var(--fall) * .70)) rotate(-20deg) scale(1)}
+  74% {transform:translate(-18px, var(--fall)) rotate(-28deg) scale(1)}
+  84% {transform:translate(-21px, calc(var(--fall) - 26px)) rotate(-34deg) scale(1)}
+  93% {transform:translate(-24px, var(--fall)) rotate(-39deg) scale(1)}
+  97% {transform:translate(-25px, calc(var(--fall) - 8px)) rotate(-41deg) scale(1)}
+  100%{transform:translate(-26px, var(--fall)) rotate(-42deg) scale(1)}
 }
-@keyframes coin-fade{ to{opacity:0; transform:translate(-48px,44px) scale(.9)} }
+@keyframes coin-fade{ to{opacity:0} }
 
 /* ============================================================
    כרטיסי הכאב — איקס אדום וזוהר אדום
@@ -836,10 +893,14 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
    ההפעלה: hover בדסקטופ, is-tapped בנייד (אותו מנגנון קיים).
    ============================================================ */
 .stepc__fx{
-  position:relative; block-size:44px; margin-block-end:var(--s2);
-  font-size:30px; line-height:1; user-select:none;
+  position:relative; block-size:40px; margin-block-end:var(--s2);
+  /* חסר צבע: currentColor יורש מכאן, בדיוק כמו אייקוני כרטיסי הכאב */
+  color:var(--line);
 }
-.stepc__fx span{position:absolute; inset-block-start:0; inset-inline-start:0; display:inline-block}
+.stepc__fx span{position:absolute; inset-block-start:0; inset-inline-start:0; display:block}
+.stepc__fx svg{inline-size:34px; block-size:34px}
+/* הפאה הבהירה נדלקת בריחוף, כמו שאר הכרטיס */
+:is(.stepc:hover, .stepc.is-tapped) .stepc__fx{color:var(--ink)}
 
 /* 01 + 02 — אותו רעד בדיוק, לשם עקביות */
 @keyframes fx-jitter{
@@ -875,8 +936,8 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   100%{opacity:1; transform:scale(1)}
 }
 .stepc__fx .fx-hammer{transform-origin:80% 80%}
-.stepc__fx .fx-rock{inset-inline-start:34px}
-.stepc__fx .fx-check{opacity:0; inset-inline-start:6px}
+.stepc__fx .fx-rock{inset-inline-start:38px}
+.stepc__fx .fx-check{opacity:0; inset-inline-start:2px}
 :is(.stepc:hover, .stepc.is-tapped) .fx-hammer{animation:fx-hammer 1.5s ease-in-out 1, fx-out .3s ease 1.5s forwards}
 :is(.stepc:hover, .stepc.is-tapped) .fx-rock  {animation:fx-rock   1.5s ease-in-out 1, fx-out .3s ease 1.5s forwards}
 :is(.stepc:hover, .stepc.is-tapped) .fx-check {animation:fx-in .45s cubic-bezier(.2,1.4,.4,1) 1.75s forwards}
@@ -941,11 +1002,17 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
      העכבישים נשארים גלויים ועומדים; הרצף הקינטי מבצע רק את
      מעבר הצבע; החלקיק לא נוצר כלל (נחסם גם ב-JS). */
   .spider{animation-name:none}
-  .spider--1{transform:translate3d(12vw,0,0)}
-  .spider--2{transform:translate3d(46vw,0,0)}
-  .spider--3{transform:translate3d(72vw,0,0)}
-  .spider--4{transform:translate3d(28vw,0,0)}
   .spider__legs{animation-name:none}
+  /* פרושים לרוחב במקום להיערם על השוליים */
+  .spider--1{transform:translate3d(8vw,0,0)}
+  .spider--2{transform:translate3d(72vw,0,0)}
+  .spider--3{transform:translate3d(34vw,0,0)}
+  .spider--4{transform:translate3d(88vw,0,0)}
+  .spider--5{transform:translate3d(20vw,0,0)}
+  .spider--6{transform:translate3d(58vw,0,0)}
+  .spider--7{transform:translate3d(44vw,0,0)}
+  .spider--8{transform:translate3d(80vw,0,0)}
+  .spider--9{transform:translate3d(12vw,0,0)}
   .coin{display:none}
   .kin{opacity:1}
   /* מצב הסיום מוצג מיד: וי במקום רצף הפטיש, שאר האמוג׳י סטטיים */

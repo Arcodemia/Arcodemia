@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 interface Pain {
   icon: ReactNode;
@@ -68,9 +69,11 @@ const COIN_LIFE_MS = 4200;
 
 export function PainPoints() {
   const headRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLSpanElement>(null);
   const [lit, setLit] = useState(false);
   const [danger, setDanger] = useState(false);
-  const [coin, setCoin] = useState(false);
+  /* null = אין חלקיק. אחרת: נקודת הזינוק ומרחק הנפילה, בפיקסלים. */
+  const [coin, setCoin] = useState<CSSProperties | null>(null);
 
   /* ============================================================
      רצף קינטי — פעם אחת בלבד לכל צפייה בדף.
@@ -95,8 +98,23 @@ export function PainPoints() {
           /* בתנועה מופחתת מבצעים אך ורק את מעבר הצבע —
              בלי חלקיק ובלי קשת. */
           if (reduce) return;
-          setCoin(true);
-          timers.push(window.setTimeout(() => setCoin(false), COIN_LIFE_MS));
+
+          /* המיקום נמדד ברגע הזינוק, מהמילה "לקוחות" עצמה.
+             ה-CSS לא יכול לדעת אותו — הוא תלוי בגלילה, בגודל
+             החלון ובגלישת השורות של הכותרת. */
+          const a = anchorRef.current;
+          if (!a) return;
+          const r = a.getBoundingClientRect();
+          const startX = r.left + r.width / 2;
+          const startY = r.top + r.height / 2;
+          /* מרחק הנפילה מחושב ב-CSS מתוך --y, ולא כאן.
+             ראו את ההערה ב-globals.css: חישוב ב-JS נעל ערך שהתיישן
+             תוך כדי גלילה חלקה, והחלקיק נחת מתחת לקצה המסך. */
+          setCoin({
+            ['--x' as string]: `${Math.round(startX)}px`,
+            ['--y' as string]: `${Math.round(startY)}px`,
+          });
+          timers.push(window.setTimeout(() => setCoin(null), COIN_LIFE_MS));
         }, DANGER_DELAY_MS),
       );
     };
@@ -144,21 +162,18 @@ export function PainPoints() {
             אם אחד מהמשפטים האלה מוכר לך —{' '}
             <span className="kin__danger">
               אתה מפסיד{' '}
-              <span className="kin__anchor">
+              <span className="kin__anchor" ref={anchorRef}>
                 לקוחות
-                {/* החלקיק ננעץ בתוך העוגן, שנמצא בתוך החתך — ולכן הוא
-                    נח בתוך הסקשן ולא בתחתית החלון, איפה שיושבים
-                    כפתור הוואטסאפ והטולטיפ שלו. */}
-                {coin && (
-                  <span className="coin" aria-hidden="true">
-                    − ₪
-                  </span>
-                )}
               </span>{' '}
               עכשיו
             </span>
           </h2>
           <p>לא בגלל שהעסק לא טוב. בגלל שאין לאן לשלוח את מי שכבר מתעניין.</p>
+          {/* ⚠️ החלקיק מרונדר ב-portal אל <body>, לא כאן.
+              #why נושא content-visibility:auto, שגורר contain:paint,
+              ואב עם contain:paint הופך לבלוק המכיל של צאצאים
+              position:fixed. התוצאה: החלקיק מוקם ביחס לחתך במקום
+              ביחס לחלון, ונחת מחוץ למסך. הפורטל מוציא אותו מההכלה. */}
         </div>
         <div className="grid grid--4">
           {PAINS.map((p) => (
@@ -173,6 +188,16 @@ export function PainPoints() {
           ))}
         </div>
       </div>
+
+      {/* coin נקבע אך ורק בתוך effect, ולכן כשהוא לא null אנחנו
+          בוודאות בלקוח ו-document קיים. אין צורך בדגל mounted. */}
+      {coin &&
+        createPortal(
+          <span className="coin" style={coin} aria-hidden="true">
+            − ₪
+          </span>,
+          document.body,
+        )}
     </section>
   );
 }
