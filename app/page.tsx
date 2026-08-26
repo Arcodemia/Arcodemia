@@ -6,6 +6,7 @@ import { LegalProvider } from '@/components/LegalDialogs';
 import { Nav } from '@/components/Nav';
 import { Hero } from '@/components/Hero';
 import { Spiders } from '@/components/Spiders';
+import { Bugs } from '@/components/Bugs';
 import { PainPoints } from '@/components/PainPoints';
 import { Process } from '@/components/Process';
 import { RiskReversal } from '@/components/RiskReversal';
@@ -47,9 +48,17 @@ export default function Page() {
         </div>
 
         <RiskReversal />
-        <ContactSection />
-        {/* השאלות הנפוצות יורדות לתחתית — מיד מעל ה-footer */}
-        <FAQ />
+
+        {/* ============================================================
+            חלקו האחרון של הדף — החיפושיות זוחלות מאחורי טופס
+            הפנייה והשאלות הנפוצות, מתחת לכל טקסט.
+            ============================================================ */}
+        <div className="endbg">
+          <Bugs />
+          <ContactSection />
+          {/* השאלות הנפוצות יורדות לתחתית — מיד מעל ה-footer */}
+          <FAQ />
+        </div>
       </main>
 
       <Footer />

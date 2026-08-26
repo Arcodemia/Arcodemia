@@ -9,7 +9,7 @@ interface Pain {
   body: string;
 }
 
-/* ✕ כ-SVG מוטבע ולא אמוג׳י — כדי שהצבע יישלט מ-var(--danger-red)
+/* ✕ כ-SVG מוטבע ולא אמוג׳י — כדי שהצבע יישלט מ-var(--neon)
    ושהוא ייראה זהה בכל מערכת הפעלה. */
 function CrossIcon() {
   return (
@@ -64,16 +64,37 @@ const PAINS: Pain[] = [
 ];
 
 const DANGER_DELAY_MS = 400;
-/* 1.15s קשת + מנוחה + 0.55s דעיכה. אחרי זה יורד מה-DOM. */
-const COIN_LIFE_MS = 4200;
+/* הארוך מבין החלקיקים: 0.72s השהיה + 1.5s נפילה + מנוחה + דעיכה */
+const COIN_LIFE_MS = 5200;
+
+/* ============================================================
+   מפל השקלים
+   ------------------------------------------------------------
+   חמישה חלקיקים ולא אחד. כל שורה היא חלקיק:
+     ox  — הסטה של נקודת הזינוק לרוחב המילה "לקוחות", בפיקסלים.
+           בלי זה כולם יוצאים מאותה נקודה ונראים כחלקיק אחד עבה.
+     dx  — לאן הוא נסחף עד הנחיתה.
+     rs  — מכפיל סיבוב. שלילי = מסתובב לצד הנגדי.
+     sc  — גודל יחסי.
+     d   — השהיה. זה מה שהופך מטח אחד למפל.
+   הערכים נבחרו ידנית ולא אקראית: אקראי בכל רינדור שובר
+   hydration, ואקראי פעם אחת עדיין נותן צבירים מכוערים.
+   ============================================================ */
+const COINS = [
+  { ox:   0, dx: -26, rs:  1.0,  sc: 1.15, d: 0 },
+  { ox: -21, dx:  38, rs: -0.75, sc: 0.9,  d: 0.14 },
+  { ox:  18, dx: -58, rs:  1.3,  sc: 1.0,  d: 0.31 },
+  { ox: -38, dx:  16, rs: -1.15, sc: 0.8,  d: 0.5 },
+  { ox:  34, dx: -14, rs:  0.65, sc: 1.05, d: 0.72 },
+];
 
 export function PainPoints() {
   const headRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const [lit, setLit] = useState(false);
   const [danger, setDanger] = useState(false);
-  /* null = אין חלקיק. אחרת: נקודת הזינוק ומרחק הנפילה, בפיקסלים. */
-  const [coin, setCoin] = useState<CSSProperties | null>(null);
+  /* מערך ריק = אין חלקיקים. אחרת: סגנון מוטבע לכל אחד מהם. */
+  const [coins, setCoins] = useState<CSSProperties[]>([]);
 
   /* ============================================================
      רצף קינטי — פעם אחת בלבד לכל צפייה בדף.
@@ -105,16 +126,22 @@ export function PainPoints() {
           const a = anchorRef.current;
           if (!a) return;
           const r = a.getBoundingClientRect();
-          const startX = r.left + r.width / 2;
+          const midX = r.left + r.width / 2;
           const startY = r.top + r.height / 2;
           /* מרחק הנפילה מחושב ב-CSS מתוך --y, ולא כאן.
              ראו את ההערה ב-globals.css: חישוב ב-JS נעל ערך שהתיישן
              תוך כדי גלילה חלקה, והחלקיק נחת מתחת לקצה המסך. */
-          setCoin({
-            ['--x' as string]: `${Math.round(startX)}px`,
-            ['--y' as string]: `${Math.round(startY)}px`,
-          });
-          timers.push(window.setTimeout(() => setCoin(null), COIN_LIFE_MS));
+          setCoins(
+            COINS.map((c) => ({
+              ['--x' as string]: `${Math.round(midX + c.ox)}px`,
+              ['--y' as string]: `${Math.round(startY)}px`,
+              ['--dx' as string]: `${c.dx}px`,
+              ['--rs' as string]: String(c.rs),
+              ['--sc' as string]: String(c.sc),
+              ['--d' as string]: `${c.d}s`,
+            })),
+          );
+          timers.push(window.setTimeout(() => setCoins([]), COIN_LIFE_MS));
         }, DANGER_DELAY_MS),
       );
     };
@@ -189,13 +216,17 @@ export function PainPoints() {
         </div>
       </div>
 
-      {/* coin נקבע אך ורק בתוך effect, ולכן כשהוא לא null אנחנו
+      {/* coins נקבע אך ורק בתוך effect, ולכן כשהוא לא ריק אנחנו
           בוודאות בלקוח ו-document קיים. אין צורך בדגל mounted. */}
-      {coin &&
+      {coins.length > 0 &&
         createPortal(
-          <span className="coin" style={coin} aria-hidden="true">
-            − ₪
-          </span>,
+          <>
+            {coins.map((style, i) => (
+              <span className="coin" style={style} aria-hidden="true" key={i}>
+                − ₪
+              </span>
+            ))}
+          </>,
           document.body,
         )}
     </section>

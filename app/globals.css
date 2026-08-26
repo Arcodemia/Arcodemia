@@ -12,13 +12,6 @@
   --hair-hi:   rgba(255,255,255,.26);
   --line:      rgba(255,255,255,.55);
 
-  /* ⚠️ דגש שני, מכוון ומתועד. לא הפרה של "סגול אחד" — הוא שמור
-     אך ורק להקשרי אובדן ודחיפות (הפסד לקוחות, ✕ בכרטיסי הכאב).
-     אין להשתמש בו ל-CTA, לקישור או לכל אלמנט לחיץ. */
-  --danger-red:      #FF3B4E;
-  --danger-red-soft: rgba(255,59,78,.14);
-  --danger-red-glow: rgba(255,59,78,.42);
-
   --neon:      #B14BFF;
   --neon-hi:   #C97BFF;
   --neon-soft: rgba(177,75,255,.13);
@@ -132,8 +125,18 @@ html:not(.intro) .hero__art img{opacity:1}
 .hero__art::after{
   content:''; position:absolute; inset:0;
   background:
-    radial-gradient(62% 58% at 50% 44%, rgba(0,0,0,.88), rgba(0,0,0,.52) 52%, rgba(0,0,0,0) 76%),
+    radial-gradient(74% 62% at 50% 44%, rgba(0,0,0,.9), rgba(0,0,0,.56) 54%, rgba(0,0,0,.06) 80%),
     linear-gradient(to bottom, rgba(0,0,0,.62), rgba(0,0,0,0) 26%, rgba(0,0,0,0) 68%, rgba(0,0,0,.9));
+}
+/* ⚠️ במסך צר הגבישים יושבים קרוב יותר למרכז — זה המחיר של
+   "שלמים ולא חתוכים" במסגרת צרה. בלי ההחשכה החזקה כאן פסקת
+   הפתיחה חוצה נצנוץ בהיר ויורדת ל-1.56:1, כלומר נעלמת. */
+@media (max-width:833px){
+  .hero__art::after{
+    background:
+      radial-gradient(94% 52% at 50% 46%, rgba(0,0,0,.93), rgba(0,0,0,.73) 58%, rgba(0,0,0,.2) 86%),
+      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 60%, rgba(0,0,0,.93));
+  }
 }
 
 /* ============================================================
@@ -178,11 +181,15 @@ section{padding-block:var(--s8)}
 .btn--primary:hover{transform:translateY(-2px); box-shadow:0 18px 40px -14px rgba(255,255,255,.55)}
 .btn--primary:active{transform:translateY(0) scale(.985)}
 
+/* ⚠️ סגול ולא ירוק — בקשת לקוח, ורק לכפתור שבניווט.
+   הכפתור הצף (.fab) נשאר בירוק של וואטסאפ בכוונה.
+   טקסט כהה ולא לבן: לבן על #B14BFF נותן 3.95:1 בלבד, שנכשל
+   ב-AA לטקסט בגודל הזה. הכהה נותן 5.0:1. */
 .btn--wa{
-  background:var(--wa); color:#03210E; font-weight:900;
-  box-shadow:0 12px 32px -14px rgba(37,211,102,.6), inset 0 1px 0 rgba(255,255,255,.3);
+  background:var(--neon); color:#14002B; font-weight:900;
+  box-shadow:0 12px 32px -14px rgba(177,75,255,.6), inset 0 1px 0 rgba(255,255,255,.3);
 }
-.btn--wa:hover{background:var(--wa-hi); transform:translateY(-2px)}
+.btn--wa:hover{background:var(--neon-hi); transform:translateY(-2px)}
 .btn--wa:active{transform:translateY(0) scale(.985)}
 
 /* רק כפתור הוואטסאפ במרכז ה-hero. רקע מקומי — לא --neon, כדי
@@ -761,6 +768,70 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
     radial-gradient(34% 24% at 92% 94%, rgba(140,60,220,.06), transparent 78%);
 }
 
+/* ---------- חיפושיות — חלקו האחרון של הדף ---------- */
+.endbg{position:relative; isolation:isolate}
+.endbg > section{position:relative; z-index:1}
+.bugs{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.bug{
+  /* left פיזי ולא inset-inline-start — אותה מלכודת בדיוק כמו
+     בעכבישים: הדף RTL, ובלי עוגן מפורש המיקום הסטטי הוא
+     השוליים הימניים, בזמן שהאנימציה היא translateX פיזי. */
+  position:absolute; left:0;
+  color:var(--line);
+  will-change:transform;
+  animation:bug-crawl linear infinite;
+}
+/* העטיפה הפנימית מסובבת את הגוף לכיוון ההליכה. הראש מצויר
+   כלפי מעלה ב-viewBox, ולכן 90deg = הולכת ימינה. */
+.bug__b{display:block}
+.bug svg{display:block; inline-size:100%; block-size:auto}
+
+.bug__legs{transform-box:fill-box; transform-origin:center}
+.bug__legs--r{animation:bug-legs-a .58s ease-in-out infinite}
+.bug__legs--l{animation:bug-legs-b .58s ease-in-out infinite}
+
+@keyframes bug-crawl{
+  from{transform:translate3d(-18vw,0,0)}
+  to  {transform:translate3d(118vw,0,0)}
+}
+@keyframes bug-legs-a{
+  0%,100%{transform:rotate(-7deg) translateY(0)}
+  50%    {transform:rotate(7deg) translateY(-1px)}
+}
+@keyframes bug-legs-b{
+  0%,100%{transform:rotate(7deg) translateY(-1px)}
+  50%    {transform:rotate(-7deg) translateY(0)}
+}
+
+/* שבע חיפושיות. שלוש הולכות שמאלה — עדר שכולו לכיוון אחד
+   נראה כמו לולאה אחת שהועתקה. */
+.bug--1{inset-block-start:12%; inline-size:34px; animation-duration:74s;  animation-delay:-9s;  opacity:.14}
+.bug--2{inset-block-start:29%; inline-size:24px; animation-duration:96s;  animation-delay:-41s; opacity:.10}
+.bug--3{inset-block-start:44%; inline-size:40px; animation-duration:63s;  animation-delay:-22s; opacity:.15}
+.bug--4{inset-block-start:58%; inline-size:20px; animation-duration:118s; animation-delay:-70s; opacity:.09}
+.bug--5{inset-block-start:71%; inline-size:30px; animation-duration:81s;  animation-delay:-53s; opacity:.12}
+.bug--6{inset-block-start:84%; inline-size:26px; animation-duration:104s; animation-delay:-15s; opacity:.11}
+.bug--7{inset-block-start:20%; inline-size:36px; animation-duration:69s;  animation-delay:-60s; opacity:.13}
+
+.bug--1 .bug__b,
+.bug--3 .bug__b,
+.bug--5 .bug__b,
+.bug--7 .bug__b{transform:rotate(90deg)}
+/* הפוכות: הגוף מסתובב לצד השני **וגם** האנימציה רצה אחורה,
+   אחרת הן היו הולכות אחורנית. */
+.bug--2 .bug__b,
+.bug--4 .bug__b,
+.bug--6 .bug__b{transform:rotate(-90deg)}
+.bug--2, .bug--4, .bug--6{animation-direction:reverse}
+
+.bug--1 .bug__legs{animation-duration:.62s}
+.bug--2 .bug__legs{animation-duration:.47s}
+.bug--3 .bug__legs{animation-duration:.71s}
+.bug--4 .bug__legs{animation-duration:.42s}
+.bug--5 .bug__legs{animation-duration:.55s}
+.bug--6 .bug__legs{animation-duration:.5s}
+.bug--7 .bug__legs{animation-duration:.66s}
+
 /* ---------- עכבישים ---------- */
 .spiders{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
 .spider{
@@ -827,8 +898,8 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 
 .kin__danger{transition:color .6s ease, text-shadow .6s ease}
 .kin.is-danger .kin__danger{
-  color:var(--danger-red);
-  text-shadow:0 0 22px var(--danger-red-glow);
+  color:var(--neon-hi);
+  text-shadow:0 0 22px var(--neon-glow);
 }
 .kin__anchor{position:relative}
 
@@ -851,43 +922,55 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   position:fixed; z-index:55; pointer-events:none;
   inset-block-start:var(--y, 50%); inset-inline-start:var(--x, 50%);
   --fall:calc(100dvh - var(--y, 50vh) - 46px);
-  font-weight:900; font-size:1.15rem; letter-spacing:-.02em; white-space:nowrap;
-  color:var(--danger-red);
-  text-shadow:0 0 16px var(--danger-red-glow);
-  animation:coin-drop 1.5s cubic-bezier(.36,.06,.5,1) forwards,
-            coin-fade .5s ease 3.2s forwards;
+  /* ברירות מחדל — כל חלקיק דורס אותן ב-style מוטבע */
+  --dx:-26px;   /* סחיפה אופקית סופית */
+  --rs:1;       /* מכפיל סיבוב: שלילי = מסתובב לצד השני */
+  --sc:1;       /* גודל יחסי */
+  --d:0s;       /* השהיה — מה שיוצר את המפל במקום מטח אחד */
+  font-weight:900; font-size:calc(1.15rem * var(--sc)); letter-spacing:-.02em;
+  white-space:nowrap;
+  color:var(--neon-hi);
+  text-shadow:0 0 16px var(--neon-glow);
+  /* both ולא forwards: בזמן ההשהיה האלמנט חייב ללבוש את מצב 0%,
+     אחרת הוא מוצג אטום ודומם עד שתורו מגיע. */
+  animation:
+    coin-drop 1.5s cubic-bezier(.36,.06,.5,1) var(--d) both,
+    coin-fade .5s ease calc(3.2s + var(--d)) forwards;
 }
-/* נפילה עם ריבאונד קטן — עקומה אחת, בלי מנוע פיזיקה */
+/* נפילה עם ריבאונד קטן — עקומה אחת, בלי מנוע פיזיקה.
+   הסחיפה האופקית היא שבר מ---dx בכל שלב, כדי שכל החלקיקים
+   יחלקו עקומה אחת ובכל זאת ייפלו למקומות שונים. */
 @keyframes coin-drop{
   0%  {transform:translate(0,0) rotate(0) scale(.6); opacity:0}
-  9%  {opacity:1; transform:translate(-3px,-20px) rotate(-8deg) scale(1.05)}
-  52% {transform:translate(-12px, calc(var(--fall) * .70)) rotate(-20deg) scale(1)}
-  74% {transform:translate(-18px, var(--fall)) rotate(-28deg) scale(1)}
-  84% {transform:translate(-21px, calc(var(--fall) - 26px)) rotate(-34deg) scale(1)}
-  93% {transform:translate(-24px, var(--fall)) rotate(-39deg) scale(1)}
-  97% {transform:translate(-25px, calc(var(--fall) - 8px)) rotate(-41deg) scale(1)}
-  100%{transform:translate(-26px, var(--fall)) rotate(-42deg) scale(1)}
+  9%  {opacity:1; transform:translate(calc(var(--dx) * .12), -20px) rotate(calc(-8deg * var(--rs))) scale(1.05)}
+  52% {transform:translate(calc(var(--dx) * .46), calc(var(--fall) * .70)) rotate(calc(-20deg * var(--rs))) scale(1)}
+  74% {transform:translate(calc(var(--dx) * .70), var(--fall)) rotate(calc(-28deg * var(--rs))) scale(1)}
+  84% {transform:translate(calc(var(--dx) * .81), calc(var(--fall) - 26px)) rotate(calc(-34deg * var(--rs))) scale(1)}
+  93% {transform:translate(calc(var(--dx) * .92), var(--fall)) rotate(calc(-39deg * var(--rs))) scale(1)}
+  97% {transform:translate(calc(var(--dx) * .96), calc(var(--fall) - 8px)) rotate(calc(-41deg * var(--rs))) scale(1)}
+  100%{transform:translate(var(--dx), var(--fall)) rotate(calc(-42deg * var(--rs))) scale(1)}
 }
 @keyframes coin-fade{ to{opacity:0} }
 
 /* ============================================================
-   כרטיסי הכאב — איקס אדום וזוהר אדום
+   כרטיסי הכאב — איקס וזוהר
    ------------------------------------------------------------
-   חריג מכוון ומתועד לכלל "סגול אחד", מוגבל לחתך הזה בלבד.
+   היו אדומים כדגש שני. הלקוח ביקש להחזיר לסגול, והפלטה חזרה
+   להיות בעלת צבע אחד בלבד. אל תחזיר את --danger-red.
    ============================================================ */
 .pain .card__x{
   position:absolute; inset-block-start:var(--s4); inset-inline-end:var(--s4);
-  inline-size:20px; block-size:20px; color:var(--danger-red); opacity:.85;
+  inline-size:20px; block-size:20px; color:var(--neon); opacity:.9;
 }
 .pain .card__x svg{inline-size:100%; block-size:100%}
 .pain .card:hover,
 .pain .card.is-tapped{
-  border-color:rgba(255,59,78,.45);
-  box-shadow:var(--shadow-float), 0 0 52px var(--danger-red-glow);
+  border-color:rgba(177,75,255,.45);
+  box-shadow:var(--shadow-float), 0 0 52px var(--neon-glow);
 }
 
 /* ============================================================
-   אמוג׳י בכרטיסי התהליך
+   אייקוני כרטיסי התהליך — SVG מוטבע, לא אמוג׳י
    ------------------------------------------------------------
    כל אמוג׳י הוא יחידה שלמה. אין פירוק פנימי של גליף.
    ההפעלה: hover בדסקטופ, is-tapped בנייד (אותו מנגנון קיים).
@@ -917,11 +1000,16 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 }
 
 /* 03 — פטיש, אבן, ואז וי */
+/* 🔑 הסימנים כאן הפוכים ביחס לגרסה הקודמת, יחד עם השיקוף
+   ב-HammerIcon ועם transform-origin שלמטה. השלוש חייבים להשתנות
+   ביחד: הראש יושב מעל-משמאל לציר, ולכן סיבוב שלילי הוא זה
+   שמוריד אותו על האבן. הפריימים של fx-rock נשארו — האבן
+   נדחסת מיד אחרי כל הכאה. */
 @keyframes fx-hammer{
-  0%,100%{transform:rotate(-32deg)}
-  12%{transform:rotate(6deg)}  22%{transform:rotate(-32deg)}
-  40%{transform:rotate(6deg)}  50%{transform:rotate(-32deg)}
-  68%{transform:rotate(6deg)}  78%{transform:rotate(-28deg)}
+  0%,100%{transform:rotate(32deg)}
+  12%{transform:rotate(-6deg)}  22%{transform:rotate(32deg)}
+  40%{transform:rotate(-6deg)}  50%{transform:rotate(32deg)}
+  68%{transform:rotate(-6deg)}  78%{transform:rotate(28deg)}
 }
 @keyframes fx-rock{
   0%,8%,26%,36%,54%,64%,100%{transform:translateY(0) scale(1)}
@@ -935,7 +1023,8 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   70%{opacity:1; transform:scale(1.18)}
   100%{opacity:1; transform:scale(1)}
 }
-.stepc__fx .fx-hammer{transform-origin:80% 80%}
+/* קצה הידית אחרי השיקוף — שם אוחזים, ולכן שם הציר */
+.stepc__fx .fx-hammer{transform-origin:86% 86%}
 .stepc__fx .fx-rock{inset-inline-start:38px}
 .stepc__fx .fx-check{opacity:0; inset-inline-start:2px}
 :is(.stepc:hover, .stepc.is-tapped) .fx-hammer{animation:fx-hammer 1.5s ease-in-out 1, fx-out .3s ease 1.5s forwards}
@@ -1001,6 +1090,15 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
      העיקרון: לא מבטלים את האלמנט, מקפיאים אותו במצב סטטי.
      העכבישים נשארים גלויים ועומדים; הרצף הקינטי מבצע רק את
      מעבר הצבע; החלקיק לא נוצר כלל (נחסם גם ב-JS). */
+  .bug{animation-name:none}
+  .bug__legs{animation-name:none}
+  .bug--1{transform:translate3d(14vw,0,0)}
+  .bug--2{transform:translate3d(66vw,0,0)}
+  .bug--3{transform:translate3d(38vw,0,0)}
+  .bug--4{transform:translate3d(84vw,0,0)}
+  .bug--5{transform:translate3d(24vw,0,0)}
+  .bug--6{transform:translate3d(52vw,0,0)}
+  .bug--7{transform:translate3d(76vw,0,0)}
   .spider{animation-name:none}
   .spider__legs{animation-name:none}
   /* פרושים לרוחב במקום להיערם על השוליים */
