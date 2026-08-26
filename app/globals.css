@@ -765,10 +765,8 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 }
 
 /* ---------- חיפושיות ---------- */
-/* שני אזורים, מערכת אחת. .bugs--mid ברצועה שבין ה-hero ל"בלי
-   סיכון", .bugs--end בטופס הפנייה ובשאלות הנפוצות. */
-.endbg{position:relative; isolation:isolate}
-.endbg > section{position:relative; z-index:1}
+/* אך ורק בתוך .techbg — כלומר בדיוק היכן שרשת המשבצות נמצאת.
+   היו גם בסוף הדף, והלקוח ביקש שיישארו רק כאן. */
 .bugs{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden}
 .bug{
   /* ⚠️ left פיזי ולא inset-inline-start. הדף RTL, ולכן בלי עוגן
@@ -805,25 +803,17 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 .bug.is-rtl .bug__b{transform:scaleX(-1)}
 .bug.is-rtl{animation-direction:reverse}
 
-/* ---------- הרצועה האמצעית: תשע ---------- */
-.bugs--mid .bug--1{inset-block-start:10%; inline-size:74px;  animation-duration:64s;  animation-delay:-4s;  opacity:.2}
-.bugs--mid .bug--2{inset-block-start:26%; inline-size:50px;  animation-duration:86s;  animation-delay:-33s; opacity:.15}
-.bugs--mid .bug--3{inset-block-start:41%; inline-size:64px;  animation-duration:57s;  animation-delay:-19s; opacity:.21}
-.bugs--mid .bug--4{inset-block-start:55%; inline-size:42px;  animation-duration:98s;  animation-delay:-61s; opacity:.13}
-.bugs--mid .bug--5{inset-block-start:68%; inline-size:82px;  animation-duration:71s;  animation-delay:-46s; opacity:.19}
-.bugs--mid .bug--6{inset-block-start:79%; inline-size:54px;  animation-duration:52s;  animation-delay:-11s; opacity:.16}
-.bugs--mid .bug--7{inset-block-start:88%; inline-size:36px;  animation-duration:112s; animation-delay:-77s; opacity:.12}
-.bugs--mid .bug--8{inset-block-start:18%; inline-size:46px;  animation-duration:93s;  animation-delay:-52s; opacity:.14}
-.bugs--mid .bug--9{inset-block-start:63%; inline-size:60px;  animation-duration:79s;  animation-delay:-25s; opacity:.18}
-
-/* ---------- סוף הדף: שבע, קטנות ועדינות יותר ---------- */
-.bugs--end .bug--1{inset-block-start:12%; inline-size:44px; animation-duration:74s;  animation-delay:-9s;  opacity:.15}
-.bugs--end .bug--2{inset-block-start:29%; inline-size:32px; animation-duration:96s;  animation-delay:-41s; opacity:.11}
-.bugs--end .bug--3{inset-block-start:44%; inline-size:52px; animation-duration:63s;  animation-delay:-22s; opacity:.16}
-.bugs--end .bug--4{inset-block-start:58%; inline-size:28px; animation-duration:118s; animation-delay:-70s; opacity:.1}
-.bugs--end .bug--5{inset-block-start:71%; inline-size:40px; animation-duration:81s;  animation-delay:-53s; opacity:.13}
-.bugs--end .bug--6{inset-block-start:84%; inline-size:34px; animation-duration:104s; animation-delay:-15s; opacity:.12}
-.bugs--end .bug--7{inset-block-start:20%; inline-size:48px; animation-duration:69s;  animation-delay:-60s; opacity:.14}
+/* תשע. גודל, גובה, קצב והשהיה שונים לכל אחת — אחרת הן צועדות
+   במקהלה וזה מסגיר מיד שזו לולאה אחת שהועתקה. */
+.bug--1{inset-block-start:10%; inline-size:74px;  animation-duration:64s;  animation-delay:-4s;  opacity:.2}
+.bug--2{inset-block-start:26%; inline-size:50px;  animation-duration:86s;  animation-delay:-33s; opacity:.15}
+.bug--3{inset-block-start:41%; inline-size:64px;  animation-duration:57s;  animation-delay:-19s; opacity:.21}
+.bug--4{inset-block-start:55%; inline-size:42px;  animation-duration:98s;  animation-delay:-61s; opacity:.13}
+.bug--5{inset-block-start:68%; inline-size:82px;  animation-duration:71s;  animation-delay:-46s; opacity:.19}
+.bug--6{inset-block-start:79%; inline-size:54px;  animation-duration:52s;  animation-delay:-11s; opacity:.16}
+.bug--7{inset-block-start:88%; inline-size:36px;  animation-duration:112s; animation-delay:-77s; opacity:.12}
+.bug--8{inset-block-start:18%; inline-size:46px;  animation-duration:93s;  animation-delay:-52s; opacity:.14}
+.bug--9{inset-block-start:63%; inline-size:60px;  animation-duration:79s;  animation-delay:-25s; opacity:.18}
 
 /* קצב רגליים שונה לכל אחת — חיפושית גדולה צועדת לאט יותר */
 .bug--1 .bug__legs{animation-duration:.78s}

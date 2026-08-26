@@ -1,12 +1,8 @@
 /* ============================================================
    חיפושיות ברקע
    ------------------------------------------------------------
-   רכיב אחד לשני האזורים:
-     zone="mid" — הרצועה שבין ה-hero ל"בלי סיכון" (החליף את
-                  העכבישים שהיו כאן).
-     zone="end" — טופס הפנייה והשאלות הנפוצות.
-   אותה חיפושית בדיוק בשניהם. שני עיצובים שונים על אותו דף
-   נראים כמו תקלה, לא כמו כוונה.
+   יושבות אך ורק בתוך .techbg — כלומר בדיוק היכן שרשת המשבצות
+   נמצאת, בין ה-hero ל"בלי סיכון". החליפו את העכבישים שהיו כאן.
 
    SVG מוטבע ולא תמונות — אפס בקשות רשת, אפס משקל נוסף.
    דקורטיבי לחלוטין: aria-hidden, pointer-events:none, z-index
@@ -63,16 +59,16 @@ function BugGlyph() {
   );
 }
 
-/** כמה חיפושיות בכל אזור. גודל, גובה וקצב לכל אחת ב-CSS. */
-const COUNT = { mid: 9, end: 7 } as const;
+/** כמה חיפושיות. גודל, גובה וקצב לכל אחת ב-CSS. */
+const COUNT = 9;
 
 /** אלה שהולכות שמאלה. עדר שכולו לכיוון אחד מסגיר לולאה אחת שהועתקה. */
 const LEFTWARD = new Set([2, 4, 7]);
 
-export function Bugs({ zone }: { zone: 'mid' | 'end' }) {
+export function Bugs() {
   return (
-    <div className={`bugs bugs--${zone}`} aria-hidden="true">
-      {Array.from({ length: COUNT[zone] }, (_, i) => {
+    <div className="bugs" aria-hidden="true">
+      {Array.from({ length: COUNT }, (_, i) => {
         const n = i + 1;
         return (
           <div className={`bug bug--${n}${LEFTWARD.has(n) ? ' is-rtl' : ''}`} key={i}>
