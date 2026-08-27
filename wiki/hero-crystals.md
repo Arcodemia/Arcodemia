@@ -23,17 +23,21 @@ updated: 2026-08-27
 ⚠️ שני קבצים חייבים להסכים על השם: ה-`<picture>` ב-`Hero.tsx` וה-preload
 ב-`layout.tsx`. אם הם מתפצלים הדפדפן מקדים לטעון תמונה אחת ומציג אחרת —
 משלם פעמיים ומאבד את ה-LCP.
-**`node tools/sync-hero-refs.cjs` מסנכרן את שניהם מ-`public/img`.**
+**`node tools/sync-hero-refs.cjs` מסנכרן את שניהם מ-`public/img`** (`bake-hero.sh` מריץ אותו לבד).
 
 ## איך מייצרים חדשות
 
+🔴 **פקודה אחת, ואסור לעקוף אותה:**
+
 ```bash
-bash tools/render-hero.sh wide 1800 1120
-bash tools/render-hero.sh tall  900 1150
-node tools/sync-hero-refs.cjs
-npm run check:crystals
+bash tools/bake-hero.sh
 npm run check:contrast
 ```
+
+⚠️ **התמונה אינה רנדר ישיר.** הגביש השמאלי הוא הדבקה 2D של הימני,
+והסקריפט מריץ שלוש שכבות + קומפוזיט + אימות lossless + התקנה עם
+hash + סנכרון ההפניות. רנדר "רגיל" מייצר גביש שמאלי אחר, בשקט.
+ראו [[hero-image-is-a-2d-composite]].
 
 המנוע הוא `tools/render-crystals.cjs` — raymarcher שמורץ **פעם אחת
 offline** באיכות בלתי אפשרית בזמן אמת: פיזור ספקטרלי ב-8 אורכי גל,
@@ -55,7 +59,8 @@ uv = xy * 1.55 / (z + 9)
 חצי-המסגרת ב-x הוא `halfW() = 0.5 * aspect`, וב-y תמיד `0.5`.
 זה מה שמאפשר לגזור מיקום שמבטיח שהגביש נכנס — במקום לנחש קבועים.
 
-⚠️ `b` עדיין משתמש ב-`ax()` הישן. `a` **לא**.
+**שני הגבישים משתמשים ב-`ax()`** — `a` הוחזר אליו ב-27.8 אחרי
+שגזירה מההיטל שינתה את מראהו. ראו [[crystal-visibility-rules]].
 
 ## הקריאות מעל התמונה
 

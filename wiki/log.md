@@ -63,4 +63,8 @@ updated: 2026-08-27
 2026-08-27 BUILD  נוספו check:crystals, check:contrast, sync-hero-refs → [[verification]]
 2026-08-27 NOTE   משקל הדף נמדד: 869KB ב-20 בקשות, פי ~4 מגרסת הקובץ היחיד → [[performance]]
 2026-08-27 LINT   הזיכרון סודר לפי סכמת fabius-archivum 2.2.0: MEMORY.md הפך לאינדקס, 30 דפים נוצרו, היומן קופל לשורות, 6 טענות מיושנות תוקנו
+2026-08-27 FIX    הגביש השמאלי הוחזר למיקום ולגודל המקוריים — "השלמתו" שינתה את מראהו → [[crystal-visibility-rules]]
+2026-08-27 NOTE   התגלה שהתמונה אינה רנדר ישיר: השמאלי הוא הדבקה 2D של הימני → [[hero-image-is-a-2d-composite]]
+2026-08-27 DROP   render-hero.sh נמחק — הוא דילג על הקומפוזיט. הוחלף ב-bake-hero.sh
+2026-08-27 NOTE   כיבוי גביש אחד משנה את השניים האחרים דרך תחומי ה-raymarch
 ```

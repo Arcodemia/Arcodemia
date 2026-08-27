@@ -186,14 +186,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="preload"
           as="image"
-          href="/img/hero-wide.da2346.webp"
+          href="/img/hero-wide.8d7a6b.webp"
           media="(min-width:834px)"
           fetchPriority="high"
         />
         <link
           rel="preload"
           as="image"
-          href="/img/hero-tall.b12a19.webp"
+          href="/img/hero-tall.0cd46a.webp"
           media="(max-width:833px)"
           fetchPriority="high"
         />

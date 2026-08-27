@@ -14,10 +14,10 @@ updated: 2026-08-27
 
 | כלי | מה הוא עונה |
 |---|---|
-| `npm run check:crystals` | האם כל גביש נכנס למסגרת בכל רוחב — **בלי לרנדר** |
+| `npm run check:crystals` | **דוח** כמה מכל גביש נחתך בכל רוחב — בלי לרנדר |
 | `npm run check:contrast` | ניגודיות מתחת לאותיות בשבעה רוחבים |
 | `node tools/sync-hero-refs.cjs` | מסנכרן שמות תמונות בין `Hero.tsx` ל-preload |
-| `bash tools/render-hero.sh` | רנדר תמונת hero והתקנה עם hash חדש |
+| `bash tools/bake-hero.sh` | **הדרך היחידה** לייצר את תמונות ה-hero — כולל הקומפוזיט |
 | `bash tools/serve.sh` | בנייה + שרת, עוקף את [[next-build-lock]] |
 | `npm run lint:memory` | קישורים שבורים, יתומים ו-frontmatter חסר ב-`wiki/` |
 
@@ -37,5 +37,9 @@ updated: 2026-08-27
 
 🔑 **לסרוק את כל הדף, לא רק את מה ששינית.**
 [[coins-are-fixed-and-outlive-the-section]] נתפס ככה.
+
+🔑 **אחרי רנדר מחדש — להשוות מול התמונה הקודמת.** מפת הפרשים
+מוגברת מראה בשנייה מה זז ומה לא. ככה התגלה ש-[[hero-image-is-a-2d-composite]]
+נשכח, וגם שכיבוי גביש אחד משנה את השניים האחרים.
 
 ⚠️ [[headless-min-width]] — צילום headless משקר על רוחב.

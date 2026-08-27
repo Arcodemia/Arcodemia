@@ -11,8 +11,11 @@
 
 ## שלושה כללים שנשברו ואסור לשבור שוב
 
-1. 🔴 **`b` — הגביש הימני-העליון — נשאר חתוך בכוונה.** בקשת לקוח מפורשת.
-   אל "תתקן". → [[crystal-visibility-rules]]
+1. 🔴 **שני הגבישים חתוכים בשוליים בכוונה.** בקשת לקוח מפורשת, פעמיים.
+   אל "תתקן" — כל ניסיון להשלים אותם שינה את המראה.
+   → [[crystal-visibility-rules]]
+   🔴 **ותמונת ה-hero אינה רנדר ישיר** — רק `bash tools/bake-hero.sh`.
+   → [[hero-image-is-a-2d-composite]]
 2. 🔴 **`.hero__in::before` הוא מה שמחזיק את הטקסט קריא.** בלעדיו הכותרת
    יורדת ל-1.38:1 בנייד. → [[accessibility]]
 3. 🔴 **אדום מותר במקום אחד בלבד: חלקיקי השקל.** → [[palette-single-accent]]
@@ -43,7 +46,7 @@
 - [פלטה: דגש אחד](wiki/decisions/palette-single-accent.md) — וחריג השקלים *(2026-08-26)*
 - [חריג התמחור](wiki/decisions/pricing-exception.md) — מחיר במקום אחד *(2026-08-25)*
 - [קריסטלים אפויים](wiki/decisions/crystals-baked-not-realtime.md) — לא WebGL, לא SVG *(2026-08-17)*
-- [כללי הגבישים](wiki/decisions/crystal-visibility-rules.md) — a שלם · b חתוך · c כבוי *(2026-08-27)*
+- [כללי הגבישים](wiki/decisions/crystal-visibility-rules.md) — a ו-b חתוכים בכוונה · c כבוי *(2026-08-27)*
 - [בלי דיוור חיצוני](wiki/decisions/no-external-mailer.md) — mailto אצל המבקר *(2026-08-23)*
 - [חיפושיות ברצועה](wiki/decisions/bugs-only-in-the-grid-band.md) — מהכרטיסים ומטה *(2026-08-27)*
 
@@ -52,6 +55,7 @@
 - [עוגן פיזי ב-RTL](wiki/gotchas/rtl-physical-anchor.md) *(2026-08-26)*
 - [cover הוא חיתוך שני](wiki/gotchas/object-fit-cover-second-crop.md) *(2026-08-27)*
 - [ניגודיות: הפיקסל הגרוע](wiki/gotchas/contrast-worst-pixel.md) *(2026-08-27)*
+- [תמונת ה-hero היא קומפוזיט](wiki/gotchas/hero-image-is-a-2d-composite.md) *(2026-08-27)*
 - [שלישיית הפטיש](wiki/gotchas/hammer-trio.md) *(2026-08-26)*
 - [אנימציה לא מגלה תוכן](wiki/gotchas/entrance-animation-must-not-gate-content.md) *(2026-08-17)*
 - [בתי בקרה ב-clean()](wiki/gotchas/raw-control-bytes-in-clean.md) *(2026-08-17)*
