@@ -89,11 +89,38 @@ const COINS = [
 
 export function PainPoints() {
   const headRef = useRef<HTMLDivElement>(null);
+  const secRef = useRef<HTMLElement>(null);
   const anchorRef = useRef<HTMLSpanElement>(null);
   const [lit, setLit] = useState(false);
   const [danger, setDanger] = useState(false);
   /* מערך ריק = אין חלקיקים. אחרת: סגנון מוטבע לכל אחד מהם. */
   const [coins, setCoins] = useState<CSSProperties[]>([]);
+
+  /* ============================================================
+     ניקוי מוקדם
+     ------------------------------------------------------------
+     ⚠️ החלקיקים הם position:fixed, ולכן הם **לא זזים עם הגלילה**.
+     אם הגולש ממשיך למטה לפני שהרצף נגמר, תשעה שקלים אדומים
+     נשארים תלויים מעל החתך הבא ויושבים על הטקסט שלו.
+     כאן הם יורדים ברגע שהחתך יוצא מהמסך.
+
+     setCoins נקרא בתוך callback ולא בגוף ה-effect, ולכן אין כאן
+     הפרה של הכלל נגד setState סינכרוני ב-effect.
+     ============================================================ */
+  useEffect(() => {
+    if (coins.length === 0) return;
+    const el = secRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e && !e.isIntersecting) setCoins([]);
+      },
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [coins.length]);
 
   /* ============================================================
      רצף קינטי — פעם אחת בלבד לכל צפייה בדף.
@@ -180,7 +207,7 @@ export function PainPoints() {
   const kinClass = ['kin', lit ? 'is-lit' : '', danger ? 'is-danger' : ''].filter(Boolean).join(' ');
 
   return (
-    <section id="why" className="pain">
+    <section id="why" className="pain" ref={secRef}>
       <div className="wrap">
         <div className="sec-head rv" ref={headRef}>
           <span className="eyebrow">למה בכלל צריך דף נחיתה</span>
