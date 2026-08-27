@@ -1,8 +1,28 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+
 /* ============================================================
    חיפושיות ברקע
    ------------------------------------------------------------
-   יושבות אך ורק בתוך .techbg — כלומר בדיוק היכן שרשת המשבצות
-   נמצאת, בין ה-hero ל"בלי סיכון". החליפו את העכבישים שהיו כאן.
+   יושבות בתוך .techbg, אבל **לא** מתחילות בראש שלו: הן מתחילות
+   בדיוק בשורת ארבעת הכרטיסים הראשונים. מעליהן, באזור הכותרת
+   "אם אחד מהמשפטים האלה מוכר לך", אין חיפושיות בכלל.
+
+   🔑 למה JS ולא אחוזים קשיחים: המרחק מראש .techbg ועד לכרטיסים
+   הוא גובה גוש הכותרת, והוא משתנה עם רוחב החלון — הכותרת
+   נשברת לשתי שורות או לשלוש, הפסקה מתקפלת, וה-padding של
+   החתך משתנה בין ברייקפוינטים. כל אחוז קבוע היה נכון ברוחב
+   אחד ושגוי בכל השאר. ResizeObserver נותן את המספר המדויק
+   ומעדכן אותו כשהפריסה זזה.
+
+   ⚠️ אין כאן setState. הערך נכתב ישירות כ-custom property על
+   האלמנט, ולכן אין רינדור נוסף ואין הפרה של הכלל נגד setState
+   בתוך effect.
+
+   ⚠️ ערך הנפילה ב-CSS (34%) הוא מה שרואים אם ה-JS לא רץ. הוא
+   מקורב בכוונה — עדיף חיפושיות שמתחילות בערך נכון מאשר
+   חיפושיות שממלאות את כל הרצועה.
 
    SVG מוטבע ולא תמונות — אפס בקשות רשת, אפס משקל נוסף.
    דקורטיבי לחלוטין: aria-hidden, pointer-events:none, z-index
@@ -65,9 +85,35 @@ const COUNT = 9;
 /** אלה שהולכות שמאלה. עדר שכולו לכיוון אחד מסגיר לולאה אחת שהועתקה. */
 const LEFTWARD = new Set([2, 4, 7]);
 
+/** ממה מתחילה הרצועה. הכרטיסים הם הסימן שהמשבצות התחילו. */
+const ANCHOR = '.pain .grid';
+
 export function Bugs() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const band = el.parentElement;
+    const anchor = band?.querySelector(ANCHOR);
+    if (!band || !anchor) return;
+
+    const measure = () => {
+      const top = anchor.getBoundingClientRect().top - band.getBoundingClientRect().top;
+      el.style.setProperty('--bugs-top', `${Math.max(0, Math.round(top))}px`);
+    };
+
+    measure();
+    /* גם הרצועה וגם העוגן: הראשונה משתנה כשהחלון משתנה, השני
+       כשהכותרת שמעליו נשברת לשורה נוספת. */
+    const ro = new ResizeObserver(measure);
+    ro.observe(band);
+    ro.observe(anchor);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className="bugs" aria-hidden="true">
+    <div className="bugs" aria-hidden="true" ref={ref}>
       {Array.from({ length: COUNT }, (_, i) => {
         const n = i + 1;
         return (

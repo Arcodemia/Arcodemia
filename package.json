@@ -12,7 +12,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:crystals": "node tools/check-crystal-fit.cjs",
+    "check:contrast": "node tools/check-text-contrast.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",
@@ -27,6 +29,8 @@
     "@types/react-dom": "^19.2.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.2",
+    "pngjs": "^7.0.0",
+    "puppeteer-core": "^25.9.0",
     "sharp": "^0.35.3",
     "supabase": "^2.115.0",
     "typescript": "^6.0.3"
