@@ -4,7 +4,16 @@ A complete technical map of this repository, written so someone who has never se
 
 **Generated from the tree at `HEAD` `9ff74c5` on `main` (2026-08-23).**  
 **Remote:** `https://github.com/Arcodemia/Arcodemia.git` (`origin/main`).  
-**There is no `README.md`.** Project memory lives in `MEMORY.md` (index / brief), `log.md` (append-only decision journal), `DEPLOY.md` (launch runbook, Hebrew), and `TECHNICAL-SUMMARY.md` (frozen snapshot of the **pre-Next.js** static site — do not treat it as current).
+**There is no `README.md`.** Project memory was restructured on 2026-08-27 to the `fabius-archivum` 2.2.0 schema and now lives in:
+
+- `MEMORY.md` — **the index only.** Live URL, stack, current goal, open threads, links. Read it first; it is deliberately short.
+- `wiki/` — one page per decision, gotcha or topic, each with frontmatter and `[[wikilinks]]`. **This is the authority.**
+- `wiki/log.md` — append-only, one prefixed line per event. Grep/tail it.
+- `wiki/log-archive-2026-07-08.md` — the earlier prose journal, preserved verbatim.
+- `DEPLOY.md` — launch runbook, Hebrew.
+- `TECHNICAL-SUMMARY.md` — frozen snapshot of the **pre-Next.js** static site; do not treat it as current.
+
+⚠️ **This file (`PROJECT_BRAIN.md`) predates that restructure and is partly stale.** Where it disagrees with `wiki/`, the wiki wins. Run `npm run lint:memory` to check the wiki's own consistency.
 
 **Rule used while writing this file:** nothing here is guessed. Where the code, git history, or docs do not settle a point, it is marked **unclear from code**.
 
@@ -32,7 +41,7 @@ The page *is* the product demo. There is no real client portfolio in the UI. Con
 
 | Decision | Value |
 |---|---|
-| Brand | **ARCODEMIA** (was **Aristocraft** until 2026-08-06; the old name survives only in `MEMORY.md` / `log.md` / `TECHNICAL-SUMMARY.md`, not in product code) |
+| Brand | **ARCODEMIA** (was **Aristocraft** until 2026-08-06; the old name survives only in `MEMORY.md` / `wiki/log.md` / `TECHNICAL-SUMMARY.md`, not in product code) |
 | Product | Landing pages only |
 | Proof | No real portfolio. The page itself is the proof |
 | Pricing | Never shown. CTA is always “contact us for a quote” |
@@ -182,18 +191,18 @@ Arcodemia/
 
 **No shared UI kit.** Buttons, cards, fields, dialogs are CSS class families in `globals.css` (`.btn`, `.card`, `.field`, `.doc`, `.fab`, `.a11y-*`). Icons are inline SVG in `components/icons.tsx` so the CSP can keep `img-src 'self' data:` with no extra requests.
 
-**Comments and commits are Hebrew; identifiers are English.** That is a deliberate convention (`TECHNICAL-SUMMARY.md`, `log.md`).
+**Comments and commits are Hebrew; identifiers are English.** That is a deliberate convention (`TECHNICAL-SUMMARY.md`, `wiki/log.md`).
 
 ### Key architectural decisions (and why)
 
 1. **The page is the proof.** No portfolio UI. `portfolio_items` exists in the schema for a later phase; nothing in the app reads it.
-2. **Hero crystals are pre-rendered WebP, not live WebGL.** Runtime cost is zero. The raymarcher lives only in `tools/render-crystals.cjs`. Live WebGL and SVG crystals were tried and deleted (`log.md` 2026-08-06).
+2. **Hero crystals are pre-rendered WebP, not live WebGL.** Runtime cost is zero. The raymarcher lives only in `tools/render-crystals.cjs`. Live WebGL and SVG crystals were tried and deleted (`wiki/log.md` 2026-08-06).
 3. **No third-party requests on page load.** Self-hosted fonts, no analytics, no cookies. WhatsApp and `mailto:` are opt-in (click / form submit).
 4. **CSP as HTTP headers, not `<meta>`.** Headers can enforce `frame-ancestors`; a meta tag cannot. Documented in `next.config.mjs`.
 5. **Entrance animations cannot be what makes content visible.** Default CSS is visible. `html.intro` / `html.rv-on` are added by a tiny inline script before first paint. If JS never runs, nothing is hidden. (`app/layout.tsx` `INTRO_SCRIPT`, `hooks/useReveal.ts`, comments in `globals.css`.)
-6. **Supabase is an observability layer, never a gate.** `logLead()` never throws. Both modes return 200 after validation. (`app/api/contact/route.ts`, `log.md` 2026-08-23.)
+6. **Supabase is an observability layer, never a gate.** `logLead()` never throws. Both modes return 200 after validation. (`app/api/contact/route.ts`, `wiki/log.md` 2026-08-23.)
 7. **Service-role key never ships to the browser.** Variable is `SUPABASE_SERVICE_ROLE_KEY` (no `NEXT_PUBLIC_`). Client module imports `server-only`.
-8. **`next/font` needs string literals and two `localFont()` calls.** A variable in `declarations.value` is silently dropped at compile time. One call would stamp the same `unicode-range` on all ten files and the two files of a given weight would clobber each other. (`app/layout.tsx` comments; `log.md`.)
+8. **`next/font` needs string literals and two `localFont()` calls.** A variable in `declarations.value` is silently dropped at compile time. One call would stamp the same `unicode-range` on all ten files and the two files of a given weight would clobber each other. (`app/layout.tsx` comments; `wiki/log.md`.)
 9. **CSP `'unsafe-eval'` is gated on `phase === PHASE_DEVELOPMENT_SERVER`, not `NODE_ENV`.** `NODE_ENV` is not trustworthy when `next.config` loads; the leak to production was caught with `curl -sI`. (`next.config.mjs`.)
 
 ---
@@ -260,7 +269,7 @@ A `@graph` of `ProfessionalService` + `FAQPage`. The FAQPage encodes **five** qu
 
 ## 4. Data Model & Supabase
 
-Supabase was added on 2026-08-23 (commits `289ef21`, `9ff74c5`). `log.md` / `MEMORY.md` state that **migrations have not been applied** (`supabase db push` / `link` not done). The schema below is what the migration files *define*. Whether those tables exist on a hosted project is **unclear from code** (this workspace has no `.env.local`; `MEMORY.md` on another machine said `public.leads` did not exist yet).
+Supabase was added on 2026-08-23 (commits `289ef21`, `9ff74c5`). `wiki/log.md` / `MEMORY.md` state that **migrations have not been applied** (`supabase db push` / `link` not done). The schema below is what the migration files *define*. Whether those tables exist on a hosted project is **unclear from code** (this workspace has no `.env.local`; `MEMORY.md` on another machine said `public.leads` did not exist yet).
 
 `lib/database.types.ts` is **hand-written** to match the migrations. A comment says they can later be regenerated with `npx supabase gen types typescript --linked`.
 
@@ -325,7 +334,7 @@ create policy "public can view published portfolio items"
   using (published = true);
 ```
 
-`log.md` records that the original instruction was **cut off** at `create policy "public can view published portfolio items" on` and that `for select using (published = true)` was the only completion that matched the policy name and the comment. Marked **awaiting confirmation**. Unpublished rows are invisible to anyone except service-role.
+`wiki/log.md` records that the original instruction was **cut off** at `create policy "public can view published portfolio items" on` and that `for select using (published = true)` was the only completion that matched the policy name and the comment. Marked **awaiting confirmation**. Unpublished rows are invisible to anyone except service-role.
 
 No `INSERT`/`UPDATE`/`DELETE` policies exist on either table.
 
@@ -504,9 +513,9 @@ Updates after the first launch, per `DEPLOY.md`: edit a component, `npm run buil
 
 ## 9. History & Milestones
 
-Git was initialized **after** the product already existed. The first commit is `1a9ac54` (2026-08-06), “ARCODEMIA — דף נחיתה מוכן לפריסה”. Pre-git history is in `log.md` (from 2026-07-29). Both are summarized below. Commit hashes are from `git log` on `main`.
+Git was initialized **after** the product already existed. The first commit is `1a9ac54` (2026-08-06), “ARCODEMIA — דף נחיתה מוכן לפריסה”. Pre-git history is in `wiki/log.md` (from 2026-07-29). Both are summarized below. Commit hashes are from `git log` on `main`.
 
-### Pre-git (from `log.md` only)
+### Pre-git (from `wiki/log.md` only)
 
 | Date | What happened |
 |---|---|
@@ -544,7 +553,7 @@ Git was initialized **after** the product already existed. The first commit is `
 
 1. **v1 → v2 → v3 design** (palette and type, not architecture).
 2. **SVG crystals → live WebGL → baked WebP.** Each step was a client rejection plus a technical lesson (SVG cannot do dispersion; live GL was too heavy; bake the expensive shader).
-3. **Static `index.html` + `api/contact.js` + `vercel.json` → Next.js 16 App Router + Route Handler + `next.config.mjs`.** Claimed 1:1 visually. One bugfix (a11y). Four conversion traps documented in `log.md` (`next/font` literals, two font families, CSP phase vs `NODE_ENV`, `suppressHydrationWarning` on `<html>`).
+3. **Static `index.html` + `api/contact.js` + `vercel.json` → Next.js 16 App Router + Route Handler + `next.config.mjs`.** Claimed 1:1 visually. One bugfix (a11y). Four conversion traps documented in `wiki/log.md` (`next/font` literals, two font families, CSP phase vs `NODE_ENV`, `suppressHydrationWarning` on `<html>`).
 4. **Email-only form → email | WhatsApp mode + optional Supabase log.** Principle: the visitor-facing channel is source of truth; the database is not allowed to fail the visitor.
 
 ### Decisions explicitly banned from being reintroduced (`MEMORY.md`)
@@ -578,7 +587,7 @@ These are checklist items, not code comments:
 
 | Item | Evidence |
 |---|---|
-| Apply migrations (`supabase db push`) | `MEMORY.md`, `log.md` 2026-08-23 |
+| Apply migrations (`supabase db push`) | `MEMORY.md`, `wiki/log.md` 2026-08-23 |
 | Owner: run `npx vercel --prod` | `MEMORY.md`, `DEPLOY.md` |
 | Register as עוסק פטור before taking first payment | Legal copy + `DEPLOY.md` + `MEMORY.md` |
 | Lawyer review of the three legal dialogs | `MEMORY.md` — they are templates, not legal advice |
@@ -588,7 +597,7 @@ These are checklist items, not code comments:
 | Photograph the page on a real device | `MEMORY.md` (headless Chrome enforces a minimum width and does not render the crystals the way a phone does) |
 | Admin dashboard to view leads / set `status` | Phase 3, not built |
 | Public portfolio UI reading `portfolio_items` | Table + RLS policy exist; no UI |
-| Confirm the truncated `portfolio_items` SELECT policy | `log.md` — awaiting confirmation |
+| Confirm the truncated `portfolio_items` SELECT policy | `wiki/log.md` — awaiting confirmation |
 
 ### Gaps visible in the current tree (not always labeled TODO)
 
@@ -669,7 +678,7 @@ This workspace has a local `.env.local` (gitignored).
 
 ### 3. (Optional) Supabase schema
 
-From `log.md`, this has **not** been done for the hosted project:
+From `wiki/log.md`, this has **not** been done for the hosted project:
 
 ```bash
 npx supabase link   # needs SUPABASE_PROJECT_REF
@@ -713,7 +722,7 @@ Then run the emitted `tools/_render.html` through headless Chrome with a real GP
 ### What you will not get locally without extra accounts
 
 - A row in `leads`, without a real (or local) Supabase project **and** the `leads` table present.
-- Vercel production headers exactly as in production — `next dev` CSP includes `'unsafe-eval'` and looser `connect-src`. To inspect production CSP: `curl -sI` against a production URL, not the eye test (`log.md`).
+- Vercel production headers exactly as in production — `next dev` CSP includes `'unsafe-eval'` and looser `connect-src`. To inspect production CSP: `curl -sI` against a production URL, not the eye test (`wiki/log.md`).
 
 ---
 

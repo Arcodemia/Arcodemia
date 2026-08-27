@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check:crystals": "node tools/check-crystal-fit.cjs",
-    "check:contrast": "node tools/check-text-contrast.cjs"
+    "check:contrast": "node tools/check-text-contrast.cjs",
+    "lint:memory": "node tools/lint-memory.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

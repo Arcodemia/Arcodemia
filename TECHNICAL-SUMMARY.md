@@ -180,7 +180,7 @@ site-1/
 - BEM-ish class naming: `.hero__in`, `.card__icon`, `.dline__ic--wa`, `.a11y-btn`.
 - CSS is organized into ~25 banner-commented sections. Comments explain *why*, and often
   record a specific bug that was hit and how it was fixed.
-- `MEMORY.md` + `log.md` are a deliberate persistent-memory system for cross-session
+- `MEMORY.md` + `wiki/` are a deliberate persistent-memory system for cross-session
   continuity, not generated documentation. **Read `MEMORY.md` first.**
 
 ---
