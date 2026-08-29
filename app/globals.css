@@ -107,6 +107,102 @@ h3{line-height:1.28; letter-spacing:-.02em; font-weight:800}
 @media (max-width:833px){ .frame{display:none} }
 
 /* ============================================================
+   הילה סגולה קבועה — מאחורי הכל, לא קשורה לגלילה
+   ------------------------------------------------------------
+   z-index:0 מתחת ל-main/header/footer (2) ולגרעין (3).
+   לא ‎-1: body הוא position:relative, ו-z-index שלילי היה
+   נעלם מאחורי רקע ה-body.
+
+   שתי קומפוזיציות נפרדות באותו שבר כמו ה-hero (834px).
+   ערכי המובייל אינם נגזרת של הדסקטופ — פחות כתמים, קטנים
+   יותר, אטימות נמוכה יותר. ב-OLED כל פיקסל סגול דולק עולה
+   בסוללה; ב-LCD של דסקטופ התאורה האחורית דולקת ממילא.
+   ============================================================ */
+.glow{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; overflow:hidden;
+  display:none;
+}
+.glow span{
+  position:absolute; pointer-events:none;
+  background-repeat:no-repeat;
+}
+
+@media (min-width:834px){
+  .glow--wide{display:block}
+  .glow--wide span:nth-child(1){
+    inset-block-start:-12%;
+    inset-inline-end:-14%;
+    inline-size:640px; block-size:640px;
+    background:radial-gradient(circle at 42% 48%, var(--neon-glow), transparent 68%);
+    opacity:.34;
+    animation:glow-wide-a 34s ease-in-out infinite;
+  }
+  .glow--wide span:nth-child(2){
+    inset-block-start:38%;
+    inset-inline-start:-16%;
+    inline-size:520px; block-size:560px;
+    background:radial-gradient(circle at 58% 40%, color-mix(in srgb, var(--neon-hi) 48%, transparent), transparent 70%);
+    opacity:.26;
+    animation:glow-wide-b 41s ease-in-out infinite;
+    animation-delay:-11s;
+  }
+  .glow--wide span:nth-child(3){
+    inset-block-start:58%;
+    inset-inline-end:22%;
+    inline-size:380px; block-size:380px;
+    background:radial-gradient(circle at 50% 50%, var(--neon-soft), transparent 72%);
+    opacity:.55;
+    animation:glow-wide-c 27s ease-in-out infinite;
+    animation-delay:-19s;
+  }
+  @keyframes glow-wide-a{
+    0%,100%{transform:translate(0,0) scale(1)}
+    35%{transform:translate(48px,-36px) scale(1.07)}
+    68%{transform:translate(-32px,44px) scale(.95)}
+  }
+  @keyframes glow-wide-b{
+    0%,100%{transform:translate(0,0) scale(1)}
+    45%{transform:translate(-56px,28px) scale(1.05)}
+    78%{transform:translate(40px,-52px) scale(.97)}
+  }
+  @keyframes glow-wide-c{
+    0%,100%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(24px,36px) scale(1.12)}
+  }
+}
+
+@media (max-width:833px){
+  .glow--tall{display:block}
+  .glow--tall span:nth-child(1){
+    inset-block-start:10%;
+    inset-inline-start:-8%;
+    inline-size:260px; block-size:260px;
+    background:radial-gradient(circle at 62% 48%, var(--neon-glow), transparent 72%);
+    opacity:.18;
+    animation:glow-tall-a 29s ease-in-out infinite;
+  }
+  .glow--tall span:nth-child(2){
+    inset-block-start:54%;
+    inset-inline-end:-6%;
+    inline-size:200px; block-size:220px;
+    background:radial-gradient(circle at 38% 52%, color-mix(in srgb, var(--neon-hi) 36%, transparent), transparent 74%);
+    opacity:.14;
+    animation:glow-tall-b 37s ease-in-out infinite;
+    animation-delay:-14s;
+  }
+  @keyframes glow-tall-a{
+    0%,100%{transform:translate(0,0) scale(1)}
+    40%{transform:translate(18px,28px) scale(1.06)}
+    75%{transform:translate(-14px,-22px) scale(.96)}
+  }
+  @keyframes glow-tall-b{
+    0%,100%{transform:translate(0,0) scale(1)}
+    55%{transform:translate(-22px,16px) scale(1.04)}
+  }
+}
+
+/* ============================================================
    הקריסטלים — תמונה סטטית
    ------------------------------------------------------------
    רונדרה מראש ב-raymarcher עם פיזור ספקטרלי בשמונה אורכי גל
@@ -236,6 +332,12 @@ section{padding-block:var(--s8)}
   .nav__links{display:flex}
   .nav__cta{margin-inline-start:0}
   .nav__menu-btn{display:none}
+}
+/* מתחת ל-900px ההמבורגר גלוי. בלי CTA בוואטסאפ בנאב — הכפתור
+   יושב במקומו משמאל, הלוגו נשאר בימין. order לא משנה את ה-DOM. */
+@media (max-width:899px){
+  .nav__cta{display:none}
+  .nav__menu-btn{order:1; margin-inline-start:auto}
 }
 
 /* ============================================================
@@ -545,6 +647,55 @@ section{padding-block:var(--s8)}
 .fab:active{transform:scale(.97)}
 .fab svg{inline-size:30px; block-size:30px}
 
+/* שיתוף — מעל כפתור הוואטסאפ, אותו צד. לא בפינת הנגישות. */
+.share-fab{
+  position:fixed;
+  inset-block-end:calc(20px + 60px + var(--s3) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end:calc(20px + env(safe-area-inset-inline-end, 0px));
+  z-index:60;
+  inline-size:60px; block-size:60px; border-radius:50%;
+  background:var(--ink); color:var(--bg);
+  border:1px solid transparent; padding:0; cursor:pointer;
+  display:grid; place-items:center;
+  box-shadow:0 12px 30px -12px rgba(255,255,255,.5);
+  transition:transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s, opacity .3s, visibility .3s, border-color .2s;
+  opacity:0; pointer-events:none; visibility:hidden;
+}
+.share-fab.is-on{opacity:1; pointer-events:auto; visibility:visible}
+.share-fab:hover{transform:scale(1.06); border-color:var(--neon); box-shadow:0 16px 38px -12px rgba(255,255,255,.6)}
+.share-fab:active{transform:scale(.97)}
+.share-fab svg{inline-size:28px; block-size:28px}
+
+.share-panel{
+  position:fixed;
+  inset-block-end:calc(20px + 60px + var(--s3) + 60px + var(--s2) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end:calc(20px + env(safe-area-inset-inline-end, 0px));
+  z-index:61;
+  inline-size:min(240px, calc(100vw - 40px));
+  background:var(--surface); border:1px solid var(--hairline-2);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-float);
+  padding:var(--s4); display:none;
+}
+.share-panel.is-open{display:block}
+.share-panel h2{font-size:1.05rem; margin-block-end:var(--s3)}
+.share-panel__list{display:grid; gap:var(--s1)}
+.share-panel__list a,
+.share-panel__list button{
+  min-block-size:44px; padding:var(--s2) var(--s3);
+  background:rgba(255,255,255,.04); border:1px solid var(--hairline-2);
+  border-radius:var(--r-sm); color:var(--soft); cursor:pointer;
+  font-size:var(--t-sm); font-weight:700; text-align:start;
+  display:flex; align-items:center; gap:var(--s2);
+  transition:background-color .2s, border-color .2s, color .2s;
+}
+.share-panel__list a:hover,
+.share-panel__list button:hover{background:rgba(177,75,255,.12); border-color:var(--neon); color:var(--ink)}
+.share-panel__list svg{inline-size:20px; block-size:20px; flex:none}
+.share-panel__live{
+  min-block-size:1.2em; margin-block-start:var(--s2);
+  font-size:var(--t-xs); font-weight:700; color:var(--neon-hi);
+}
+
 /* ============================================================
    מסמכים משפטיים
    ============================================================ */
@@ -653,8 +804,9 @@ html.a11y-gray{filter:grayscale(1)}
 html.a11y-contrast body{background:#000; color:#fff}
 html.a11y-contrast .hero__art,
 html.a11y-contrast .grain,
-html.a11y-contrast .frame{display:none !important}
-html.a11y-contrast :is(.card,.stepc,.faq details,.dline,.risk,.a11y-panel,.doc,.field input,.field textarea){background:#000 !important; border-color:#fff !important}
+html.a11y-contrast .frame,
+html.a11y-contrast .glow{display:none !important}
+html.a11y-contrast :is(.card,.stepc,.faq details,.dline,.risk,.a11y-panel,.share-panel,.doc,.field input,.field textarea){background:#000 !important; border-color:#fff !important}
 html.a11y-contrast :is(p,span,li,strong,b,summary,label,h1,h2,h3,.lead,.sub,.val,.eyebrow){color:#fff !important; -webkit-text-fill-color:#fff}
 html.a11y-contrast a:not(.btn):not(.logo){color:#FFE100 !important; -webkit-text-fill-color:#FFE100}
 html.a11y-contrast .card::before,html.a11y-contrast .risk::before{display:none}
@@ -729,13 +881,24 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   .risk__list{gap:var(--s3)}
   .faq summary{padding:var(--s3); font-size:.98rem}
 
-  /* שני הכפתורים הצפים קטנים יותר, ולא מכסים תוכן */
+  /* כפתורי הפינה קטנים יותר, ולא מכסים תוכן */
   .fab{
     inline-size:52px; block-size:52px;
     inset-block-end:calc(14px + env(safe-area-inset-bottom, 0px));
     inset-inline-end:calc(14px + env(safe-area-inset-inline-end, 0px));
   }
   .fab svg{inline-size:26px; block-size:26px}
+  .share-fab{
+    inline-size:52px; block-size:52px;
+    inset-block-end:calc(14px + 52px + var(--s2) + env(safe-area-inset-bottom, 0px));
+    inset-inline-end:calc(14px + env(safe-area-inset-inline-end, 0px));
+  }
+  .share-fab svg{inline-size:24px; block-size:24px}
+  .share-panel{
+    inset-block-end:calc(14px + 52px + var(--s2) + 52px + var(--s2) + env(safe-area-inset-bottom, 0px));
+    inset-inline-end:calc(14px + env(safe-area-inset-inline-end, 0px));
+    padding:var(--s3);
+  }
   .a11y-btn{
     inline-size:46px; block-size:46px;
     inset-block-end:calc(14px + env(safe-area-inset-bottom, 0px));
@@ -1135,6 +1298,7 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   html{scroll-behavior:auto}
   .rv{opacity:1; transform:none}
   .grain{display:none}
+  .glow span{animation:none}
   /* animation-duration לא מבטל animation-timeline: view() — צריך לכבות את השם */
   .card, .stepc, .faq details, .dline{animation-name:none}
 

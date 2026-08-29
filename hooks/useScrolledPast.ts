@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-/** true אחרי שגללו מעבר ל-threshold. משמש את כפתור הוואטסאפ הצף. */
+/** מופיע אחרי גלילה מה-hero, כדי לא להתחרות ב-CTA הראשי */
+export const FAB_SHOW_AFTER_PX = 460;
+
+/** true אחרי שגללו מעבר ל-threshold. משמש את כפתורי הוואטסאפ והשיתוף הצפים. */
 export function useScrolledPast(threshold: number): boolean {
   const [past, setPast] = useState(false);
 

@@ -1,12 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useScrolledPast } from '@/hooks/useScrolledPast';
+import { FAB_SHOW_AFTER_PX, useScrolledPast } from '@/hooks/useScrolledPast';
 import { DEFAULT_MSG, waURL } from '@/lib/whatsapp';
 import { WhatsAppIcon } from './icons';
 
-/** מופיע אחרי גלילה מה-hero, כדי לא להתחרות ב-CTA הראשי */
-const SHOW_AFTER_PX = 460;
+/* הסף משותף עם כפתור השיתוף הצף ולכן יושב ב-useScrolledPast.
+   קודם היה כאן קבוע מקומי בשם SHOW_AFTER_PX באותו ערך (460). */
 const TIP_DELAY_MS = 4000;
 
 /* ⚠️ חריג מדיניות מאושר ומתוחם:
@@ -16,7 +16,7 @@ const TIP_DELAY_MS = 4000;
 const TIP_TEXT = 'שלחו הודעה עכשיו בכדי לקבל דף נחיתה החל מ-850 ₪ !';
 
 export function WhatsAppFab() {
-  const visible = useScrolledPast(SHOW_AFTER_PX);
+  const visible = useScrolledPast(FAB_SHOW_AFTER_PX);
   const [elapsed, setElapsed] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [closing, setClosing] = useState(false);
