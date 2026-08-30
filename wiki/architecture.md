@@ -12,13 +12,15 @@ Next.js 16 · App Router · TypeScript strict · React 19 · עברית RTL.
 
 ```
 app/layout.tsx            metadata, JSON-LD, next/font, preload לתמונות ה-hero
-app/page.tsx              מרכיב את כל החתכים
+app/page.tsx              עמוד הבית של הסוכנות
+app/services/<slug>/      חמישה עמודי קטגוריה, ראו [[services-catalog]]
 app/globals.css           כל ה-CSS. תכונות לוגיות ל-RTL
 app/api/contact/route.ts  Route Handler שרושם את הפנייה ב-Supabase
 app/fonts/                Heebo מתארח אצלנו — אין Google Fonts
-components/               רכיב לכל חתך + Dialog + A11yWidget + icons
+components/               רכיב לכל חתך + SubpageShell + CategoryNav + Dialog
+public/work/              צילומי אתרי לקוחות לתיק העבודות
 hooks/                    useA11yPreferences · useReveal · useScrolledPast
-lib/                      config · whatsapp · mailto · env · supabase · types
+lib/                      config · services · projects · whatsapp · mailto · env · supabase
 public/img/               תמונות הקריסטלים (רחב + לאורך), שם עם hash
 supabase/migrations/      סכמה
 tools/                    רנדר הקריסטלים + בדיקות — ראו [[verification]]
@@ -51,12 +53,15 @@ Python+fonttools (לחיתוך פונטים) · Chrome (לרנדר headless).
 
 ## מבנה הדף
 
-nav → hero ([[hero-crystals]]) → "למה בכלל צריך דף נחיתה" → תהליך 4 שלבים
-→ הסרת סיכון → שאלות נפוצות → צור קשר → footer → 3 dialogs משפטיים
-+ כפתור וואטסאפ צף
+עמוד הבית: nav + `components/CategoryNav.tsx` → hero → תיק עבודות → קרוסלת
+השירותים → אוטומציות → NFC → שיווק → מי אנחנו → ביקורות → צור קשר
+→ footer + dialogs משפטיים + כפתורי וואטסאפ ושיתוף צפים.
 
-`.techbg` עוטף את `#why` + `#process`: רשת קווים, blooms סגולים,
-ו-[[background-creatures]].
+עמוד קטגוריה: אותו nav + חזרה → hero של השירות → גוף → CTA →
+שירותים נוספים. ראו [[services-catalog]].
+
+⚠️ הקופי של דפי הנחיתה עבר ל-`/services/landing-pages` כמות שהוא.
+ראו [[agency-repositioning]].
 
 **"בורר השירותים" הוסר** (2026-08-06). שדה "סוג העסק" הוא טקסט חופשי,
-לא `<select>` — לבקשת הלקוח.
+לא `<select>`, לבקשת הלקוח.

@@ -5,7 +5,7 @@ import { waURL } from '@/lib/whatsapp';
 import { WhatsAppIcon } from './icons';
 
 const HERO_CTA_MSG =
-  'שלום, הגעתי מהאתר של ARCODEMIA ואשמח לקבל הצעת מחיר לדף נחיתה.';
+  'שלום, הגעתי מהאתר של ARCODEMIA ואשמח לשמוע מה אתם יכולים לעשות לעסק שלי.';
 
 /* ============================================================
    הקריסטלים — תמונה סטטית שרונדרה מראש
@@ -65,15 +65,15 @@ export function Hero() {
       </picture>
 
       <div className="wrap hero__in">
-        <span className="eyebrow">דפי נחיתה לעסקים מקומיים</span>
+        <span className="eyebrow">ארקודמיה, סוכנות דיגיטל</span>
         <h1>
           הלקוחות שלך כבר מחפשים אותך.
           <br />
           <em>השאלה היא מה הם מוצאים.</em>
         </h1>
         <p className="lead">
-          אנחנו בונים לעסקים מקומיים דף נחיתה אחד — שנטען מהר, נראה מצוין בנייד,
-          ומוביל את הגולש לפעולה אחת: ליצור איתך קשר.
+          סוכנות דיגיטל שבונה לעסקים את מה שמביא לקוחות: אתרים, אוטומציות
+          בוואטסאפ, קמפיינים ממומנים, כרטיסי NFC ופרופיל עסקי בגוגל.
         </p>
         <div className="hero__cta">
           <a
@@ -85,14 +85,14 @@ export function Hero() {
             <WhatsAppIcon />
             דברו איתנו בוואטסאפ
           </a>
-          <a className="btn btn--ghost" href="#contact">
-            השאירו פרטים →
+          <a className="btn btn--ghost" href="#services">
+            מה אנחנו עושים
           </a>
         </div>
         <div className="hero__trust">
-          <span>מותאם קודם כל לנייד</span>
-          <span>נטען במהירות</span>
-          <span>מחובר ישירות לוואטסאפ שלך</span>
+          <span>נבנה קודם כל לנייד</span>
+          <span>איש קשר אחד לכל הפרויקט</span>
+          <span>הנכסים נשארים בבעלותכם</span>
         </div>
       </div>
     </section>

@@ -28,7 +28,7 @@ const PAINS: Pain[] = [
         <circle cx="17" cy="7" r="1.2" fill="currentColor" />
       </svg>
     ),
-    title: 'יש אינסטגרם — אבל אין לאן לשלוח',
+    title: 'יש אינסטגרם, אבל אין לאן לשלוח',
     body: 'הפרופיל עובד קשה, והלינק בביו מוביל לכלום. כל הגולשים האלה מתאדים.',
   },
   {
@@ -40,7 +40,7 @@ const PAINS: Pain[] = [
       </svg>
     ),
     title: 'האתר הישן שבור בנייד',
-    body: 'במחשב זה נראה סביר. בטלפון — טקסט זעיר וכפתורים שלא נלחצים. שם רוב הלקוחות.',
+    body: 'במחשב זה נראה סביר. בטלפון, טקסט זעיר וכפתורים שלא נלחצים. שם רוב הלקוחות.',
   },
   {
     icon: (
@@ -48,7 +48,7 @@ const PAINS: Pain[] = [
         <path d="M3 12h5l2-6 4 12 2-6h5" />
       </svg>
     ),
-    title: 'מתעניינים — ואז נעלמים',
+    title: 'מתעניינים, ואז נעלמים',
     body: 'אין קריאה ברורה לפעולה, אז אף אחד לא מרים טלפון. עניין בלי פעולה שווה אפס.',
   },
 ];
@@ -212,7 +212,7 @@ export function PainPoints() {
         <div className="sec-head rv" ref={headRef}>
           <span className="eyebrow">למה בכלל צריך דף נחיתה</span>
           <h2 className={kinClass}>
-            אם אחד מהמשפטים האלה מוכר לך —{' '}
+            אם אחד מהמשפטים האלה מוכר לך,{' '}
             <span className="kin__danger">
               אתה מפסיד{' '}
               <span className="kin__anchor" ref={anchorRef}>

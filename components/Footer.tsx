@@ -19,7 +19,7 @@ export function Footer() {
     <footer className="foot">
       <div className="wrap foot__in">
         <span>
-          © <span>{year}</span> <bdi>ARCODEMIA</bdi> — דפי נחיתה לעסקים מקומיים
+          © <span>{year}</span> <bdi>ARCODEMIA</bdi>, ממומן ואורגני. סוכנות דיגיטל
         </span>
         <nav className="foot__legal" aria-label="מסמכים משפטיים">
           {DOCS.map((d) => (

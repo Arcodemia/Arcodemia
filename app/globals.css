@@ -380,7 +380,7 @@ section{padding-block:var(--s8)}
   .hero__in::before{
     inset:-5% -16% -12%;
     background:
-      linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,.5) 78%, rgba(0,0,0,.66) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0) 46%, rgba(0,0,0,.58) 76%, rgba(0,0,0,.74) 100%),
       radial-gradient(70% 56% at 50% 48%,
         rgba(0,0,0,.92), rgba(0,0,0,.76) 48%, rgba(0,0,0,.42) 74%, rgba(0,0,0,0) 94%);
   }
@@ -1358,3 +1358,364 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
     }
   }
 }
+
+
+/* ============================================================
+   ניווט הקטגוריות
+   ------------------------------------------------------------
+   רצועה שנייה מתחת לשורת הזהות, קבועה בכל הדפים.
+   ⚠️ נגללת אופקית בנייד ולא נשברת לשתי שורות: שבירה דחפה את
+   ה-hero מטה בכל מכשיר צר.
+   ============================================================ */
+.catnav{border-block-start:1px solid var(--hairline); background:rgba(0,0,0,.55)}
+.catnav__in{
+  display:flex; gap:var(--s1); align-items:center;
+  overflow-x:auto; scrollbar-width:none;
+  padding-block:6px;
+  /* דהייה בקצה, כדי שיהיה ברור שיש עוד */
+  -webkit-mask-image:linear-gradient(to left, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+          mask-image:linear-gradient(to left, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+}
+.catnav__in::-webkit-scrollbar{display:none}
+.catnav__item{
+  flex:none; white-space:nowrap;
+  padding:8px 13px; border-radius:var(--r-sm);
+  font-size:var(--t-xs); font-weight:700; letter-spacing:.01em;
+  color:var(--muted); text-decoration:none;
+  border:1px solid transparent;
+  transition:color .2s, border-color .2s, background .2s;
+}
+.catnav__item:hover{color:var(--ink); border-color:var(--hairline-2); background:rgba(255,255,255,.04)}
+/* הקטגוריה שאנחנו נמצאים בה */
+.catnav__item.is-current{color:var(--neon-hi); border-color:rgba(177,75,255,.42); background:rgba(177,75,255,.1)}
+@media (min-width:834px){ .catnav__in{justify-content:center; gap:var(--s2)} }
+
+.nav-menu__h{
+  font-size:var(--t-xs); font-weight:800; letter-spacing:.12em;
+  color:var(--faint); text-transform:uppercase;
+  margin-block:var(--s4) var(--s2);
+}
+.nav-menu__h:first-child{margin-block-start:0}
+
+/* ============================================================
+   תיק העבודות
+   ============================================================ */
+.work{position:relative}
+/* ⚠️ תקרה לרוחב הכרטיס, לא 1fr. עם פרויקט אחד בלבד
+   auto-fit מתח אותו על כל הרוחב והתמונה יצאה ענקית. */
+.work__grid{
+  display:grid; gap:var(--s4);
+  grid-template-columns:1fr;
+  justify-content:center;
+}
+@media (min-width:700px){
+  .work__grid{grid-template-columns:repeat(auto-fit, minmax(320px, 430px))}
+}
+
+.work__card{
+  display:block; text-decoration:none; color:inherit;
+  border:1px solid var(--hairline); border-radius:var(--r-lg);
+  background:var(--surface); overflow:hidden;
+  transition:transform .3s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s;
+}
+.work__card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(177,75,255,.42);
+  box-shadow:var(--shadow-float), 0 0 60px rgba(177,75,255,.16);
+}
+.work__shot{
+  display:block; position:relative;
+  aspect-ratio:16/10; overflow:hidden;
+  background:#050409;
+  /* קו סגול דק בתחתית התמונה, מפריד בלי מסגרת */
+  border-block-end:1px solid var(--hairline);
+}
+.work__shot img{
+  inline-size:100%; block-size:100%; object-fit:cover; object-position:top;
+  display:block;
+  transition:transform .5s cubic-bezier(.2,.8,.3,1);
+}
+.work__card:hover .work__shot img{transform:scale(1.03)}
+.work__meta{display:block; padding:var(--s4)}
+.work__name{display:block; font-size:var(--t-h3); font-weight:900; margin-block-end:6px}
+.work__what{display:block; color:var(--muted); font-size:var(--t-sm); line-height:1.6}
+.work__live{
+  display:inline-flex; align-items:center; gap:7px;
+  margin-block-start:var(--s3);
+  font-size:var(--t-sm); font-weight:800; color:var(--neon-hi);
+}
+.work__live svg{inline-size:15px; block-size:15px}
+
+/* ============================================================
+   קרוסלת השירותים
+   ------------------------------------------------------------
+   🔑 scroll-snap על גלילה מקורית. אין טרנספורם מחושב ב-JS,
+   ולכן ההחלקה באצבע היא של המערכת: אינרציה, גבולות, והכל.
+   ============================================================ */
+.svc{position:relative; overflow:hidden}
+.svc__frame{position:relative}
+.svc__rail{
+  display:flex; gap:var(--s3);
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding-inline:max(var(--gut), calc((100vw - var(--lock)) / 2));
+  padding-block:var(--s2) var(--s4);
+  /* ⚠️ בלי זה הכרטיס נצמד לקצה המסילה ולא לעמודת התוכן,
+     כלומר "נדבק" מתחת לחצים במקום ליישר עם הכותרת. */
+  scroll-padding-inline-start:max(var(--gut), calc((100vw - var(--lock)) / 2));
+}
+.svc__rail::-webkit-scrollbar{display:none}
+.svc__slide{flex:none; scroll-snap-align:start; inline-size:min(78vw, 340px)}
+
+.svc__card{
+  position:relative; display:flex; flex-direction:column; block-size:100%;
+  padding:var(--s5) var(--s4) var(--s4);
+  border:1px solid var(--hairline); border-radius:var(--r-lg);
+  background:linear-gradient(165deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+  text-decoration:none; color:inherit;
+  transition:transform .35s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s;
+  overflow:hidden;
+}
+/* זוהר עדין שנדלק רק בכרטיס שבמרכז */
+.svc__card::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 70% at 50% 0%, rgba(177,75,255,.16), transparent 62%);
+  opacity:0; transition:opacity .4s;
+}
+.svc__card.is-active::before{opacity:1}
+.svc__card.is-active{border-color:rgba(177,75,255,.36)}
+.svc__card:hover{transform:translateY(-4px); box-shadow:var(--shadow-float), 0 0 54px rgba(177,75,255,.14)}
+
+.svc__art{
+  display:block; position:relative;
+  color:var(--neon-hi); opacity:.9;
+  margin-block-end:var(--s3);
+}
+.svc__art svg{inline-size:100%; block-size:auto; display:block}
+.svc__num{
+  position:absolute; inset-block-start:var(--s3); inset-inline-end:var(--s4);
+  font-family:var(--mono); font-size:var(--t-xs); font-weight:700;
+  color:var(--faint); letter-spacing:.08em;
+}
+.svc__card h3{font-size:var(--t-h3); margin-block-end:8px}
+.svc__card p{color:var(--muted); font-size:var(--t-sm); line-height:1.65; flex:1 1 auto}
+.svc__go{
+  display:inline-flex; align-items:center; gap:6px;
+  margin-block-start:var(--s3);
+  font-size:var(--t-sm); font-weight:800; color:var(--neon-hi);
+}
+.svc__go svg{inline-size:15px; block-size:15px}
+/* בפריסת RTL "הבא" מצביע שמאלה, ולכן ה-chevron הבסיסי כבר נכון */
+
+/* ⚠️ מרחפים מעל המסילה ולא יושבים בקצות הפריים.
+   כפריטי flex הם נדחפו אל מחוץ לחלון ונחתכו. */
+.svc__arrow{
+  position:absolute; inset-block-start:50%; transform:translateY(-50%);
+  z-index:2;
+  inline-size:44px; block-size:44px; border-radius:50%;
+  display:grid; place-items:center;
+  background:rgba(12,11,16,.85); backdrop-filter:blur(6px);
+  border:1px solid var(--hairline-2);
+  color:var(--ink); cursor:pointer;
+  transition:background .2s, border-color .2s, opacity .2s;
+}
+/* ⚠️ בפריסת RTL inset-inline-start הוא **ימין**.
+   "הקודם" מוביל אל הכרטיס הראשון, שהוא הימני ביותר, ולכן הוא
+   יושב מימין. "הבא" משמאל. */
+.svc__arrow--prev{inset-inline-start:max(12px, calc((100vw - var(--lock)) / 2 - 56px))}
+.svc__arrow--next{inset-inline-end:max(12px, calc((100vw - var(--lock)) / 2 - 56px))}
+.svc__arrow:hover:not(:disabled){background:rgba(177,75,255,.16); border-color:rgba(177,75,255,.45)}
+.svc__arrow:disabled{opacity:.25; cursor:default}
+.svc__arrow svg{inline-size:20px; block-size:20px}
+/* ⚠️ הצורה מצוירת פעם אחת ומצביעה שמאלה. בפריסת RTL שמאלה
+   הוא "הבא", ולכן דווקא "הקודם" הוא זה שמסתובב. */
+.svc__arrow--prev svg{transform:rotate(180deg)}
+/* בנייד מחליקים באצבע, ולכן החצים מיותרים */
+@media (max-width:833px){ .svc__arrow{display:none} }
+
+.svc__dots{display:flex; justify-content:center; gap:8px; margin-block-start:var(--s2)}
+.svc__dot{
+  inline-size:8px; block-size:8px; border-radius:50%; padding:0;
+  border:none; background:var(--hair-hi); cursor:pointer;
+  transition:background .25s, transform .25s;
+}
+.svc__dot.is-on{background:var(--neon); transform:scale(1.4)}
+
+/* ============================================================
+   חתכי השירות המורחבים
+   ------------------------------------------------------------
+   פריסה מתחלפת: התמונה עוברת צד בכל חתך, כדי שהעין לא תרד
+   ברשימה אחידה.
+   ============================================================ */
+.feat__in{display:grid; gap:var(--s5); align-items:center}
+@media (min-width:960px){
+  .feat__in{grid-template-columns:minmax(0,.85fr) minmax(0,1fr); gap:var(--s7)}
+  .feat--flip .feat__art{order:2}
+}
+.feat__art{
+  position:relative; color:var(--neon-hi);
+  padding:var(--s5); border-radius:var(--r-lg);
+  border:1px solid var(--hairline);
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgba(177,75,255,.13), transparent 68%),
+    linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+}
+.feat__art svg{inline-size:100%; block-size:auto; display:block}
+.feat__text h2{font-size:var(--t-h2); margin-block:var(--s3) var(--s3); text-wrap:balance}
+.feat__text .lead{color:var(--soft); font-size:1.0625rem; line-height:1.7; margin-block-end:var(--s4)}
+.feat__list{display:grid; gap:var(--s3); margin-block-end:var(--s4)}
+.feat__list li{
+  display:grid; gap:3px;
+  padding-inline-start:var(--s4); position:relative;
+}
+/* סימן בודד במקום נקודה: קו קצר בסגול */
+.feat__list li::before{
+  content:''; position:absolute; inset-inline-start:0; inset-block-start:.62em;
+  inline-size:14px; block-size:2px; border-radius:2px; background:var(--neon);
+}
+.feat__list b{font-size:1.0125rem; font-weight:800}
+.feat__list span{color:var(--muted); font-size:var(--t-sm); line-height:1.6}
+.feat__more{color:var(--muted); font-size:var(--t-sm); line-height:1.7; margin-block-end:var(--s4)}
+.feat__note{
+  color:var(--faint); font-size:var(--t-xs); line-height:1.6;
+  margin-block-end:var(--s4); padding:10px 12px;
+  border:1px dashed var(--hairline-2); border-radius:var(--r-sm);
+}
+
+/* ============================================================
+   מי אנחנו
+   ============================================================ */
+.about__in{display:grid; gap:var(--s5)}
+@media (min-width:960px){ .about__in{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:var(--s7); align-items:start} }
+.about__text h2{font-size:var(--t-h2); margin-block:var(--s3) var(--s4); text-wrap:balance}
+.about__text .lead{color:var(--soft); font-size:1.125rem; line-height:1.7; margin-block-end:var(--s3)}
+.about__text p{color:var(--muted); line-height:1.75; margin-block-end:var(--s3)}
+.about__close{
+  color:var(--ink) !important; font-weight:700;
+  padding-inline-start:var(--s3);
+  border-inline-start:2px solid var(--neon);
+}
+.about__facts{display:grid; gap:var(--s2)}
+.about__facts li{
+  padding:var(--s3) var(--s4);
+  border:1px solid var(--hairline); border-radius:var(--r-md);
+  background:linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  display:grid; gap:4px;
+}
+.about__facts b{font-size:1.0125rem; font-weight:800}
+.about__facts span{color:var(--muted); font-size:var(--t-sm); line-height:1.6}
+
+/* ============================================================
+   ביקורות
+   ============================================================ */
+.rev__grid{display:grid; gap:var(--s3); grid-template-columns:1fr}
+@media (min-width:700px){ .rev__grid{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:1060px){ .rev__grid{grid-template-columns:repeat(3,1fr)} }
+.rev__card{
+  padding:var(--s4);
+  border:1px solid var(--hairline); border-radius:var(--r-lg);
+  background:linear-gradient(165deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+  display:flex; flex-direction:column; gap:var(--s3);
+}
+.rev__stars{display:flex; gap:3px}
+.rev__stars svg{inline-size:16px; block-size:16px; fill:var(--hair-hi)}
+.rev__stars svg.is-on{fill:#FFC53D}
+.rev__card blockquote{
+  margin:0; color:var(--soft); font-size:var(--t-sm); line-height:1.7; flex:1 1 auto;
+}
+.rev__card cite{
+  display:flex; align-items:center; gap:10px;
+  font-style:normal; font-weight:800; font-size:var(--t-sm);
+}
+.rev__avatar{
+  inline-size:30px; block-size:30px; border-radius:50%; flex:none;
+  display:grid; place-items:center;
+  background:rgba(177,75,255,.18); border:1px solid rgba(177,75,255,.4);
+  color:var(--neon-hi); font-weight:900; font-size:var(--t-xs);
+}
+.rev__note{
+  margin-block-start:var(--s5); text-align:center;
+  color:var(--faint); font-size:var(--t-xs); line-height:1.6;
+  max-width:640px; margin-inline:auto;
+}
+
+/* ============================================================
+   עמודי המשנה
+   ============================================================ */
+.nav--sub .nav__in{gap:var(--s3)}
+.subback{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:999px;
+  background:rgba(255,255,255,.05); border:1px solid var(--hairline-2);
+  color:var(--ink); font-weight:800; font-size:var(--t-sm);
+  cursor:pointer; margin-inline-end:auto;
+  transition:background .2s, border-color .2s;
+}
+.subback:hover{background:rgba(177,75,255,.14); border-color:rgba(177,75,255,.42)}
+.subback svg{inline-size:16px; block-size:16px}
+
+.sub__hero{position:relative; padding-block:var(--s8) var(--s7); overflow:hidden}
+.sub__hero::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(70% 60% at 50% 0%, rgba(177,75,255,.17), transparent 70%);
+}
+.sub__hero-in{position:relative; z-index:1; text-align:center; max-width:780px}
+.sub__hero h1{font-size:var(--t-h2); margin-block:var(--s3) var(--s3); text-wrap:balance}
+.sub__hero .lead{color:var(--soft); font-size:1.125rem; line-height:1.7}
+.sub__art{
+  display:block; max-width:340px; margin:var(--s5) auto 0;
+  color:var(--neon-hi); opacity:.92;
+}
+.sub__art svg{inline-size:100%; block-size:auto}
+
+.sub__body .wrap{max-width:800px}
+.sub__body h2{font-size:var(--t-h3); margin-block:var(--s6) var(--s3)}
+.sub__body h2:first-child{margin-block-start:0}
+.sub__body p{color:var(--muted); line-height:1.8; margin-block-end:var(--s3)}
+.sub__cards{display:grid; gap:var(--s3); margin-block:var(--s4) var(--s5)}
+@media (min-width:700px){ .sub__cards{grid-template-columns:repeat(2,1fr)} }
+.sub__cards li{
+  padding:var(--s4); border:1px solid var(--hairline); border-radius:var(--r-md);
+  background:linear-gradient(165deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  display:grid; gap:6px;
+}
+.sub__cards b{font-size:1.0125rem; font-weight:800}
+.sub__cards span{color:var(--muted); font-size:var(--t-sm); line-height:1.65}
+.sub__flag{
+  color:var(--faint) !important; font-size:var(--t-xs) !important;
+  padding:10px 12px; border:1px dashed var(--hairline-2); border-radius:var(--r-sm);
+}
+
+.sub__cta{text-align:center; border-block-start:1px solid var(--hairline)}
+.sub__cta h2{font-size:var(--t-h2); margin-block-end:var(--s2)}
+.sub__cta p{color:var(--muted); margin-block-end:var(--s4)}
+.sub__cta-row{display:flex; gap:var(--s2); justify-content:center; flex-wrap:wrap}
+
+.sub__more{border-block-start:1px solid var(--hairline); padding-block:var(--s7)}
+.sub__more-h{font-size:var(--t-h3); margin-block-end:var(--s4); text-align:center}
+.sub__more ul{display:grid; gap:var(--s2)}
+@media (min-width:834px){ .sub__more ul{grid-template-columns:repeat(2,1fr)} }
+.sub__more a{
+  display:grid; gap:4px; padding:var(--s3) var(--s4);
+  border:1px solid var(--hairline); border-radius:var(--r-md);
+  text-decoration:none; color:inherit;
+  transition:border-color .25s, background .25s;
+}
+.sub__more a:hover{border-color:rgba(177,75,255,.42); background:rgba(177,75,255,.06)}
+.sub__more b{font-weight:800}
+.sub__more span{color:var(--muted); font-size:var(--t-sm); line-height:1.55}
+
+/* ============================================================
+   תנועה מופחתת לחתכים החדשים
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  .work__card, .work__shot img, .svc__card{transition:none}
+  .work__card:hover, .svc__card:hover{transform:none}
+  .work__card:hover .work__shot img{transform:none}
+  .svc__rail{scroll-behavior:auto}
+}
+html.a11y-nomotion .work__card,
+html.a11y-nomotion .work__shot img,
+html.a11y-nomotion .svc__card{transition:none}
+html.a11y-nomotion .work__card:hover,
+html.a11y-nomotion .svc__card:hover{transform:none}

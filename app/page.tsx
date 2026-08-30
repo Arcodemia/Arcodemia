@@ -5,17 +5,36 @@ import { useTapSpotlight } from '@/hooks/useTapSpotlight';
 import { LegalProvider } from '@/components/LegalDialogs';
 import { Nav } from '@/components/Nav';
 import { Hero } from '@/components/Hero';
-import { Bugs } from '@/components/Bugs';
-import { PainPoints } from '@/components/PainPoints';
-import { Process } from '@/components/Process';
-import { RiskReversal } from '@/components/RiskReversal';
-import { FAQ } from '@/components/FAQ';
+import { Portfolio } from '@/components/Portfolio';
+import { ServicesCarousel } from '@/components/ServicesCarousel';
+import { Automation, NfcCards, Marketing } from '@/components/Highlights';
+import { About } from '@/components/About';
+import { Testimonials } from '@/components/Testimonials';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import { WhatsAppFab } from '@/components/WhatsAppFab';
 import { ShareFab } from '@/components/ShareFab';
 import { A11yWidget } from '@/components/A11yWidget';
 
+/* ============================================================
+   עמוד הבית של הסוכנות
+   ------------------------------------------------------------
+   ⚠️ הפוזיציה השתנתה: זה כבר לא דף מכירה לדף נחיתה אחד, אלא
+   עמוד בית של סוכנות דיגיטל עם חמישה שירותים.
+
+   כל הקופי של דפי הנחיתה (כרטיסי הכאב, ארבעת השלבים, הסרת
+   הסיכון והשאלות הנפוצות) עבר כמות שהוא אל
+   app/services/landing-pages. הוא לא נמחק ולא נכתב מחדש.
+
+   סדר החתכים אינו שרירותי:
+     hero      ההבטחה, במשפט שלא נגענו בו
+     work      ההוכחה. עבודה שרצה באוויר, גבוה ככל האפשר
+     services  חמש הקטגוריות, שער לעמודי המשנה
+     automation / nfc / marketing  השירותים שדורשים הסבר
+     about     מי עומד מאחורי זה
+     reviews   מה אומרים אחרים
+     contact   הפעולה
+   ============================================================ */
 export default function Page() {
   useReveal();
   useTapSpotlight();
@@ -26,9 +45,9 @@ export default function Page() {
         דילוג לתוכן הראשי
       </a>
 
-      {/* גרעין — הורג את המראה של "גרדיאנט CSS שטוח" */}
+      {/* גרעין: הורג את המראה של גרדיאנט CSS שטוח */}
       <div className="grain" aria-hidden="true" />
-      {/* מסגרת קווים דקה — נותנת לדף מבנה של מוצר, לא של תבנית */}
+      {/* מסגרת קווים דקה: נותנת לדף מבנה של מוצר, לא של תבנית */}
       <div className="frame" aria-hidden="true" />
 
       <Nav />
@@ -36,21 +55,14 @@ export default function Page() {
       <main id="main">
         <a id="top" />
         <Hero />
-
-        {/* ============================================================
-            הרצועה שבין ה-hero ל"בלי סיכון": רשת היי-טק, דעיכת הזוהר
-            הסגול לשחור, והחיפושיות. כולם ברקע, מתחת לכל טקסט.
-            ============================================================ */}
-        <div className="techbg">
-          <Bugs />
-          <PainPoints />
-          <Process />
-        </div>
-
-        <RiskReversal />
+        <Portfolio />
+        <ServicesCarousel />
+        <Automation />
+        <NfcCards />
+        <Marketing />
+        <About />
+        <Testimonials />
         <ContactSection />
-        {/* השאלות הנפוצות יורדות לתחתית — מיד מעל ה-footer */}
-        <FAQ />
       </main>
 
       <Footer />

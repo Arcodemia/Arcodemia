@@ -5,7 +5,7 @@ import { CONFIG } from '@/lib/config';
 import { FAB_SHOW_AFTER_PX, useScrolledPast } from '@/hooks/useScrolledPast';
 import { CopyIcon, FacebookIcon, ShareIcon, WhatsAppIcon } from './icons';
 
-const SHARE_TEXT = 'ARCODEMIA — דפי נחיתה מקצועיים לעסקים מקומיים';
+const SHARE_TEXT = 'ARCODEMIA, סוכנות דיגיטל: אתרים, אוטומציות, שיווק ממומן וכרטיסי NFC';
 
 type FallbackTarget = 'whatsapp' | 'facebook';
 

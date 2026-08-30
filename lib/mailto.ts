@@ -17,7 +17,7 @@ export function toMailtoBody(d: MailtoFields): string {
 }
 
 function toMailSubject(d: MailtoFields): string {
-  return `פנייה מדף הנחיתה של ${BRAND} — ${d.name}${d.business ? ` · ${d.business}` : ''}`;
+  return `פנייה מהאתר של ${BRAND}: ${d.name}${d.business ? ` · ${d.business}` : ''}`;
 }
 
 function encodedMailParts(d: MailtoFields): { subject: string; body: string } {

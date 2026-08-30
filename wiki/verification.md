@@ -20,6 +20,8 @@ updated: 2026-08-27
 | `bash tools/bake-hero.sh` | **הדרך היחידה** לייצר את תמונות ה-hero — כולל הקומפוזיט |
 | `bash tools/serve.sh` | בנייה + שרת, עוקף את [[next-build-lock]] |
 | `npm run lint:memory` | קישורים שבורים, יתומים ו-frontmatter חסר ב-`wiki/` |
+| `node tools/find-emdash.cjs` | em dash בקופי, ראו [[no-em-dash-in-copy]] |
+| `node tools/shoot-project.cjs` | צילום אתר לקוח לתיק העבודות |
 
 `puppeteer-core` ו-`pngjs` הם devDependencies — בדיקת הניגודיות תלויה
 בהם. הם לא נשלחים ללקוח.

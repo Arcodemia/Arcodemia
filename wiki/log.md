@@ -60,6 +60,14 @@ updated: 2026-08-27
 2026-08-27 NOTE   הבסיס נכשל ב-9 מדידות ניגודיות — 1.38:1 בנייד → [[accessibility]]
 2026-08-27 FIX    נוסף .hero__in::before, סקרים מתחת לטקסט בלבד → [[contrast-worst-pixel]]
 2026-08-27 FIX    חלקיקים fixed שרדו את החתך שלהם → [[coins-are-fixed-and-outlive-the-section]]
+2026-08-30 DECIDE האתר הופנה מחדש מדף נחיתה יחיד לסוכנות דיגיטל → [[agency-repositioning]]
+2026-08-30 BUILD  lib/services.ts כמקור אמת לחמש הקטגוריות → [[services-catalog]]
+2026-08-30 BUILD  קרוסלת שירותים על scroll-snap מקורי, חמישה עמודי משנה עם חזרה ולוגו
+2026-08-30 BUILD  תיק עבודות עם צילום אמיתי של motorstravels.com
+2026-08-30 BUILD  חתכי אוטומציות, NFC ושיווק, מי אנחנו, וביקורות
+2026-08-30 FIX    44 שורות קופי נכתבו מחדש בלי em dash → [[no-em-dash-in-copy]]
+2026-08-30 FIX    חצי הקרוסלה יצאו הפוכים, inset לוגי מראה ב-RTL → [[rtl-logical-insets-are-mirrored]]
+2026-08-30 NOTE   הביקורות ברובן דוגמאות, נוספה הערת גילוי → [[sample-reviews-disclosure]]
 2026-08-27 BUILD  נוספו check:crystals, check:contrast, sync-hero-refs → [[verification]]
 2026-08-27 NOTE   משקל הדף נמדד: 869KB ב-20 בקשות, פי ~4 מגרסת הקובץ היחיד → [[performance]]
 2026-08-27 LINT   הזיכרון סודר לפי סכמת fabius-archivum 2.2.0: MEMORY.md הפך לאינדקס, 30 דפים נוצרו, היומן קופל לשורות, 6 טענות מיושנות תוקנו

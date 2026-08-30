@@ -14,7 +14,7 @@ interface Status {
   isError: boolean;
 }
 
-const SUBMIT_LABEL = 'שלחו — ונחזור אליכם';
+const SUBMIT_LABEL = 'שלחו ונחזור אליכם';
 
 export function ContactForm() {
   const { open } = useLegal();

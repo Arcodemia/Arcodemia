@@ -6,10 +6,12 @@
 
 - **חי:** https://arcodemia.vercel.app ⚠️ *טרם נפרס — ראו פתוחים*
 - **סטאק:** Next.js 16 · App Router · TypeScript strict · React 19 · עברית RTL
+- **מה זה:** סוכנות דיגיטל עם חמישה שירותים. **הופנה מחדש ב-30.8**
+  מדף מכירה לדף נחיתה אחד. ראו [[agency-repositioning]]
 - **מטרה עכשיו:** פריסה ל-Vercel. הטופס פותח וואטסאפ או `mailto:` אצל המבקר,
   והפנייה נרשמת ב-Supabase.
 
-## שלושה כללים שנשברו ואסור לשבור שוב
+## כללים שנשברו ואסור לשבור שוב
 
 1. 🔴 **שני הגבישים חתוכים בשוליים בכוונה.** בקשת לקוח מפורשת, פעמיים.
    אל "תתקן" — כל ניסיון להשלים אותם שינה את המראה.
@@ -19,11 +21,15 @@
 2. 🔴 **`.hero__in::before` הוא מה שמחזיק את הטקסט קריא.** בלעדיו הכותרת
    יורדת ל-1.38:1 בנייד. → [[accessibility]]
 3. 🔴 **אדום מותר במקום אחד בלבד: חלקיקי השקל.** → [[palette-single-accent]]
+4. 🔴 **אין em dash בקופי.** בהערות קוד מותר. → [[no-em-dash-in-copy]]
+5. 🔴 **המשפט הפותח ב-hero לא נגעים בו**, וקופי דפי הנחיתה
+   ב-`/services/landing-pages` נשאר כמות שהוא. → [[agency-repositioning]]
 
 ## אינדקס
 
 ### הבסיס
-- [ארכיטקטורה](wiki/architecture.md) — מבנה, סטאק, פקודות *(entity, 2026-08-27)*
+- [ארכיטקטורה](wiki/architecture.md) — מבנה, סטאק, פקודות *(entity, 2026-08-30)*
+- [קטלוג השירותים](wiki/services-catalog.md) — חמש הקטגוריות ועמודי המשנה *(entity, 2026-08-30)*
 - [הבריף](wiki/brief.md) — מותג, קהל, מה מוכרים ומה לא מציגים *(entity, 2026-08-06)*
 - [יומן](wiki/log.md) — שורה לכל החלטה ותיקון *(synthesis, 2026-08-27)*
 
@@ -49,6 +55,7 @@
 - [כללי הגבישים](wiki/decisions/crystal-visibility-rules.md) — a ו-b חתוכים בכוונה · c כבוי *(2026-08-27)*
 - [בלי דיוור חיצוני](wiki/decisions/no-external-mailer.md) — mailto אצל המבקר *(2026-08-23)*
 - [חיפושיות ברצועה](wiki/decisions/bugs-only-in-the-grid-band.md) — מהכרטיסים ומטה *(2026-08-27)*
+- [מיצוב מחדש כסוכנות](wiki/decisions/agency-repositioning.md) — מה זז לאן *(2026-08-30)*
 
 ### מלכודות — כל אחת עלתה שעה
 - [contain:paint שובר fixed](wiki/gotchas/contain-paint-breaks-fixed.md) *(2026-08-26)*
@@ -63,8 +70,16 @@
 - [חלקיקים fixed שורדים](wiki/gotchas/coins-are-fixed-and-outlive-the-section.md) *(2026-08-27)*
 - [.next נעול](wiki/gotchas/next-build-lock.md) *(2026-08-27)*
 - [headless משקר על רוחב](wiki/gotchas/headless-min-width.md) *(2026-08-06)*
+- [בלי em dash בקופי](wiki/gotchas/no-em-dash-in-copy.md) *(2026-08-30)*
+- [insets לוגיים הפוכים ב-RTL](wiki/gotchas/rtl-logical-insets-are-mirrored.md) *(2026-08-30)*
+- [ביקורות לדוגמה וגילוי](wiki/gotchas/sample-reviews-disclosure.md) *(2026-08-30)*
 
 ## פתוחים
+
+- [ ] 🔴 **תצלום מוצר אמיתי של כרטיס ה-NFC.** כרגע איור זמני
+      ב-`ServiceArt.tsx` (`NfcArt`), מסומן בקוד ובדף.
+- [ ] **ביקורות אמיתיות** במקום הדוגמאות → [[sample-reviews-disclosure]]
+- [ ] פרויקטים נוספים לתיק העבודות. `node tools/shoot-project.cjs <url> <slug>`
 
 - [ ] 🔴 **הלקוח: להריץ `npx vercel --prod`.** ראו [DEPLOY.md](DEPLOY.md).
       עד אז ה-URL למעלה אינו חי.

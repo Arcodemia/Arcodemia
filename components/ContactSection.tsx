@@ -12,7 +12,7 @@ export function ContactSection() {
         <div className="sec-head rv">
           <span className="eyebrow">יוצרים קשר</span>
           <h2>נדבר?</h2>
-          <p>הכי מהיר בוואטסאפ. אם נוח לכם אחרת — התקשרו, שלחו מייל, או השאירו פרטים ונחזור אליכם.</p>
+          <p>הכי מהיר בוואטסאפ. אם נוח לכם אחרת, אפשר להתקשר, לשלוח מייל או להשאיר פרטים ונחזור אליכם.</p>
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export function ContactSection() {
             </span>
             <span>
               <strong>וואטסאפ</strong>
-              <span className="sub">המסלול המהיר — נענים תוך זמן קצר</span>
+              <span className="sub">המסלול המהיר, נענים תוך זמן קצר</span>
             </span>
           </a>
 
