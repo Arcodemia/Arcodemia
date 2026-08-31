@@ -55,8 +55,8 @@ export default function Page() {
       <main id="main">
         <a id="top" />
         <Hero />
-        <Portfolio />
         <ServicesCarousel />
+        <Portfolio />
         <Automation />
         <NfcCards />
         <Marketing />

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SubpageShell } from '@/components/SubpageShell';
 import { getService } from '@/lib/services';
+import { GbpShowcase } from '@/components/GbpShowcase';
 
 const SERVICE = getService('google-business')!;
 
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <SubpageShell service={SERVICE}>
+    <SubpageShell service={SERVICE} heroArt={false}>
+      <GbpShowcase />
+
       <section className="sub__body">
         <div className="wrap">
           <h2 className="rv">למה זה הדבר הראשון שצריך לסדר</h2>

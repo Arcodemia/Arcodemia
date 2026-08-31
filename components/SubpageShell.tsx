@@ -31,9 +31,14 @@ import { SERVICE_ART } from './ServiceArt';
 export function SubpageShell({
   service,
   children,
+  heroArt = true,
 }: {
   service: Service;
   children: ReactNode;
+  /** ⚠️ כבו רק כשהעמוד מציג גרסה **טובה יותר** של אותו איור
+      בהמשך. בעמוד פרופיל גוגל ההשוואה לפני/אחרי מכילה את
+      אותו כרטיס בדיוק, ושתי הופעות באותו מסך נקראו כטעות. */
+  heroArt?: boolean;
 }) {
   const router = useRouter();
   /* אותן אנימציות חשיפה כמו בעמוד הבית, אחרת התוכן כאן
@@ -89,9 +94,11 @@ export function SubpageShell({
             <span className="eyebrow">שירות</span>
             <h1>{service.title}</h1>
             <p className="lead">{service.teaser}</p>
-            <span className="sub__art" aria-hidden="true">
-              {Art ? <Art /> : null}
-            </span>
+            {heroArt && Art ? (
+              <span className="sub__art" aria-hidden="true">
+                <Art />
+              </span>
+            ) : null}
           </div>
         </section>
 

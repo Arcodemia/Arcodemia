@@ -1452,6 +1452,28 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
    🔑 scroll-snap על גלילה מקורית. אין טרנספורם מחושב ב-JS,
    ולכן ההחלקה באצבע היא של המערכת: אינרציה, גבולות, והכל.
    ============================================================ */
+/* ============================================================
+   פלטת האיורים — 🔴 חריג מתועד ומתוחם
+   ------------------------------------------------------------
+   חמשת איורי הקטגוריות משתמשים בצבעים שאינם הסגול: אדום
+   וירוק בגרף התוצאות, צהוב בכוכבי גוגל, ירוק וואטסאפ. אלה
+   **תוכן של איור** ולא כרום ממשק — הם מתארים דברים שלצופה
+   יש עליהם ציפייה מוקדמת (כוכב גוגל צהוב, גרף שיורד אדום).
+
+   ⚠️ מוגדרים כאן, על מיכלי האיורים בלבד, ולכן **אינם יכולים
+   לדלוף** לכפתור, לקישור או לטקסט. הכלל "דגש אחד" נשמר בכל
+   שאר האתר. ראו wiki/decisions/palette-single-accent.
+
+   ⚠️ כל מיכל שמרנדר איור חייב להופיע ברשימה הזו. איור בלי
+   הטוקנים מקבל fill ריק, כלומר נעלם בשקט.
+   ============================================================ */
+:is(.svc__art, .sub__art, .feat__art, .gbp__art){
+  --art-red:#FF4D5E;
+  --art-green:#34E88C;
+  --art-gold:#FFC53D;
+  --art-wa:#25D366;
+}
+
 .svc{position:relative; overflow:hidden}
 .svc__frame{position:relative}
 .svc__rail{
@@ -1465,81 +1487,132 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
   scroll-padding-inline-start:max(var(--gut), calc((100vw - var(--lock)) / 2));
 }
 .svc__rail::-webkit-scrollbar{display:none}
-.svc__slide{flex:none; scroll-snap-align:start; inline-size:min(78vw, 340px)}
+.svc__rail:focus-visible{outline:2px solid var(--neon); outline-offset:-6px; border-radius:var(--r-lg)}
+
+/* 🔑 כרטיס אחד גדול בכל פעם, כמעט ברוחב החלון — לא רצועת
+   כרטיסים קטנים. זו הייתה דרישה מפורשת. */
+.svc__slide{
+  flex:none; scroll-snap-align:start;
+  inline-size:min(92vw, var(--lock));
+}
 
 .svc__card{
-  position:relative; display:flex; flex-direction:column; block-size:100%;
-  padding:var(--s5) var(--s4) var(--s4);
+  position:relative; block-size:100%;
+  display:grid; gap:var(--s4); align-items:center;
+  padding:var(--s5);
   border:1px solid var(--hairline); border-radius:var(--r-lg);
-  background:linear-gradient(165deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
-  text-decoration:none; color:inherit;
-  transition:transform .35s cubic-bezier(.2,.8,.3,1), border-color .3s, box-shadow .3s;
+  background:linear-gradient(165deg, rgba(255,255,255,.05), rgba(255,255,255,.012));
   overflow:hidden;
+  transition:border-color .35s, box-shadow .35s, transform .35s cubic-bezier(.2,.8,.3,1);
 }
-/* זוהר עדין שנדלק רק בכרטיס שבמרכז */
+/* זוהר עדין שנדלק רק בכרטיס הפעיל */
 .svc__card::before{
   content:''; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(120% 70% at 50% 0%, rgba(177,75,255,.16), transparent 62%);
-  opacity:0; transition:opacity .4s;
+  background:radial-gradient(90% 70% at 50% 0%, rgba(177,75,255,.16), transparent 64%);
+  opacity:0; transition:opacity .45s;
 }
-.svc__card.is-active::before{opacity:1}
-.svc__card.is-active{border-color:rgba(177,75,255,.36)}
-.svc__card:hover{transform:translateY(-4px); box-shadow:var(--shadow-float), 0 0 54px rgba(177,75,255,.14)}
+.svc__slide.is-active .svc__card::before{opacity:1}
+.svc__slide.is-active .svc__card{
+  border-color:rgba(177,75,255,.34);
+  box-shadow:0 0 70px rgba(177,75,255,.10);
+}
 
+/* ---- האיור ---- */
 .svc__art{
   display:block; position:relative;
-  color:var(--neon-hi); opacity:.9;
-  margin-block-end:var(--s3);
+  border-radius:var(--r-md); overflow:hidden;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(177,75,255,.10), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
 }
 .svc__art svg{inline-size:100%; block-size:auto; display:block}
-.svc__num{
-  position:absolute; inset-block-start:var(--s3); inset-inline-end:var(--s4);
-  font-family:var(--mono); font-size:var(--t-xs); font-weight:700;
-  color:var(--faint); letter-spacing:.08em;
-}
-.svc__card h3{font-size:var(--t-h3); margin-block-end:8px}
-.svc__card p{color:var(--muted); font-size:var(--t-sm); line-height:1.65; flex:1 1 auto}
-.svc__go{
-  display:inline-flex; align-items:center; gap:6px;
-  margin-block-start:var(--s3);
-  font-size:var(--t-sm); font-weight:800; color:var(--neon-hi);
-}
-.svc__go svg{inline-size:15px; block-size:15px}
-/* בפריסת RTL "הבא" מצביע שמאלה, ולכן ה-chevron הבסיסי כבר נכון */
 
+/* ---- המספר והשם ---- */
+.svc__meta{display:flex; flex-direction:column; gap:var(--s2); min-inline-size:0}
+.svc__num{
+  font-family:var(--mono); font-size:var(--t-xs); font-weight:700;
+  color:var(--neon-hi); letter-spacing:.16em; opacity:.85;
+}
+.svc__title{margin:0; font-size:clamp(1.6rem, 3.6vw, 2.7rem); line-height:1.12; text-wrap:balance}
+/* 🔑 זהו הקישור היחיד בכרטיס. הכרטיס עצמו אינו <a>, כדי
+   שהחלקה באצבע לא תסתיים בניווט. */
+.svc__name{
+  display:inline-flex; align-items:center; gap:12px;
+  color:var(--ink); text-decoration:none;
+  transition:color .25s;
+}
+.svc__name span{
+  background-image:linear-gradient(var(--neon-hi), var(--neon-hi));
+  background-size:0% 2px; background-position:100% 100%;
+  background-repeat:no-repeat;
+  transition:background-size .35s cubic-bezier(.2,.8,.3,1);
+  padding-block-end:3px;
+}
+.svc__name svg{
+  inline-size:26px; block-size:26px; flex:none;
+  color:var(--neon-hi);
+  transition:transform .35s cubic-bezier(.2,.8,.3,1);
+}
+.svc__name:hover span, .svc__name:focus-visible span{background-size:100% 2px}
+/* בפריסת RTL "הבא" מצביע שמאלה, ולכן החץ זז שמאלה */
+.svc__name:hover svg, .svc__name:focus-visible svg{transform:translateX(-6px)}
+.svc__name:focus-visible{outline:2px solid var(--neon); outline-offset:6px; border-radius:6px}
+
+/* ---- החצים ---- */
 /* ⚠️ מרחפים מעל המסילה ולא יושבים בקצות הפריים.
    כפריטי flex הם נדחפו אל מחוץ לחלון ונחתכו. */
 .svc__arrow{
   position:absolute; inset-block-start:50%; transform:translateY(-50%);
   z-index:2;
-  inline-size:44px; block-size:44px; border-radius:50%;
+  inline-size:52px; block-size:52px; border-radius:50%;
   display:grid; place-items:center;
-  background:rgba(12,11,16,.85); backdrop-filter:blur(6px);
+  background:rgba(12,11,16,.86); backdrop-filter:blur(6px);
   border:1px solid var(--hairline-2);
   color:var(--ink); cursor:pointer;
-  transition:background .2s, border-color .2s, opacity .2s;
+  transition:background .2s, border-color .2s, opacity .2s, transform .2s;
 }
 /* ⚠️ בפריסת RTL inset-inline-start הוא **ימין**.
    "הקודם" מוביל אל הכרטיס הראשון, שהוא הימני ביותר, ולכן הוא
    יושב מימין. "הבא" משמאל. */
-.svc__arrow--prev{inset-inline-start:max(12px, calc((100vw - var(--lock)) / 2 - 56px))}
-.svc__arrow--next{inset-inline-end:max(12px, calc((100vw - var(--lock)) / 2 - 56px))}
-.svc__arrow:hover:not(:disabled){background:rgba(177,75,255,.16); border-color:rgba(177,75,255,.45)}
-.svc__arrow:disabled{opacity:.25; cursor:default}
-.svc__arrow svg{inline-size:20px; block-size:20px}
+.svc__arrow--prev{inset-inline-start:max(10px, calc((100vw - var(--lock)) / 2 - 62px))}
+.svc__arrow--next{inset-inline-end:max(10px, calc((100vw - var(--lock)) / 2 - 62px))}
+.svc__arrow:hover:not(:disabled){background:rgba(177,75,255,.18); border-color:rgba(177,75,255,.5)}
+.svc__arrow:active:not(:disabled){transform:translateY(-50%) scale(.94)}
+.svc__arrow:disabled{opacity:.22; cursor:default}
+.svc__arrow svg{inline-size:22px; block-size:22px}
 /* ⚠️ הצורה מצוירת פעם אחת ומצביעה שמאלה. בפריסת RTL שמאלה
    הוא "הבא", ולכן דווקא "הקודם" הוא זה שמסתובב. */
 .svc__arrow--prev svg{transform:rotate(180deg)}
-/* בנייד מחליקים באצבע, ולכן החצים מיותרים */
-@media (max-width:833px){ .svc__arrow{display:none} }
 
-.svc__dots{display:flex; justify-content:center; gap:8px; margin-block-start:var(--s2)}
+.svc__dots{display:flex; justify-content:center; gap:10px; margin-block-start:var(--s2)}
 .svc__dot{
-  inline-size:8px; block-size:8px; border-radius:50%; padding:0;
+  inline-size:9px; block-size:9px; border-radius:50%; padding:0;
   border:none; background:var(--hair-hi); cursor:pointer;
   transition:background .25s, transform .25s;
 }
-.svc__dot.is-on{background:var(--neon); transform:scale(1.4)}
+.svc__dot.is-on{background:var(--neon); transform:scale(1.45)}
+
+/* ---- שולחני: איור לצד השם ---- */
+@media (min-width:834px){
+  .svc__card{grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr); padding:var(--s5) var(--s6)}
+  .svc__meta{gap:var(--s3)}
+}
+
+/* ---- נייד: החצים יורדים לשורת הנקודות ---- */
+/* 🔑 החלקה באצבע לבדה אינה מספיקה: לא כל גולש מנסה אותה,
+   ולכן צריך גם כפתור. אותם שני כפתורים, בלי כפילות ב-DOM. */
+@media (max-width:833px){
+  .svc__frame{display:flex; flex-wrap:wrap; align-items:center; justify-content:center}
+  .svc__rail{flex:1 0 100%}
+  .svc__arrow{
+    position:static; transform:none;
+    inline-size:46px; block-size:46px;
+  }
+  .svc__arrow:active:not(:disabled){transform:scale(.94)}
+  /* ב-RTL שורת flex מתחילה מימין, ולכן "הקודם" יוצא ימני */
+  .svc__arrow--prev{order:2}
+  .svc__dots{order:3; margin:0 var(--s3)}
+  .svc__arrow--next{order:4}
+}
 
 /* ============================================================
    חתכי השירות המורחבים
@@ -1662,11 +1735,16 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 .sub__hero-in{position:relative; z-index:1; text-align:center; max-width:780px}
 .sub__hero h1{font-size:var(--t-h2); margin-block:var(--s3) var(--s3); text-wrap:balance}
 .sub__hero .lead{color:var(--soft); font-size:1.125rem; line-height:1.7}
+/* 🔑 אותו איור בדיוק כמו בקרוסלה, ולכן אותם טוקנים. בלעדיהם
+   הצבעים בעמוד המשנה נופלים לברירת מחדל והאיור נראה שבור. */
 .sub__art{
-  display:block; max-width:340px; margin:var(--s5) auto 0;
-  color:var(--neon-hi); opacity:.92;
+  display:block; max-width:min(560px, 100%); margin:var(--s5) auto 0;
+  border-radius:var(--r-md); overflow:hidden;
+  background:radial-gradient(120% 100% at 50% 0%, rgba(177,75,255,.10), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
+  color:var(--neon-hi);
 }
-.sub__art svg{inline-size:100%; block-size:auto}
+.sub__art svg{inline-size:100%; block-size:auto; display:block}
 
 .sub__body .wrap{max-width:800px}
 .sub__body h2{font-size:var(--t-h3); margin-block:var(--s6) var(--s3)}
@@ -1719,3 +1797,120 @@ html.a11y-nomotion .work__shot img,
 html.a11y-nomotion .svc__card{transition:none}
 html.a11y-nomotion .work__card:hover,
 html.a11y-nomotion .svc__card:hover{transform:none}
+
+
+/* ============================================================
+   תנועה בתוך האיורים
+   ------------------------------------------------------------
+   🔑 הכל נתלה ב-.is-active, כלומר רץ **פעם אחת בכל פעם
+   שכרטיס נכנס למרכז**. זה הופך את ההחלקה לפעולה שמחזירה
+   משהו, במקום רצועה סטטית שגוללים מעליה.
+   ⚠️ רק transform ו-opacity (ו-stroke-dashoffset, שגם הוא
+   לא מפעיל פריסה מחדש). שום דבר כאן לא נוגע ב-layout.
+   ============================================================ */
+
+/* נקודות ההקלדה של הבוט. זו הלולאה היחידה באתר, והיא מוצדקת:
+   מחוון הקלדה שאינו נע אינו מחוון הקלדה. */
+.au-dot{animation:au-type 1.25s ease-in-out infinite; transform-origin:center}
+.au-dot--2{animation-delay:.16s}
+.au-dot--3{animation-delay:.32s}
+@keyframes au-type{
+  0%, 60%, 100%{transform:translateY(0); opacity:.55}
+  30%          {transform:translateY(-5px); opacity:1}
+}
+
+/* הלקוחות והצ׳יפים נכנסים במדורג כשהכרטיס מגיע למרכז */
+.svc__slide.is-active .au-av{animation:art-pop .5s cubic-bezier(.2,1.5,.4,1) backwards}
+.svc__slide.is-active .au-av--1{animation-delay:.15s}
+.svc__slide.is-active .au-av--2{animation-delay:.28s}
+.svc__slide.is-active .au-av--3{animation-delay:.41s}
+.svc__slide.is-active .au-chip{animation:art-rise .5s ease backwards}
+.svc__slide.is-active .au-chip--1{animation-delay:.5s}
+.svc__slide.is-active .au-chip--2{animation-delay:.6s}
+.svc__slide.is-active .au-chip--3{animation-delay:.7s}
+@keyframes art-pop{from{transform:scale(.4); opacity:0} to{transform:scale(1); opacity:1}}
+@keyframes art-rise{from{transform:translateY(10px); opacity:0} to{transform:none; opacity:1}}
+
+/* הכוכב על כרטיס ה-NFC נוחת פנימה */
+.svc__slide.is-active .nfc-star{
+  animation:art-pop .6s cubic-bezier(.2,1.5,.4,1) .25s backwards;
+  transform-origin:330px 70px;
+}
+
+/* כפתור הוואטסאפ במוקאפ */
+.svc__slide.is-active .wb-fab{
+  animation:art-pop .5s cubic-bezier(.2,1.5,.4,1) .35s backwards;
+  transform-origin:286px 232px;
+}
+
+/* 🔑 הגרף נמשך בפועל: קודם הירידה האדומה, ואז העלייה הירוקה.
+   הרצף הזה הוא כל הסיפור של החתך, ולכן הוא שווה אנימציה. */
+.mk-down{stroke-dasharray:280; stroke-dashoffset:0}
+.mk-up{stroke-dasharray:360; stroke-dashoffset:0}
+.svc__slide.is-active .mk-down{animation:art-draw .75s ease forwards}
+.svc__slide.is-active .mk-up{animation:art-draw 1s cubic-bezier(.4,0,.2,1) .6s backwards}
+.svc__slide.is-active .mk-arrow{animation:art-rise .6s cubic-bezier(.2,1.4,.4,1) 1.25s backwards}
+@keyframes art-draw{from{stroke-dashoffset:var(--d, 360)} to{stroke-dashoffset:0}}
+.mk-down{--d:280}
+.mk-up{--d:360}
+
+/* ============================================================
+   תנועה מופחתת — האיורים
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  .au-dot,
+  .svc__slide.is-active :is(.au-av, .au-chip, .nfc-star, .wb-fab, .mk-down, .mk-up, .mk-arrow){
+    animation:none;
+  }
+  /* ⚠️ בלי זה הקווים נשארים בלתי נראים כשהאנימציה מבוטלת —
+     בדיוק הבאג של "אנימציה שמגלה תוכן". */
+  .mk-down, .mk-up{stroke-dashoffset:0}
+}
+html.a11y-nomotion .au-dot,
+html.a11y-nomotion .svc__slide.is-active :is(.au-av, .au-chip, .nfc-star, .wb-fab, .mk-down, .mk-up, .mk-arrow){
+  animation:none;
+}
+html.a11y-nomotion :is(.mk-down, .mk-up){stroke-dashoffset:0}
+
+/* ============================================================
+   פרופיל גוגל — ההשוואה לפני/אחרי
+   ------------------------------------------------------------
+   העמוד הזה היה טקסט בלבד ונקרא חלש. שני כרטיסים זה לצד זה
+   מסבירים את הערך בלי משפט שכנוע אחד.
+   ============================================================ */
+.gbp{padding-block:var(--s7) 0}
+.gbp__pair{
+  display:grid; gap:var(--s4);
+  margin-block-start:var(--s6);
+}
+.gbp__side{position:relative; margin:0}
+.gbp__art{
+  position:relative;
+  border-radius:var(--r-lg); overflow:hidden;
+  border:1px solid var(--hairline);
+  background:radial-gradient(120% 100% at 50% 0%, rgba(255,255,255,.05), rgba(255,255,255,.015));
+}
+.gbp__art svg{display:block; inline-size:100%; block-size:auto}
+/* הצד ה"לפני" מעומעם, כדי שהעין תנחת על ה"אחרי" */
+.gbp__side--before .gbp__art{opacity:.72; filter:saturate(.5)}
+.gbp__side--after .gbp__art{
+  border-color:rgba(177,75,255,.34);
+  box-shadow:0 0 60px rgba(177,75,255,.13);
+}
+.gbp__tag{
+  position:absolute; z-index:2;
+  inset-block-start:-12px; inset-inline-end:16px;
+  padding:5px 14px; border-radius:999px;
+  font-size:var(--t-xs); font-weight:800; letter-spacing:.04em;
+}
+.gbp__tag--before{background:#2A2430; color:var(--muted); border:1px solid var(--hairline-2)}
+.gbp__tag--after{background:var(--neon); color:#fff; box-shadow:0 0 26px rgba(177,75,255,.5)}
+.gbp__side figcaption{
+  margin-block-start:var(--s3);
+  color:var(--muted); font-size:var(--t-sm); line-height:1.6;
+}
+.gbp__side--after figcaption{color:var(--soft)}
+
+@media (min-width:834px){
+  .gbp__pair{grid-template-columns:1fr 1fr; gap:var(--s5); align-items:start}
+}

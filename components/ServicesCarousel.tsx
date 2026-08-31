@@ -11,14 +11,16 @@ import { SERVICE_ART } from './ServiceArt';
    🔑 הגלילה עצמה היא **גלילה מקורית** של הדפדפן עם scroll-snap,
    ולא טרנספורם שמחושב ב-JS. זה מה שנותן החלקה אמיתית באצבע
    בלי לכתוב מטפל מגע, שומר על אינרציה של המערכת, ומאפשר
-   ניווט במקלדת בחינם. ה-JS כאן רק מוסיף חצים לשולחני ומסמן
-   איזה כרטיס פעיל.
+   ניווט במקלדת בחינם. ה-JS כאן רק מוסיף חצים, מסמן איזה
+   כרטיס פעיל, ותומך בחצי המקלדת.
 
    ⚠️ בדף RTL הדפדפן מדווח scrollLeft שלילי. אסור להסתמך על
    הסימן שלו, ולכן כל חישוב כאן עובר דרך Math.abs.
 
-   ⚠️ הכרטיס כולו הוא <Link> אל עמוד אמיתי, לא מודאל. זו הייתה
-   דרישה מפורשת.
+   🔑 **הכרטיס כולו אינו קישור, ובכוונה.** הוא ברוחב כמעט מלא
+   ונגררים אותו באצבע; כשכל השטח הוא <a>, החלקה מסתיימת
+   בניווט לא רצוי. הקישור הוא **שם השירות** בלבד, שהוא גם
+   מה שהתבקש. יעד המגע שלו רחב ממילא.
    ============================================================ */
 
 export function ServicesCarousel() {
@@ -81,6 +83,18 @@ export function ServicesCarousel() {
     el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   }, []);
 
+  /* חצי מקלדת על המסילה. בפריסת RTL "שמאלה" הוא הכרטיס הבא. */
+  const onKey = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const rtl = getComputedStyle(e.currentTarget).direction === 'rtl';
+      const next = e.key === (rtl ? 'ArrowLeft' : 'ArrowRight');
+      step(next ? 1 : -1);
+    },
+    [step],
+  );
+
   return (
     <section id="services" className="svc">
       <div className="wrap">
@@ -91,11 +105,53 @@ export function ServicesCarousel() {
             <br />
             <em>שיגיעו אליכם יותר לקוחות.</em>
           </h2>
-          <p>בחרו קטגוריה כדי לראות מה היא כוללת.</p>
+          <p>החליקו בין הקטגוריות, ולחצו על שם השירות כדי לראות מה הוא כולל.</p>
         </div>
       </div>
 
       <div className="svc__frame">
+        <div
+          className="svc__rail"
+          ref={railRef}
+          role="list"
+          tabIndex={0}
+          onKeyDown={onKey}
+          aria-label="קטגוריות השירות"
+        >
+          {SERVICES.map((s, i) => {
+            const Art = SERVICE_ART[s.slug];
+            return (
+              <article
+                className={`svc__slide${i === active ? ' is-active' : ''}`}
+                role="listitem"
+                key={s.slug}
+                aria-current={i === active ? 'true' : undefined}
+              >
+                <div className="svc__card">
+                  <span className="svc__art" aria-hidden="true">
+                    {Art ? <Art /> : null}
+                  </span>
+
+                  <div className="svc__meta">
+                    <span className="svc__num" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {/* 🔑 הקישור היחיד בכרטיס: שם השירות. */}
+                    <h3 className="svc__title">
+                      <Link className="svc__name" href={servicePath(s.slug)}>
+                        <span>{s.title}</span>
+                        <Chevron dir="next" />
+                      </Link>
+                    </h3>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* פס הבקרה. בשולחני החצים נדחפים ל**צדי** המסגרת;
+            בנייד הם יורדים לשורה אחת עם הנקודות, בהישג אגודל. */}
         <button
           type="button"
           className="svc__arrow svc__arrow--prev"
@@ -106,31 +162,6 @@ export function ServicesCarousel() {
           <Chevron dir="prev" />
         </button>
 
-        <div className="svc__rail" ref={railRef} role="list">
-          {SERVICES.map((s, i) => {
-            const Art = SERVICE_ART[s.slug];
-            return (
-              <div className="svc__slide" role="listitem" key={s.slug}>
-                <Link
-                  className={`svc__card${i === active ? ' is-active' : ''}`}
-                  href={servicePath(s.slug)}
-                >
-                  <span className="svc__art" aria-hidden="true">
-                    {Art ? <Art /> : null}
-                  </span>
-                  <span className="svc__num">{String(i + 1).padStart(2, '0')}</span>
-                  <h3>{s.title}</h3>
-                  <p>{s.teaser}</p>
-                  <span className="svc__go">
-                    לפרטים
-                    <Chevron dir="next" />
-                  </span>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-
         <button
           type="button"
           className="svc__arrow svc__arrow--next"
@@ -140,21 +171,20 @@ export function ServicesCarousel() {
         >
           <Chevron dir="next" />
         </button>
-      </div>
 
-      {/* נקודות: גם חיווי מיקום וגם ניווט, בעיקר לנייד */}
-      <div className="svc__dots" role="tablist" aria-label="בחירת קטגוריה">
-        {SERVICES.map((s, i) => (
-          <button
-            key={s.slug}
-            type="button"
-            role="tab"
-            aria-selected={i === active}
-            aria-label={s.title}
-            className={`svc__dot${i === active ? ' is-on' : ''}`}
-            onClick={() => goTo(i)}
-          />
-        ))}
+        <div className="svc__dots" role="tablist" aria-label="בחירת קטגוריה">
+          {SERVICES.map((s, i) => (
+            <button
+              key={s.slug}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              aria-label={s.title}
+              className={`svc__dot${i === active ? ' is-on' : ''}`}
+              onClick={() => goTo(i)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

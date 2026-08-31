@@ -56,6 +56,7 @@
 - [בלי דיוור חיצוני](wiki/decisions/no-external-mailer.md) — mailto אצל המבקר *(2026-08-23)*
 - [חיפושיות ברצועה](wiki/decisions/bugs-only-in-the-grid-band.md) — מהכרטיסים ומטה *(2026-08-27)*
 - [מיצוב מחדש כסוכנות](wiki/decisions/agency-repositioning.md) — מה זז לאן *(2026-08-30)*
+- [גוגל: לפני/אחרי](wiki/decisions/gbp-before-after.md) — להראות במקום להסביר *(2026-08-30)*
 
 ### מלכודות — כל אחת עלתה שעה
 - [contain:paint שובר fixed](wiki/gotchas/contain-paint-breaks-fixed.md) *(2026-08-26)*
@@ -73,6 +74,7 @@
 - [בלי em dash בקופי](wiki/gotchas/no-em-dash-in-copy.md) *(2026-08-30)*
 - [insets לוגיים הפוכים ב-RTL](wiki/gotchas/rtl-logical-insets-are-mirrored.md) *(2026-08-30)*
 - [ביקורות לדוגמה וגילוי](wiki/gotchas/sample-reviews-disclosure.md) *(2026-08-30)*
+- [text-anchor מתהפך ב-RTL](wiki/gotchas/svg-text-anchor-flips-in-rtl.md) *(2026-08-30)*
 
 ## פתוחים
 
