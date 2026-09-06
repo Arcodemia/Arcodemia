@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { SERVICES, servicePath } from '@/lib/services';
-import { SERVICE_ART } from './ServiceArt';
+import { ServiceVisual } from './ServiceVisual';
 
 /* ============================================================
    קרוסלת השירותים
@@ -118,36 +118,31 @@ export function ServicesCarousel() {
           onKeyDown={onKey}
           aria-label="קטגוריות השירות"
         >
-          {SERVICES.map((s, i) => {
-            const Art = SERVICE_ART[s.slug];
-            return (
-              <article
-                className={`svc__slide${i === active ? ' is-active' : ''}`}
-                role="listitem"
-                key={s.slug}
-                aria-current={i === active ? 'true' : undefined}
-              >
-                <div className="svc__card">
-                  <span className="svc__art" aria-hidden="true">
-                    {Art ? <Art /> : null}
-                  </span>
+          {SERVICES.map((s, i) => (
+            <article
+              className={`svc__slide${i === active ? ' is-active' : ''}`}
+              role="listitem"
+              key={s.slug}
+              aria-current={i === active ? 'true' : undefined}
+            >
+              <div className="svc__card">
+                <ServiceVisual slug={s.slug} className="svc__art" />
 
-                  <div className="svc__meta">
-                    <span className="svc__num" aria-hidden="true">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {/* 🔑 הקישור היחיד בכרטיס: שם השירות. */}
-                    <h3 className="svc__title">
-                      <Link className="svc__name" href={servicePath(s.slug)}>
-                        <span>{s.title}</span>
-                        <Chevron dir="next" />
-                      </Link>
-                    </h3>
-                  </div>
+                <div className="svc__meta">
+                  <span className="svc__num" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {/* 🔑 הקישור היחיד בכרטיס: שם השירות. */}
+                  <h3 className="svc__title">
+                    <Link className="svc__name" href={servicePath(s.slug)}>
+                      <span>{s.title}</span>
+                      <Chevron dir="next" />
+                    </Link>
+                  </h3>
                 </div>
-              </article>
-            );
-          })}
+              </div>
+            </article>
+          ))}
         </div>
 
         {/* פס הבקרה. בשולחני החצים נדחפים ל**צדי** המסגרת;

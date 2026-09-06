@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { servicePath } from '@/lib/services';
-import { AutomationArt, MarketingArt, NfcArt } from './ServiceArt';
+import { ServiceVisual } from './ServiceVisual';
 
 /* ============================================================
    שלושת החתכים המורחבים בעמוד הבית
@@ -19,9 +19,7 @@ export function Automation() {
   return (
     <section id="automation" className="feat">
       <div className="wrap feat__in">
-        <div className="feat__art rv" aria-hidden="true">
-          <AutomationArt />
-        </div>
+        <ServiceVisual slug="automation" className="feat__art rv" />
         <div className="feat__text rv">
           <span className="eyebrow">אוטומציות</span>
           <h2>
@@ -63,9 +61,7 @@ export function NfcCards() {
   return (
     <section id="nfc" className="feat feat--flip">
       <div className="wrap feat__in">
-        <div className="feat__art rv" aria-hidden="true">
-          <NfcArt />
-        </div>
+        <ServiceVisual slug="nfc" className="feat__art rv" />
         <div className="feat__text rv">
           <span className="eyebrow">כרטיסי NFC</span>
           <h2>
@@ -107,9 +103,7 @@ export function Marketing() {
   return (
     <section id="marketing" className="feat">
       <div className="wrap feat__in">
-        <div className="feat__art rv" aria-hidden="true">
-          <MarketingArt />
-        </div>
+        <ServiceVisual slug="marketing" className="feat__art rv" />
         <div className="feat__text rv">
           <span className="eyebrow">שיווק דיגיטלי</span>
           <h2>

@@ -10,7 +10,7 @@ import { waURL } from '@/lib/whatsapp';
 import { SERVICES, servicePath, type Service } from '@/lib/services';
 import { CategoryNav } from './CategoryNav';
 import { LogoMark, WhatsAppIcon } from './icons';
-import { SERVICE_ART } from './ServiceArt';
+import { ServiceVisual } from './ServiceVisual';
 
 /* ============================================================
    המעטפת של עמוד קטגוריה
@@ -51,7 +51,6 @@ export function SubpageShell({
     else router.push('/');
   }, [router]);
 
-  const Art = SERVICE_ART[service.slug];
   const others = SERVICES.filter((s) => s.slug !== service.slug);
 
   return (
@@ -94,10 +93,8 @@ export function SubpageShell({
             <span className="eyebrow">שירות</span>
             <h1>{service.title}</h1>
             <p className="lead">{service.teaser}</p>
-            {heroArt && Art ? (
-              <span className="sub__art" aria-hidden="true">
-                <Art />
-              </span>
+            {heroArt ? (
+              <ServiceVisual slug={service.slug} className="sub__art" eager />
             ) : null}
           </div>
         </section>
