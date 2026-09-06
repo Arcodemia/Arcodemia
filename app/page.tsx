@@ -7,7 +7,6 @@ import { Nav } from '@/components/Nav';
 import { Hero } from '@/components/Hero';
 import { Portfolio } from '@/components/Portfolio';
 import { ServicesCarousel } from '@/components/ServicesCarousel';
-import { Automation, NfcCards, Marketing } from '@/components/Highlights';
 import { About } from '@/components/About';
 import { Testimonials } from '@/components/Testimonials';
 import { ContactSection } from '@/components/ContactSection';
@@ -57,9 +56,6 @@ export default function Page() {
         <Hero />
         <ServicesCarousel />
         <Portfolio />
-        <Automation />
-        <NfcCards />
-        <Marketing />
         <About />
         <Testimonials />
         <ContactSection />

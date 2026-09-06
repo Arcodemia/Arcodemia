@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SubpageShell } from '@/components/SubpageShell';
+import { ServiceFeature } from '@/components/ServiceFeature';
 import { getService } from '@/lib/services';
 
 const SERVICE = getService('nfc')!;
@@ -11,7 +12,17 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <SubpageShell service={SERVICE}>
+    <SubpageShell service={SERVICE} heroArt={false}>
+      <ServiceFeature
+        slug="nfc"
+        eyebrow="כרטיסי NFC"
+        title="הצמדה אחת,"
+        emphasis="וביקורת בגוגל."
+        lead="כרטיס פיזי על הדלפק. הלקוח מצמיד אליו טלפון ונוחת ישירות בדף הביקורות שלכם, בלי לחפש ובלי להקליד."
+        closing="יותר ביקורות משמעותן דירוג גבוה יותר, וזה בדיוק מה שמקדם אתכם בחיפוש המקומי ובמפות."
+        flip
+      />
+
       <section className="sub__body">
         <div className="wrap">
           <h2 className="rv">למה ביקורות בגוגל חשובות</h2>
@@ -49,10 +60,6 @@ export default function Page() {
               <span>הכרטיס פסיבי. אין בו סוללה ואין מה לטעון.</span>
             </li>
           </ul>
-
-          <p className="rv sub__flag">
-            ⚠️ תצלום המוצר האמיתי יעלה בקרוב. האיור בעמוד הוא זמני.
-          </p>
         </div>
       </section>
     </SubpageShell>

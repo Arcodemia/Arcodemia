@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SubpageShell } from '@/components/SubpageShell';
+import { ServiceFeature } from '@/components/ServiceFeature';
 import { getService } from '@/lib/services';
 
 const SERVICE = getService('marketing')!;
@@ -11,7 +12,16 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <SubpageShell service={SERVICE}>
+    <SubpageShell service={SERVICE} heroArt={false}>
+      <ServiceFeature
+        slug="marketing"
+        eyebrow="שיווק דיגיטלי"
+        title="קמפיין שמביא פניות,"
+        emphasis="לא רק צפיות."
+        lead="אנחנו מנהלים את הקמפיינים ומפיקים את התוכן בעצמנו, מהרעיון ועד הדוח החודשי."
+        closing="כל שקל מדווח. אתם רואים כמה עלתה פנייה, מאיזה קמפיין היא הגיעה, ומה שווה להגדיל בחודש הבא."
+      />
+
       <section className="sub__body">
         <div className="wrap">
           <h2 className="rv">קמפיינים ממומנים</h2>

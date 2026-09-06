@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { SubpageShell } from '@/components/SubpageShell';
+import { ServiceFeature } from '@/components/ServiceFeature';
 import { getService } from '@/lib/services';
 
 const SERVICE = getService('automation')!;
@@ -11,7 +12,16 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <SubpageShell service={SERVICE}>
+    <SubpageShell service={SERVICE} heroArt={false}>
+      <ServiceFeature
+        slug="automation"
+        eyebrow="אוטומציות"
+        title="הטלפון מפסיק לצלצל,"
+        emphasis="והיומן ממשיך להתמלא."
+        lead="בוט וואטסאפ שעונה ללקוחות שלכם בזמן שאתם עובדים, ישנים או בחופש."
+        closing="כל תהליך שאתם חוזרים עליו ידנית אפשר להפוך לאוטומטי, ונשמח לשמוע מה גוזל לכם הכי הרבה זמן."
+      />
+
       <section className="sub__body">
         <div className="wrap">
           <h2 className="rv">מה זה עושה בפועל</h2>

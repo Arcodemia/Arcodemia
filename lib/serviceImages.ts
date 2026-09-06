@@ -32,9 +32,9 @@ export const SERVICE_IMAGES: Readonly<Record<string, ServiceImage>> = {
     alt: 'תרשים זרימה: בוט וואטסאפ עונה ללקוחות על שעות פעילות ועל קביעת תור, ומעביר פנייה על מצב זיכוי לנציגה אנושית.',
   },
   nfc: {
-    src: '/img/services/nfc-card.301cf5.webp',
-    w: 1100,
-    h: 1100,
+    src: '/img/services/nfc-card.572de3.webp',
+    w: 1057,
+    h: 1057,
     alt: 'כרטיס NFC כחול-לבן עם חמישה כוכבים, לוגו גוגל והכיתוב "Tap אחד ושימו דירוג", עם איור של הצמדת טלפון לכרטיס.',
   },
   marketing: {

@@ -1758,10 +1758,6 @@ html.a11y-readable :is(p,span,li,label){font-weight:700 !important}
 }
 .sub__cards b{font-size:1.0125rem; font-weight:800}
 .sub__cards span{color:var(--muted); font-size:var(--t-sm); line-height:1.65}
-.sub__flag{
-  color:var(--faint) !important; font-size:var(--t-xs) !important;
-  padding:10px 12px; border:1px dashed var(--hairline-2); border-radius:var(--r-sm);
-}
 
 .sub__cta{text-align:center; border-block-start:1px solid var(--hairline)}
 .sub__cta h2{font-size:var(--t-h2); margin-block-end:var(--s2)}
